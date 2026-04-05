@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shell Designer v0.1</title>
+</head>
+<body>
+
+<h1>Shell Designer</h1>
+
+<h2>Request</h2>
+<p id="request"></p>
+
+<h2>Current Build</h2>
+<p id="build"></p>
+
+<h2>Stats</h2>
+<p id="stats"></p>
+
+<h2>Choose Core</h2>
+<button onclick="selectCore('heavy')">Heavy Core</button>
+<button onclick="selectCore('light')">Light Core</button>
+
+<h2>Choose Casing</h2>
+<button onclick="selectCasing('reinforced')">Reinforced</button>
+<button onclick="selectCasing('cheap')">Cheap</button>
+
+<h2>Choose Powder</h2>
+<button onclick="selectPowder('fast')">Fast Burn</button>
+<button onclick="selectPowder('stable')">Stable Burn</button>
+
+<br><br>
+<button onclick="submitDesign()">Submit Design</button>
+
+<h2 id="result"></h2>
+
+<script>
+let power = 0;
+let cost = 0;
+let stability = 0;
+
+let core = "None";
+let casing = "None";
+let powder = "None";
+
+let requiredPower = 7;
+let maxCost = 5;
+
+// UPDATE UI
+function updateDisplay() {
+    document.getElementById("build").innerText =
+        "Core: " + core + " | Casing: " + casing + " | Powder: " + powder;
+
+    document.getElementById("stats").innerText =
+        "Power: " + power + " | Cost: " + cost + " | Stability: " + stability;
+}
+
+// CORE
+function selectCore(type) {
+    core = type;
+
+    if(type === "heavy") {
+        power += 5;
+        cost += 3;
+    }
+
+    if(type === "light") {
+        power += 2;
+        cost += 1;
+    }
+
+    updateDisplay();
+}
+
+// CASING
+function selectCasing(type) {
+    casing = type;
+
+    if(type === "reinforced") {
+        stability += 4;
+        cost += 2;
+    }
+
+    if(type === "cheap") {
+        cost += 1;
+        stability -= 1;
+    }
+
+    updateDisplay();
+}
+
+// POWDER
+function selectPowder(type) {
+    powder = type;
+
+    if(type === "fast") {
+        power += 3;
+        stability -= 2;
+    }
+
+    if(type === "stable") {
+        stability += 3;
+        power += 1;
+    }
+
+    updateDisplay();
+}
+
+// SUBMIT
+function submitDesign() {
+    if(power >= requiredPower && cost <= maxCost) {
+        document.getElementById("result").innerText = "SUCCESS";
+    } else {
+        document.getElementById("result").innerText = "FAILED";
+    }
+}
+
+// INIT
+document.getElementById("request").innerText =
+    "Power ≥ " + requiredPower + " | Cost ≤ " + maxCost;
+
+updateDisplay();
+</script>
+
+</body>
+</html>
