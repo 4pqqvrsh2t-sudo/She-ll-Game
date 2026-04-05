@@ -34,6 +34,32 @@
 <h2 id="result"></h2>
 
 <script>
+
+// Min & Max ranges for each stat
+const powerMin = 5, powerMax = 9;
+const costMin = 4, costMax = 8;
+const stabilityMin = 1, stabilityMax = 3;
+
+// Variables to hold current order
+let requiredPower;
+let maxCost;
+let requiredStability;
+
+// Function to generate a new order
+function generateOrder() {
+    requiredPower = Math.floor(Math.random() * (powerMax - powerMin + 1)) + powerMin;
+    maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
+    requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
+
+    document.getElementById("request").innerText =
+        "Power ≥ " + requiredPower +
+        " | Cost ≤ " + maxCost +
+        " | Stability ≥ " + requiredStability;
+}
+
+// Call once at start to generate the first order
+generateOrder();
+
 // Stats
 let power = 0;
 let cost = 0;
