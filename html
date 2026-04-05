@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shell Designer v0.1</title>
+    <title>Shell Designer v0.2</title>
 </head>
 <body>
 
-<h1>Shell Designer</h1>
+<h1>Shell Designer – Phase 2</h1>
 
 <h2>Request</h2>
 <p id="request"></p>
@@ -34,78 +34,114 @@
 <h2 id="result"></h2>
 
 <script>
+// Stats
 let power = 0;
 let cost = 0;
 let stability = 0;
 
-let core = "None";
-let casing = "None";
-let powder = "None";
+// Current parts
+let core = null;
+let casing = null;
+let powder = null;
 
+// Stats for each part
+const coreStats = {
+    heavy: {power:5, cost:3, stability:0},
+    light: {power:2, cost:1, stability:0}
+};
+
+const casingStats = {
+    reinforced: {power:0, cost:2, stability:4},
+    cheap: {power:0, cost:1, stability:-1}
+};
+
+const powderStats = {
+    fast: {power:3, cost:0, stability:-2},
+    stable: {power:1, cost:0, stability:3}
+};
+
+// Request
 let requiredPower = 7;
 let maxCost = 5;
 
-// UPDATE UI
+// Helper to clamp stats >= 0
+function clampStats() {
+    power = Math.max(0, power);
+    cost = Math.max(0, cost);
+    stability = Math.max(0, stability);
+}
+
+// Update display
 function updateDisplay() {
     document.getElementById("build").innerText =
-        "Core: " + core + " | Casing: " + casing + " | Powder: " + powder;
+        "Core: " + (core || "None") +
+        " | Casing: " + (casing || "None") +
+        " | Powder: " + (powder || "None");
 
     document.getElementById("stats").innerText =
-        "Power: " + power + " | Cost: " + cost + " | Stability: " + stability;
+        "Power: " + power +
+        " | Cost: " + cost +
+        " | Stability: " + stability;
 }
 
-// CORE
+// Core selection
 function selectCore(type) {
+    // Remove old stats
+    if(core) {
+        power -= coreStats[core].power;
+        cost -= coreStats[core].cost;
+        stability -= coreStats[core].stability;
+    }
+
+    // Assign new core
     core = type;
 
-    if(type === "heavy") {
-        power += 5;
-        cost += 3;
-    }
+    // Add new stats
+    power += coreStats[type].power;
+    cost += coreStats[type].cost;
+    stability += coreStats[type].stability;
 
-    if(type === "light") {
-        power += 2;
-        cost += 1;
-    }
-
+    clampStats();
     updateDisplay();
 }
 
-// CASING
+// Casing selection
 function selectCasing(type) {
+    if(casing) {
+        power -= casingStats[casing].power;
+        cost -= casingStats[casing].cost;
+        stability -= casingStats[casing].stability;
+    }
+
     casing = type;
 
-    if(type === "reinforced") {
-        stability += 4;
-        cost += 2;
-    }
+    power += casingStats[type].power;
+    cost += casingStats[type].cost;
+    stability += casingStats[type].stability;
 
-    if(type === "cheap") {
-        cost += 1;
-        stability -= 1;
-    }
-
+    clampStats();
     updateDisplay();
 }
 
-// POWDER
+// Powder selection
 function selectPowder(type) {
+    if(powder) {
+        power -= powderStats[powder].power;
+        cost -= powderStats[powder].cost;
+        stability -= powderStats[powder].stability;
+    }
+
     powder = type;
 
-    if(type === "fast") {
-        power += 3;
-        stability -= 2;
-    }
+    power += powderStats[type].power;
+    cost += powderStats[type].cost;
+    stability += powderStats[type].stability;
 
-    if(type === "stable") {
-        stability += 3;
-        power += 1;
-    }
-
+    clampStats();
     updateDisplay();
 }
 
-// SUBMIT
+// Submit design
 function submitDesign() {
     if(power >= requiredPower && cost <= maxCost) {
         document.getElementById("result").innerText = "SUCCESS";
@@ -114,7 +150,7 @@ function submitDesign() {
     }
 }
 
-// INIT
+// Initialize
 document.getElementById("request").innerText =
     "Power ≥ " + requiredPower + " | Cost ≤ " + maxCost;
 
