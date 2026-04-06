@@ -61,14 +61,17 @@ let failedOrders = []; //Store failed Orders
 let orderSinceLastFailure = 0; // Track Orders since last failed one
 let currentOrderDescription = ""; // Store the current order text
 
+// Current parts
+let core = null;
+let casing = null;
+let powder = null;
+
+// Stats
+let power = 0;
+let cost = 0;
+let stability = 0;
+
 // Function to generate a new order
-//Reset stats for new order
- core = null;
-    casing = null;
-    powder = null;
-    power = 0;
-    cost = 0;
-    stability = 0;
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
@@ -153,16 +156,6 @@ let description;
 
 // Call once at start to generate the first order
 generateOrder();
-
-// Stats
-let power = 0;
-let cost = 0;
-let stability = 0;
-
-// Current parts
-let core = null;
-let casing = null;
-let powder = null;
 
 // Stats for each part
 const coreStats = {
