@@ -73,11 +73,14 @@ let currentOrderDescription = ""; // Store the current order text
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
-    let (failedOrders.length > 0 && orderSinceLastFailure >= 3) 
-        usedFailedOrder = Math.random() < 0.5; // 50% chance to reuse a failed order
+    orderSinceLastFailure++; // Increment counter for orders since last failure
+    let useFailedOrder = false;
+    
+    if (failedOrders.length > 0 && orderSinceLastFailure >= 3) {
+        useFailedOrder = Math.random() < 0.5; // 50% chance to reuse a failed order
     }
 
-        if (usedFailedOrder) {
+        if (useFailedOrder) {
             // Pick a random failed order
             let index = Math.floor(Math.random() * failedOrders.length);
             let order = failedOrders[index];
