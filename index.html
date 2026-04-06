@@ -98,15 +98,24 @@ let knownStats = {
     }
 };
 
-// Alternative version that shows all armors with ??? for unknown ones
+// New version that shows all armors with ??? for unknown ones
 function getKnownStatText(partType, partName) {
     let text = "";
     let armors = ["Armor A", "Armor B", "Armor C"];
     armors.forEach((armor, i) => {
-        if (knownStats[partType][partName] && knownStats[partType][partName][armor] !== undefined) {
-            text += armor + ": " + knownStats[partType][partName][armor];
+        const stat = knownStats[partType][partName][armor];
+        if (stat !== undefined) {
+            // Check if it's an object or a single number
+            if (typeof stat === "object") {
+                text += `${armor}: Power ${stat.power}, Cost ${stat.cost} | `;
+                if (stats.stability !== undefined) {
+                    text += `Stability ${stat.stability}`;
+                }
+            } else {
+                text += stats;
+            }
         } else {
-            text += armor + ": ???";
+            text += "???";
         }
         if (i < armors.length - 1) text += " | ";
     });
@@ -164,7 +173,7 @@ function testShell() {
   //  knownStats.powder[powder] = knownStats.powder[powder] || {};
   //  knownStats.powder[powder][currentArmor] = power;
   //Show results of the test
-  let resultText = 'Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}';
+  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
     document.getElementById("testResult").innerText = resultText;
 
     updateDisplay();
