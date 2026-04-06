@@ -56,6 +56,10 @@ let isWaiting = false;
 let requiredPower;
 let maxCost;
 let requiredStability;
+// Remembering Failed Orders
+let failedOrders = []; //Store failed Orders
+let orderSinceLastFailure = 0; // Track Orders since last failed one
+let currentOrderDescription = ""; // Store the current order text
 
 // Function to generate a new order
 //Reset stats for new order
@@ -69,6 +73,32 @@ let requiredStability;
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
+    let (failedOrders.length > 0 && orderSinceLastFailure >= 3) {
+        usedFailedOrder = Math.randomMath.random() < 0.5; // 50% chance to reuse a failed order
+    }
+
+        if (usedFailedOrder) {
+            // Pick a random failed order
+            let index = Math.floor(Math.random() * failedOrders.length);
+            let order = failedOrders[index];
+
+            description = "Central Command: The previous shells were ineffective." + order.description;
+
+            requiredPower = order.requiredPower;
+            maxCost = order.maxCost;
+            requiredStability = order.requiredStability;
+            
+            failedOrders.splice(index, 1); // Remove from memory
+            orderSinceLastFailure = 0; // Reset counter after using a failed order
+
+            document.getElementById("request").innerText =
+                "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
+                "Power ≥ " + requiredPower +
+                " | Cost ≤ " + maxCost +
+                " | Stability ≥ " + requiredStability;
+            orderSinceLastFailure = 0; // Reset counter after using a failed order
+        } else {
+        
     // Base stats for the order
     let pMin = 5, pMax = 9;
     let cMin = 4, cMax = 8;
@@ -237,6 +267,16 @@ function submitDesign() {
     }
     if (stability < requiredStability) {
         failures.push("Shell Stability is too low.");
+    }
+    if (failures.length > 0) {
+        // Store failed order details for potential reuse
+        failedOrders.push({
+            description: currentOrderDescription,
+            requiredPower,
+            maxCost,
+            requiredStability
+        });
+        orderSinceLastFailure = 0; // Reset counter on failure
     }
     // Display result
     if (failures.length === 0) {
