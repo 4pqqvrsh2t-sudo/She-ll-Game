@@ -110,6 +110,10 @@ function clampStats() {
 
 // Update display
 function updateDisplay() {
+    document.getElementById("build").innerText =
+        "Core: " + (core ? core : "None") +
+        " | Casing: " + (casing ? casing : "None") +
+        " | Powder: " + (powder ? powder : "None");
 
     document.getElementById("stats").innerText =
         "Power: " + power +
@@ -179,13 +183,16 @@ function submitDesign() {
     if (isWaiting) return; // Prevent multiple submissions while waiting for the next order
 
     isWaiting = true; // Set waiting state to prevent new orders until the next one is generated
-    
+
     if ((power >= requiredPower && cost <= maxCost) && stability >= requiredStability) {
         document.getElementById("result").innerText = "SUCCESS";
     } else {
         document.getElementById("result").innerText = "FAILED";
     }
-    setTimeout(generateOrder, 1000); // Creates a new order after a 1-second delay after submission
+    setTimeout( () => {
+        generateOrder();
+        isWaiting = false; // Reset waiting state to allow new orders
+    }, 1000); // Creates a new order after a 1-second delay after submission
 }
 
 updateDisplay();
