@@ -30,6 +30,10 @@
 <button onclick="selectPowder('fast')">Fast Burn</button>
 <button onclick="selectPowder('stable')">Stable Burn</button>
 
+<button onclick="testShell()">Test Shell</button>
+<p id="testResult"></p>
+
+<button onclick="getNewArmor()">Recover New Armor Sample</button>
 <br><br>
 <button onclick="submitDesign()">Submit Design</button>
 
@@ -71,6 +75,50 @@ let power = 0;
 let cost = 0;
 let stability = 0;
 
+//Testing System
+let currentArmor ="Armor A";
+let armorDurability = 4;
+
+//Knowledge system( What the player has learned about the enemy armor)
+let knownStats = {
+    core: {},
+    casing: {},
+    powder: {}
+};
+
+// Function to test the shell against the current armor
+function testShell() {
+    if (!core || !casing || !powder) {
+        document.getElementById("testResult").innerText = "Incomplete shell!";
+        return;
+    }
+    if (armorDurability <= 0) {
+        document.getElementById("testResult").innerText = "Armor has been spent. Recover a new sample to continue testing.";
+        return;
+    }
+    armorDurability--;
+    //Reveal actual stats of the shell to the player
+    let resultText = "Testing Results on " + currentArmor + ":\n"; +
+    "Power: " + power + 
+    " | Cost: " + cost +
+    " | Stability: " + stability +
+    "\nDurability Left: " + armorDurability;
+
+    document.getElementById("testResult").innerText = resultText;
+
+    //Store Knowledge
+    knownStats.core[core] = coreStats[core];
+    knownStats.casing[casing] = casingStats[casing];
+    knownStats.powder[powder] = powderStats[powder];
+
+// Function to recover a new armor sample
+function getNewArmor() {
+    let armorTypes = ["Armor A", "Armor B", "Armor C"];
+    currentArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
+    armorDurability = 4; // Reset durability for new armor
+
+    document.getElementById("testResult").innerText = "New Armor Sample Recovered: " + currentArmor;
+    
 // Function to generate a new order
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
@@ -188,9 +236,7 @@ function updateDisplay() {
         " | Powder: " + (powder ? powder : "None");
 
     document.getElementById("stats").innerText =
-        "Power: " + power +
-        " | Cost: " + cost +
-        " | Stability: " + stability;
+        "Power: ??? | Cost: ??? | Stability: ???";
 }
 
 // Core selection
