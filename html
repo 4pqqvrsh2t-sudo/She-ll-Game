@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shell Designer v0.2</title>
+</head>
+<body>
+
+<h1>Shell Designer – Phase 2</h1>
+
+<div id="request">Order will appear here</div>
+<button onclick="generateOrder()">New Order</button>
+
+<h2>Request</h2>
+
+<h2>Current Build</h2>
+<p id="build"></p>
+
+<h2>Stats</h2>
+<p id="stats"></p>
+
+<h2>Choose Core</h2>
+<button onclick="selectCore('heavy')">Heavy Core</button>
+<button onclick="selectCore('light')">Light Core</button>
+
+<h2>Choose Casing</h2>
+<button onclick="selectCasing('reinforced')">Reinforced</button>
+<button onclick="selectCasing('cheap')">Cheap</button>
+
+<h2>Choose Powder</h2>
+<button onclick="selectPowder('fast')">Fast Burn</button>
+<button onclick="selectPowder('stable')">Stable Burn</button>
+
+<br><br>
+<button onclick="submitDesign()">Submit Design</button>
+
+<h2 id="result"></h2>
+
+<script>
+
+// Min & Max ranges for each stat
+const powerMin = 5, powerMax = 9;
+const costMin = 4, costMax = 8;
+const stabilityMin = 1, stabilityMax = 3;
+
+// Variables to hold current order
+let requiredPower;
+let maxCost;
+let requiredStability;
+
+// Function to generate a new order
+function generateOrder() {
+    requiredPower = Math.floor(Math.random() * (powerMax - powerMin + 1)) + powerMin;
+    maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
+    requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
+
+    document.getElementById("request").innerText =
+        "Power ≥ " + requiredPower +
+        " | Cost ≤ " + maxCost +
+        " | Stability ≥ " + requiredStability;
+}
+
+// Call once at start to generate the first order
+generateOrder();
+
+// Stats
+let power = 0;
+let cost = 0;
+let stability = 0;
+
+// Current parts
+let core = null;
+let casing = null;
+let powder = null;
+
+// Stats for each part
+const coreStats = {
+    heavy: {power:5, cost:3, stability:0},
+    light: {power:2, cost:1, stability:0}
+};
+
+const casingStats = {
+    reinforced: {power:0, cost:2, stability:4},
+    cheap: {power:0, cost:1, stability:-1}
+};
+
+const powderStats = {
+    fast: {power:3, cost:0, stability:-2},
+    stable: {power:1, cost:0, stability:3}
+};
+
+// Helper to clamp stats >= 0
+function clampStats() {
+    power = Math.max(0, power);
+    cost = Math.max(0, cost);
+    stability = Math.max(0, stability);
+}
+
+// Update display
+function updateDisplay() {
+    document.getElementById("build").innerText =
+        "Core: " + (core || "None") +
+        " | Casing: " + (casing || "None") +
+        " | Powder: " + (powder || "None");
+
+    document.getElementById("stats").innerText =
+        "Power: " + power +
+        " | Cost: " + cost +
+        " | Stability: " + stability;
+}
+
+// Core selection
+function selectCore(type) {
+    // Remove old stats
+    if(core) {
+        power -= coreStats[core].power;
+        cost -= coreStats[core].cost;
+        stability -= coreStats[core].stability;
+    }
+
+    // Assign new core
+    core = type;
+
+    // Add new stats
+    power += coreStats[type].power;
+    cost += coreStats[type].cost;
+    stability += coreStats[type].stability;
+
+    clampStats();
+    updateDisplay();
+}
+
+// Casing selection
+function selectCasing(type) {
+    if(casing) {
+        power -= casingStats[casing].power;
+        cost -= casingStats[casing].cost;
+        stability -= casingStats[casing].stability;
+    }
+
+    casing = type;
+
+    power += casingStats[type].power;
+    cost += casingStats[type].cost;
+    stability += casingStats[type].stability;
+
+    clampStats();
+    updateDisplay();
+}
+
+// Powder selection
+function selectPowder(type) {
+    if(powder) {
+        power -= powderStats[powder].power;
+        cost -= powderStats[powder].cost;
+        stability -= powderStats[powder].stability;
+    }
+
+    powder = type;
+
+    power += powderStats[type].power;
+    cost += powderStats[type].cost;
+    stability += powderStats[type].stability;
+
+    clampStats();
+    updateDisplay();
+}
+
+// Submit design
+function submitDesign() {
+    if ((power >= requiredPower && cost <= maxCost) && stability >= requiredStability) {
+        document.getElementById("result").innerText = "SUCCESS";
+    } else {
+        document.getElementById("result").innerText = "FAILED";
+    }
+    generateOrder(); // Creates a new order immediately after submission
+}
+
+updateDisplay();
+</script>
+
+</body>
+</html>
