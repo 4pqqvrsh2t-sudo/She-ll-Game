@@ -62,8 +62,8 @@ function generateOrder() {
     maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
     requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
 
-    let description = description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
-    
+    let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+
     //Pick a random description for the order
     document.getElementById("request").innerText =
     description + "\n\n" +
@@ -110,12 +110,8 @@ function clampStats() {
 
 // Update display
 function updateDisplay() {
-    document.getElementById("build").innerText = description + "<br><br>" +
-        "Core: " + (core || "None") +
-        " | Casing: " + (casing || "None") +
-        " | Powder: " + (powder || "None");
 
-    document.getElementById("request").innerHTML =
+    document.getElementById("stats").innerText =
         "Power: " + power +
         " | Cost: " + cost +
         " | Stability: " + stability;
@@ -180,6 +176,10 @@ function selectPowder(type) {
 
 // Submit design
 function submitDesign() {
+    if (isWaiting) return; // Prevent multiple submissions while waiting for the next order
+
+    isWaiting = true; // Set waiting state to prevent new orders until the next one is generated
+    
     if ((power >= requiredPower && cost <= maxCost) && stability >= requiredStability) {
         document.getElementById("result").innerText = "SUCCESS";
     } else {
