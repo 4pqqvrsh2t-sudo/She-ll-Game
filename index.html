@@ -115,19 +115,19 @@ function getKnownStatText(partType, partName) {
         } else {
             text += "???";
         }
-        if (i < armors.length - 1) text += " | ";
+        if (i < armors.length - 1) text += forTooltip ? "&#10;" : "\n"; // New line between armors
     });
     return text;
 }
 
 // Update tooltips with known stats
 function updateTooltip() {
-   document.getElementById("heavyCoreBtn").title = getKnownStatText("core", "heavy");
-   document.getElementById("lightCoreBtn").title = getKnownStatText("core", "light");
-   document.getElementById("reinforcedCasingBtn").title = getKnownStatText("casing", "reinforced");
-   document.getElementById("cheapCasingBtn").title = getKnownStatText("casing", "cheap");
-   document.getElementById("fastPowderBtn").title = getKnownStatText("powder", "fast");
-   document.getElementById("stablePowderBtn").title = getKnownStatText("powder", "stable");
+   document.getElementById("heavyCoreBtn").title = getKnownStatText("core", "heavy", true);
+   document.getElementById("lightCoreBtn").title = getKnownStatText("core", "light", true);
+   document.getElementById("reinforcedCasingBtn").title = getKnownStatText("casing", "reinforced", true);
+   document.getElementById("cheapCasingBtn").title = getKnownStatText("casing", "cheap", true);
+   document.getElementById("fastPowderBtn").title = getKnownStatText("powder", "fast", true);
+   document.getElementById("stablePowderBtn").title = getKnownStatText("powder", "stable", true);
 }
 
 function calculateArmorStats(core, casing, powder, armor) {
@@ -297,9 +297,9 @@ function updateDisplay() {
         " | Powder: " + (powder ? powder : "None");
 
     document.getElementById("stats").innerText =
-        "Core Info: " + (core ? getKnownStatText("core", core) : "None") + "\n" +
-        "Casing Info: " + (casing ? getKnownStatText("casing", casing) : "None") + "\n" +
-        "Powder Info: " + (powder ? getKnownStatText("powder", powder) : "None");
+        "Core Info:\n " + (core ? getKnownStatText("core", core) : "None") + "\n" +
+        "Casing Info:\n " + (casing ? getKnownStatText("casing", casing) : "None") + "\n" +
+        "Powder Info:\n " + (powder ? getKnownStatText("powder", powder) : "None");
 }
 
 // Core selection
