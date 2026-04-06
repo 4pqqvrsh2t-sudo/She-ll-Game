@@ -167,17 +167,13 @@ function selectPowder(type) {
 
 // Submit design
 function submitDesign() {
-    if(power >= requiredPower && cost <= maxCost) {
+    if(power >= requiredPower && cost <= maxCost) && stability >= requiredStability {
         document.getElementById("result").innerText = "SUCCESS";
     } else {
         document.getElementById("result").innerText = "FAILED";
     }
 generateOrder(); // Creates a new order immediately after submission
 }
-
-// Initialize
-document.getElementById("request").innerText =
-    "Power ≥ " + requiredPower + " | Cost ≤ " + maxCost;
 
 updateDisplay();
 </script>
