@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shell Designer v0.2</title>
+    <title>Shell Designer v0.3</title>
 </head>
 <body>
 
-<h1>Shell Designer – Phase 2</h1>
+<h1>Shell Designer – Phase 3</h1>
 
 <div id="request">Order will appear here</div>
 <button onclick="generateOrder()">New Order</button>
@@ -118,7 +118,7 @@ function getNewArmor() {
     armorDurability = 4; // Reset durability for new armor
 
     document.getElementById("testResult").innerText = "New Armor Sample Recovered: " + currentArmor;
-    
+
 // Function to generate a new order
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
