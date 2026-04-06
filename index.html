@@ -110,6 +110,7 @@ function testShell() {
     knownStats.core[core] = coreStats[core];
     knownStats.casing[casing] = casingStats[casing];
     knownStats.powder[powder] = powderStats[powder];
+}
 
 // Function to recover a new armor sample
 function getNewArmor() {
@@ -118,6 +119,7 @@ function getNewArmor() {
     armorDurability = 4; // Reset durability for new armor
 
     document.getElementById("testResult").innerText = "New Armor Sample Recovered: " + currentArmor;
+}
 
 // Function to generate a new order
 function generateOrder() {
