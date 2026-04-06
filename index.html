@@ -58,16 +58,16 @@ let maxCost;
 let requiredStability;
 
 // Function to generate a new order
-function generateOrder() {
-    if (isWaiting) return; // Prevent generating a new order while waiting for the next one
-
-    //Reset stats for new order
+//Reset stats for new order
     core = null;
     casing = null;
     powder = null;
     power = 0;
     cost = 0;
     stability = 0;
+
+function generateOrder() {
+    if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
     // Base stats for the order
     let pMin = 5, pMax = 9;
