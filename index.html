@@ -38,11 +38,13 @@
 <script>
 
 const orderDescriptions = [
-    "Frontline Report: Enemy armor is reinforced.",
-    "Frontline Report: Enemy vehicles are lightly armored and agile.",
+    "Frontline Report: Enemy armor is Reinforced.",
+    "Frontline Report: Enemy vehicles are Lightly Armored and Agile.",
     "Frontline Report: New Enemy plating detected, adjust accordingly.",
-    "We need a shell that can withstand high impact but is cost-effective.",
-    "We need an all rounder shell that can handle various combat scenarios.",
+    "Central Command: We need a shell that can withstand High Impact but is Cost-Effective.",
+    "Central Command: We need an all-rounder shell that can handle various combat scenarios. Keep the cost Low.",
+    "Central Command: We need a shell that can deliver high power but is stable enough for Long-Range engagements.",
+    "Central Command: We need a shell that can deliver high power but is Cost-Effective for mass production."
 ];
 // Min & Max ranges for each stat
 const powerMin = 5, powerMax = 9;
@@ -58,11 +60,36 @@ let requiredStability;
 // Function to generate a new order
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
-    requiredPower = Math.floor(Math.random() * (powerMax - powerMin + 1)) + powerMin;
-    maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
+    // Base stats for the order
+    let pMin = 5, pMax = 9;
+    let cMin = 4, cMax = 8;
+    let sMin = 1, sMax = 3;
+    
+    // Randomly chose a description
+    let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+
+    //Keywords in description that adjust the stat requirements
+    if(description.includes("Reinforced") || description.includes("Heavily armored")) {
+        pMin += 2; 
+        pMax += 2; // Increase power requirement for reinforced armor
+    }
+    if(description.includes("Lightly Armored") || description.includes("Soft targets") || description.includes("Weak armor")) {
+        pMin -= 2; 
+        pMax -= 2; // Decrease power requirement for lightly armored targets
+    }
+    if(description.includes("Cost-Effective") || description.includes("Low")) {
+        cMin -= 2; 
+        cMax -= 2; // Decrease cost requirement for cost-effective orders
+    }
+    if(description.includes("Stable") || description.includes("Wont break") || description.includes("Wont shatter") || description.includes("High Impact")) {
+        sMin += 1; 
+        sMax += 1; // Increase stability requirement for stable/long-range orders
+    }
+    requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+    maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
     requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
 
-    let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+    
 
     //Pick a random description for the order
     document.getElementById("request").innerText =
