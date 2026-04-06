@@ -163,7 +163,7 @@ function testShell() {
   //  knownStats.powder[powder] = knownStats.powder[powder] || {};
   //  knownStats.powder[powder][currentArmor] = power;
   //Show results of the test
-  let resultText = 'Testing Results on ${currentArmor}:\nPower: | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}';
+  let resultText = 'Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}';
     document.getElementById("testResult").innerText = resultText;
 
     updateDisplay();
