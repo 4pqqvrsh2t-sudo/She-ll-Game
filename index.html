@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shell Designer v0.3</title>
+    <title>Shell Designer v0.3.1</title>
 </head>
 <body>
 
-<h1>Shell Designer – Phase 3</h1>
+<h1>Shell Designer – Phase 3.</h1>
 
 <div id="request">Order will appear here</div>
 <button onclick="generateOrder()">New Order</button>
@@ -19,16 +19,16 @@
 <p id="stats"></p>
 
 <h2>Choose Core</h2>
-<button onclick="selectCore('heavy')">Heavy Core</button>
-<button onclick="selectCore('light')">Light Core</button>
+<button onclick="selectCore('heavy')" id="heavyCoreBtn">Heavy Core</button>
+<button onclick="selectCore('light')" id="lightCoreBtn">Light Core</button>
 
 <h2>Choose Casing</h2>
-<button onclick="selectCasing('reinforced')">Reinforced</button>
-<button onclick="selectCasing('cheap')">Cheap</button>
+<button onclick="selectCasing('reinforced')" id="reinforcedCasingBtn">Reinforced</button>
+<button onclick="selectCasing('cheap')" id="cheapCasingBtn">Cheap</button>
 
 <h2>Choose Powder</h2>
-<button onclick="selectPowder('fast')">Fast Burn</button>
-<button onclick="selectPowder('stable')">Stable Burn</button>
+<button onclick="selectPowder('fast')" id="fastPowderBtn">Fast Burn</button>
+<button onclick="selectPowder('stable')" id="stablePowderBtn">Stable Burn</button>
 
 <h2>Research</h2>
 <button onclick="testShell()">Test Shell</button>
@@ -115,6 +115,31 @@ function getKnownStatText(partType, partName) {
 
 }
 
+// Alternative version that shows all armors with ??? for unknown ones
+function getKnownStatText(partType, partName) {
+    let text = "";
+    let armors = ["Armor A", "Armor B", "Armor C"];
+    armors.forEach((armor, i) => {
+        if (knownStats[type][name] && knownStats[type][name][armor] !== undefined) {
+            text += armor + ": " + knownStats[type][name][armor];
+        } else {
+            text += armor + ": ???";
+        }
+        if (i < armors.length - 1) text += " | ";
+    });
+    return text;
+}
+
+// Update tooltips with known stats
+function updateTooltip() {
+   document.getElementById("heavyCoreBtn").title = getKnownStatText("core", "heavy");
+   document.getElementById("lightCoreBtn").title = getKnownStatText("core", "light");
+   document.getElementById("reinforcedCasingBtn").title = getKnownStatText("casing", "reinforced");
+   document.getElementById("cheapCasingBtn").title = getKnownStatText("casing", "cheap");
+   document.getElementById("fastPowderBtn").title = getKnownStatText("powder", "fast");
+   document.getElementById("stablePowderBtn").title = getKnownStatText("powder", "stable");
+}
+
 // Function to test the shell against the current armor
 function testShell() {
     if (!core || !casing || !powder) {
@@ -139,6 +164,16 @@ function testShell() {
    knownStats.core[core][currentArmor] = coreStats[core].power;
    knownStats.casing[casing][currentArmor] = casingStats[casing].stability;
    knownStats.powder[powder][currentArmor] = powderStats[powder].power 
+
+   knownStats.core[core] = knownStats.core[core] || {};
+   knownStats.core[core][currentArmor] = power;
+    knownStats.casing[casing] = knownStats.casing[casing] || {};
+    knownStats.casing[casing][currentArmor] = stability;
+    knownStats.powder[powder] = knownStats.powder[powder] || {};
+    knownStats.powder[powder][currentArmor] = power;
+
+    updateDisplay();
+    updateTooltip();
 }
 
 // Function to recover a new armor sample
@@ -369,6 +404,7 @@ function submitDesign() {
 }
 
 updateDisplay();
+updateTooltip();
 </script>
 
 </body>
