@@ -61,7 +61,9 @@ function generateOrder() {
     requiredPower = Math.floor(Math.random() * (powerMax - powerMin + 1)) + powerMin;
     maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
     requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
+
     let description = description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+    
     //Pick a random description for the order
     document.getElementById("request").innerText =
     description + "\n\n" +
