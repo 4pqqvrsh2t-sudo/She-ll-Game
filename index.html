@@ -97,7 +97,6 @@ let knownStats = {
     }
 };
 
-
 // Alternative version that shows all armors with ??? for unknown ones
 function getKnownStatText(partType, partName) {
     let text = "";
@@ -123,6 +122,19 @@ function updateTooltip() {
    document.getElementById("stablePowderBtn").title = getKnownStatText("powder", "stable");
 }
 
+function calculateArmorStats(core, casing, powder, armor) {
+    //multipliers for each armor type
+    let armorMultiplier = {
+        "Armor A": 1.0,
+        "Armor B": 0.5,
+        "Armor C": 1.5
+    };
+    return {
+        power: Math.round(coreStats[core].power + powderStats[powder].power * armorMultiplier[armor]),
+        cost: Math.round(coreStats[core].cost + casingStats[casing].cost + powderStats[powder].cost),
+        stability: Math.round(casingStats[casing].stability * armorMultiplier[armor])
+    };
+}
 // Function to test the shell against the current armor
 function testShell() {
     if (!core || !casing || !powder) {
@@ -134,26 +146,24 @@ function testShell() {
         return;
     }
     armorDurability--;
-    //Reveal actual stats of the shell to the player
-    let resultText = "Testing Results on " + currentArmor + ":\n" +
-    "Power: " + power + 
-    " | Cost: " + cost +
-    " | Stability: " + stability +
-    "\nDurability Left: " + armorDurability;
+    //Caculate the actual stats of the shell against the current armor
+    let actualStats = calculateArmorStats(core, casing, powder, currentArmor);
 
+
+    //Store Knowledge for this part and armor
+   knownStats.core[core][currentArmor] = actual.power;
+   knownStats.casing[casing][currentArmor] = actual.stability;
+   knownStats.powder[powder][currentArmor] = actual.power;
+   //NULL REGION
+  // knownStats.core[core] = knownStats.core[core] || {};
+  // knownStats.core[core][currentArmor] = power;
+  //  knownStats.casing[casing] = knownStats.casing[casing] || {};
+  //  knownStats.casing[casing][currentArmor] = stability;
+  //  knownStats.powder[powder] = knownStats.powder[powder] || {};
+  //  knownStats.powder[powder][currentArmor] = power;
+  //Show results of the test
+  let resultText = 'Testing Results on ${currentArmor}:\nPower: | Cost: ${actual.cost} | Stability: ${actual.stability}\nDurability Left: ${armorDurability}';
     document.getElementById("testResult").innerText = resultText;
-
-    //Store Knowledge
-   knownStats.core[core][currentArmor] = coreStats[core].power;
-   knownStats.casing[casing][currentArmor] = casingStats[casing].stability;
-   knownStats.powder[powder][currentArmor] = powderStats[powder].power 
-
-   knownStats.core[core] = knownStats.core[core] || {};
-   knownStats.core[core][currentArmor] = power;
-    knownStats.casing[casing] = knownStats.casing[casing] || {};
-    knownStats.casing[casing][currentArmor] = stability;
-    knownStats.powder[powder] = knownStats.powder[powder] || {};
-    knownStats.powder[powder][currentArmor] = power;
 
     updateDisplay();
     updateTooltip();
