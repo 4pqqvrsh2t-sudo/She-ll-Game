@@ -211,10 +211,22 @@ function submitDesign() {
 
     isWaiting = true; // Set waiting state to prevent new orders until the next one is generated
 
-    if ((power >= requiredPower && cost <= maxCost) && stability >= requiredStability) {
-        document.getElementById("result").innerText = "SUCCESS";
+    let failures = [];
+    // Check each requirement and collect failure reasons
+    if (power < requiredPower) {
+        failures.push("Not enough power.");
+    }
+    if (cost > maxCost) {
+        failures.push("Too expensive.");
+    }
+    if (stability < requiredStability) {
+        failures.push("Shell Stability is too low.");
+    }
+    // Display result
+    if (failures.length === 0) {
+        document.getElementById("result").innerText = "Order Fulfilled! Great job!";
     } else {
-        document.getElementById("result").innerText = "FAILED";
+        document.getElementById("result").innerText = "Order requirements not met:\n" + failures.join("\n");
     }
     setTimeout( () => {
         generateOrder();
