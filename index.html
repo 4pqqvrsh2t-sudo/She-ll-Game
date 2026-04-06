@@ -63,12 +63,6 @@ let currentOrderDescription = ""; // Store the current order text
 
 // Function to generate a new order
 //Reset stats for new order
-    core = null;
-    casing = null;
-    powder = null;
-    power = 0;
-    cost = 0;
-    stability = 0;
 
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
