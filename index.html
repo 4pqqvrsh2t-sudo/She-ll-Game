@@ -107,9 +107,9 @@ function getKnownStatText(partType, partName) {
         if (stat !== undefined) {
             // Check if it's an object or a single number
             if (typeof stat === "object") {
-                text += `${armor}: Power ${stat.power}, Cost ${stat.cost} | `;
+                text += `${armor}: Power ${stat.power}, Cost ${stat.cost}`;
                 if (stats.stability !== undefined) {
-                    text += `Stability ${stat.stability}`;
+                    text += `, Stability ${stat.stability}`;
                 }
             } else {
                 text += stats;
@@ -161,10 +161,9 @@ function testShell() {
 
 
     //Store Knowledge for this part and armor
-   knownStats.core[core][currentArmor] = actualStats.power;
-   knownStats.casing[casing][currentArmor] = actualStats.stability;
-   knownStats.powder[powder][currentArmor] = actualStats.power;
-   knownStats.core[core][currentArmor] = { power:actualStats.power, cost:actualStats.cost };
+   knownStats.core[core][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
+   knownStats.casing[casing][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
+   knownStats.powder[powder][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
    //NULL REGION
   // knownStats.core[core] = knownStats.core[core] || {};
   // knownStats.core[core][currentArmor] = power;
