@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shell Designer v0.3.1</title>
+    <title>Shell Designer v0.3.2</title>
 </head>
 <body>
 
@@ -11,11 +11,8 @@
 <div id="request">Order will appear here</div>
 <button onclick="generateOrder()">New Order</button>
 
-
-
 <h2>Current Build</h2>
 <p id="build"></p>
-<p id="stats"></p>
 
 <h2>Stats</h2>
 <p id="stats"></p>
@@ -46,13 +43,13 @@
 <script>
 
 const orderDescriptions = [
-    "Frontline Report: Enemy armor is Reinforced.",
+    "Frontline Report: Enemy armor is Reinforced. Requesting new ammunition!",
     "Frontline Report: Enemy vehicles are Lightly Armored and Agile.",
     "Frontline Report: New Enemy plating detected, adjust accordingly.",
-    "Central Command: We need a shell that can withstand High Impact but is Cost-Effective.",
-    "Central Command: We need an all-rounder shell that can handle various combat scenarios. Keep the cost Low.",
-    "Central Command: We need a shell that can deliver high power but is stable enough for Long-Range engagements.",
-    "Central Command: We need a shell that can deliver high power but is Cost-Effective for mass production."
+    "Central Command: We need a Tank shell that can withstand High Impact but is Cost-Effective.",
+    "Central Command: We need an all-rounder Tank shell that can handle various combat scenarios. Keep the cost Low.",
+    "Central Command: We need a Tank shell that can deliver high power but is stable enough for Long-Range engagements.",
+    "Central Command: We need a Tank shell that can deliver high power but is Cost-Effective for mass production."
 ];
 // Min & Max ranges for each stat
 const powerMin = 5, powerMax = 9;
@@ -164,7 +161,8 @@ function testShell() {
     //Store Knowledge for this part and armor
    knownStats.core[core][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
    knownStats.casing[casing][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
-   knownStats.powder[powder][currentArmor] = { power:actualStats.power};// cost:actualStats.cost, stability:actualStats.stability };//
+   knownStats.powder[powder][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
+   knownStats.core[stability][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
    //NULL REGION
   // knownStats.core[core] = knownStats.core[core] || {};
   // knownStats.core[core][currentArmor] = power;
