@@ -83,10 +83,37 @@ let armorDurability = 4;
 
 //Knowledge system( What the player has learned about the enemy armor)
 let knownStats = {
-    core: {},
-    casing: {},
-    powder: {}
+    core: {
+        heavy: {},
+        light: {}
+    },
+    casing: {
+        reinforced: {},
+        cheap: {}
+    },
+    powder: {
+        fast: {},
+        stable: {}
+    }
 };
+
+// Function to get known stats text for a part
+
+function getKnownStatText(partType, partName) {
+    let data = knownStats[partType][partName];
+
+    let result = [];
+
+    for (let armor in data) {
+        result.push(armor + ": " + data[armor]);
+    }
+
+    if (result.length === 0) {
+        return "[Test " + currentArmor + " to reveal stats]";
+    }
+    return "[" + result.join(" | ") + "]";
+
+}
 
 // Function to test the shell against the current armor
 function testShell() {
@@ -109,9 +136,9 @@ function testShell() {
     document.getElementById("testResult").innerText = resultText;
 
     //Store Knowledge
-    knownStats.core[core] = coreStats[core];
-    knownStats.casing[casing] = casingStats[casing];
-    knownStats.powder[powder] = powderStats[powder];
+   knownStats.core[core][currentArmor] = coreStats[core].power;
+   knownStats.casing[casing][currentArmor] = casingStats[casing].stability;
+   knownStats.powder[powder][currentArmor] = powderStats[powder].power 
 }
 
 // Function to recover a new armor sample
@@ -240,7 +267,9 @@ function updateDisplay() {
         " | Powder: " + (powder ? powder : "None");
 
     document.getElementById("stats").innerText =
-        "Power: ??? | Cost: ??? | Stability: ???";
+        "Core Info: " + (core ? getKnownStatText("core", core) : "None") + "\n" +
+        "Casing Info: " + (casing ? getKnownStatText("casing", casing) : "None") + "\n" +
+        "Powder Info: " + (powder ? getKnownStatText("powder", powder) : "None");
 }
 
 // Core selection
