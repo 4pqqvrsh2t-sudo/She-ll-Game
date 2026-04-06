@@ -102,8 +102,8 @@ function getKnownStatText(partType, partName) {
     let text = "";
     let armors = ["Armor A", "Armor B", "Armor C"];
     armors.forEach((armor, i) => {
-        if (knownStats[type][name] && knownStats[type][name][armor] !== undefined) {
-            text += armor + ": " + knownStats[type][name][armor];
+        if (knownStats[partType][partName] && knownStats[partType][partName][armor] !== undefined) {
+            text += armor + ": " + knownStats[partType][partName][armor];
         } else {
             text += armor + ": ???";
         }
@@ -151,9 +151,10 @@ function testShell() {
 
 
     //Store Knowledge for this part and armor
-   knownStats.core[core][currentArmor] = actual.power;
-   knownStats.casing[casing][currentArmor] = actual.stability;
-   knownStats.powder[powder][currentArmor] = actual.power;
+   knownStats.core[core][currentArmor] = actualStats.power;
+   knownStats.casing[casing][currentArmor] = actualStats.stability;
+   knownStats.powder[powder][currentArmor] = actualStats.power;
+   knownStats.core[core][currentArmor] = { power:actualStats.power, cost:actualStats.cost };
    //NULL REGION
   // knownStats.core[core] = knownStats.core[core] || {};
   // knownStats.core[core][currentArmor] = power;
@@ -162,7 +163,7 @@ function testShell() {
   //  knownStats.powder[powder] = knownStats.powder[powder] || {};
   //  knownStats.powder[powder][currentArmor] = power;
   //Show results of the test
-  let resultText = 'Testing Results on ${currentArmor}:\nPower: | Cost: ${actual.cost} | Stability: ${actual.stability}\nDurability Left: ${armorDurability}';
+  let resultText = 'Testing Results on ${currentArmor}:\nPower: | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}';
     document.getElementById("testResult").innerText = resultText;
 
     updateDisplay();
