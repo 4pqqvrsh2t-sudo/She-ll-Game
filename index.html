@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<h1>Shell Designer – Phase 3.</h1>
+<h1>Shell Designer – Phase 3.5</h1>
 
 <div id="request">Order will appear here</div>
 <button onclick="generateOrder()">New Order</button>
@@ -97,23 +97,6 @@ let knownStats = {
     }
 };
 
-// Function to get known stats text for a part
-
-function getKnownStatText(partType, partName) {
-    let data = knownStats[partType][partName];
-
-    let result = [];
-
-    for (let armor in data) {
-        result.push(armor + ": " + data[armor]);
-    }
-
-    if (result.length === 0) {
-        return "[Test " + currentArmor + " to reveal stats]";
-    }
-    return "[" + result.join(" | ") + "]";
-
-}
 
 // Alternative version that shows all armors with ??? for unknown ones
 function getKnownStatText(partType, partName) {
