@@ -73,8 +73,8 @@ let currentOrderDescription = ""; // Store the current order text
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
-    let (failedOrders.length > 0 && orderSinceLastFailure >= 3) {
-        usedFailedOrder = Math.randomMath.random() < 0.5; // 50% chance to reuse a failed order
+    let (failedOrders.length > 0 && orderSinceLastFailure >= 3) 
+        usedFailedOrder = Math.random() < 0.5; // 50% chance to reuse a failed order
     }
 
         if (usedFailedOrder) {
@@ -90,7 +90,7 @@ function generateOrder() {
             
             failedOrders.splice(index, 1); // Remove from memory
             orderSinceLastFailure = 0; // Reset counter after using a failed order
-
+            currentOrderDescription = description;
             document.getElementById("request").innerText =
                 "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
                 "Power ≥ " + requiredPower +
