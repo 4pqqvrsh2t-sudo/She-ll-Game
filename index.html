@@ -50,18 +50,21 @@ const costMin = 4, costMax = 8;
 const stabilityMin = 1, stabilityMax = 3;
 
 // Variables to hold current order
+let isWaiting = false;
 let requiredPower;
 let maxCost;
 let requiredStability;
 
 // Function to generate a new order
 function generateOrder() {
+    if (isWaiting) return; // Prevent generating a new order while waiting for the next one
     requiredPower = Math.floor(Math.random() * (powerMax - powerMin + 1)) + powerMin;
     maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
     requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
+    let description = description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
     //Pick a random description for the order
-    const description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
     document.getElementById("request").innerText =
+    description + "\n\n" +
         "Power ≥ " + requiredPower +
         " | Cost ≤ " + maxCost +
         " | Stability ≥ " + requiredStability;
@@ -105,12 +108,12 @@ function clampStats() {
 
 // Update display
 function updateDisplay() {
-    document.getElementById("build").innerText =
+    document.getElementById("build").innerText = description + "<br><br>" +
         "Core: " + (core || "None") +
         " | Casing: " + (casing || "None") +
         " | Powder: " + (powder || "None");
 
-    document.getElementById("stats").innerText =
+    document.getElementById("request").innerHTML =
         "Power: " + power +
         " | Cost: " + cost +
         " | Stability: " + stability;
