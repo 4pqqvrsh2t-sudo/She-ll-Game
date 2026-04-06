@@ -75,12 +75,13 @@ function generateOrder() {
 
     orderSinceLastFailure++; // Increment counter for orders since last failure
     let useFailedOrder = false;
+let description;
     
     if (failedOrders.length > 0 && orderSinceLastFailure >= 3) {
         useFailedOrder = Math.random() < 0.5; // 50% chance to reuse a failed order
     }
 
-        if (useFailedOrder) {
+    if (useFailedOrder) {
             // Pick a random failed order
             let index = Math.floor(Math.random() * failedOrders.length);
             let order = failedOrders[index];
@@ -140,12 +141,15 @@ function generateOrder() {
     maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
     requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
 
+    currentOrderDescription = description;
+
     //Pick a random description for the order
     document.getElementById("request").innerText =
     description + "\n\n" +
         "Power ≥ " + requiredPower +
         " | Cost ≤ " + maxCost +
         " | Stability ≥ " + requiredStability;
+    }
 }
 
 // Call once at start to generate the first order
