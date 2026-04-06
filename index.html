@@ -60,6 +60,15 @@ let requiredStability;
 // Function to generate a new order
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
+
+    //Reset stats for new order
+    core = null;
+    casing = null;
+    powder = null;
+    power = 0;
+    cost = 0;
+    stability = 0;
+
     // Base stats for the order
     let pMin = 5, pMax = 9;
     let cMin = 4, cMax = 8;
@@ -89,7 +98,14 @@ function generateOrder() {
     maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
     requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
 
-    
+    // Clamp values to ensure they stay within reasonable bounds
+    pMin = Math.max(0, pMin); pMax = Math.max(pMin, pMax);
+    cMin = Math.max(0, cMin); cMax = Math.max(cMin, cMax);
+    sMin = Math.max(0, sMin); sMax = Math.max(sMin, sMax);
+
+    requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+    maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+    requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
 
     //Pick a random description for the order
     document.getElementById("request").innerText =
