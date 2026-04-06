@@ -37,6 +37,13 @@
 
 <script>
 
+const orderDescriptions = [
+    "Frontline Report: Enemy armor is reinforced.",
+    "Frontline Report: Enemy vehicles are lightly armored and agile.",
+    "Frontline Report: New Enemy plating detected, adjust accordingly.",
+    "We need a shell that can withstand high impact but is cost-effective.",
+    "We need an all rounder shell that can handle various combat scenarios.",
+];
 // Min & Max ranges for each stat
 const powerMin = 5, powerMax = 9;
 const costMin = 4, costMax = 8;
@@ -52,7 +59,8 @@ function generateOrder() {
     requiredPower = Math.floor(Math.random() * (powerMax - powerMin + 1)) + powerMin;
     maxCost = Math.floor(Math.random() * (costMax - costMin + 1)) + costMin;
     requiredStability = Math.floor(Math.random() * (stabilityMax - stabilityMin + 1)) + stabilityMin;
-
+    //Pick a random description for the order
+    const description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
     document.getElementById("request").innerText =
         "Power ≥ " + requiredPower +
         " | Cost ≤ " + maxCost +
@@ -172,7 +180,7 @@ function submitDesign() {
     } else {
         document.getElementById("result").innerText = "FAILED";
     }
-    generateOrder(); // Creates a new order immediately after submission
+    setTimeout(generateOrder, 1000); // Creates a new order after a 1-second delay after submission
 }
 
 updateDisplay();
