@@ -138,15 +138,9 @@ function getKnownStatText(partType, partName) {
             // Check if it's an object or a single number
             if (typeof stat === "object") {
                 text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
-                if (stats.stability !== undefined) {
-                    text += `, Stability ${stat.stability}`;
-                }
             } else {
-                text += stats;
+                text += `${armor}: ???`;
             }
-        } else {
-            text += "???";
-        }
         if (i < armors.length - 1) text += forTooltip ? "&#10;" : "\n"; // New line between armors
     });
     return text;
