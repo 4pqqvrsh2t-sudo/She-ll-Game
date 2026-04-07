@@ -401,6 +401,43 @@ function submitDesign() {
 updateDisplay();
 updateTooltip();
 </script>
+<body style="margin:0; font-family:Arial, sans-serif; background:#f0f0f0;">
+
+<!-- Container for the entire UI -->
+<div style="display:flex; height:100vh;">
+
+  <!-- Right-hand parts panel -->
+  <div style="width:200px; background:#ddd; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:10px;">
+    <h3 style="margin-top:0;">Parts</h3>
+    <button style="padding:10px; cursor:pointer;">Heavy Core</button>
+    <button style="padding:10px; cursor:pointer;">Light Core</button>
+    <button style="padding:10px; cursor:pointer;">Reinforced Casing</button>
+    <button style="padding:10px; cursor:pointer;">Cheap Casing</button>
+    <button style="padding:10px; cursor:pointer;">Fast Powder</button>
+    <button style="padding:10px; cursor:pointer;">Stable Powder</button>
+  </div>
+
+  <!-- Middle blueprint area -->
+  <div style="flex:1; background:#fff; margin:10px; border:2px dashed #aaa; display:flex; align-items:center; justify-content:center; position:relative;">
+    <div style="text-align:center; color:#888;">
+      <p>Blueprint Placeholder</p>
+      <div style="width:150px; height:150px; background:#eee; border:1px solid #ccc; margin:auto;"></div>
+    </div>
+  </div>
+
+  <!-- Left stats & request panel -->
+  <div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
+    <h3 style="margin-top:0;">Request</h3>
+    <p id="request" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:60px;">Order will appear here</p>
+
+    <h3>Stats</h3>
+    <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:60px;">Stats info</p>
+
+    <h3>Test Shell</h3>
+    <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;">Test results here</p>
+  </div>
+
+</div>
 
 </body>
 </html>
