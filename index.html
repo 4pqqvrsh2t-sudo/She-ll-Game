@@ -4,13 +4,6 @@
     <title>Shell Designer v0.3.2</title>
 </head>
 
-<h2>Recover New Armor Sample</h2>
-<button onclick="getNewArmor()">Recover New Armor Sample</button>
-<br><br>
-<button onclick="submitDesign()">Submit Design</button>
-
-<p id="result" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;"></p>
-
 <body style="margin:0; font-family:Arial, sans-serif; background:#f0f0f0;">
 
 <!-- Container for the entire UI -->
@@ -38,15 +31,28 @@
   </div>
 
   <!-- Left stats & request panel -->
+<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
+   <h3>Recover New Armor Sample</h3>
+<button onclick="getNewArmor()">Recover New Armor Sample</button>
+<br><br>
+<button onclick="submitDesign()">Submit Design</button>
+</div>
+
+<p id="result" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;"></p>
+</div>
+<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
    <h3>Current Build</h3>
 <p id="build" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;">No parts selected</p>
   <div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
+</div>
     <h3 style="margin-top:0;">Request</h3>
     <p id="request" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:60px;">Order will appear here</p>
-
+</div>
+<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
     <h3>Stats</h3>
     <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:60px;">Stats info</p>
-
+</div>
+<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;"></div>
     <h3>Test Shell</h3>
     <button onclick="testShell()">Test Shell</button>
     <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;">Test results here</p>
@@ -125,10 +131,11 @@ function getKnownStatText(partType, partName) {
                 text += `${armor}: ???`;
             }
         if (i < armors.length - 1) text += forTooltip ? " | " : "\n"; // New line between armors
+        }
     });
     return text;
 }
-
+forTooltip = false; // Flag to control formatting for tooltips (single line) vs stats display (multi-line)
 // Update tooltips with known stats
 function updateTooltip() {
    document.getElementById("heavyCoreBtn").title = getKnownStatText("core", "heavy", true);
