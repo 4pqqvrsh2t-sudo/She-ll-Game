@@ -118,12 +118,12 @@ let knownStats = {
 };
 
 // New version that shows all armors with ??? for unknown ones
-function getKnownStatText(partType, partName) {
+function getKnownStatText(partType, partName, forTooltip = false) {
     let text = "";
     let armors = ["Armor A", "Armor B", "Armor C"];
     armors.forEach((armor, i) => {
         const stat = knownStats[partType][partName][armor];
-        if (stat !== undefined) {
+        if (stat !== undefined && typeof stat === "object") {
             // Check if it's an object or a single number
             if (typeof stat === "object") {
                 text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
@@ -135,7 +135,7 @@ function getKnownStatText(partType, partName) {
     });
     return text;
 }
-forTooltip = false; // Flag to control formatting for tooltips (single line) vs stats display (multi-line)
+
 // Update tooltips with known stats
 function updateTooltip() {
    document.getElementById("heavyCoreBtn").title = getKnownStatText("core", "heavy", true);
