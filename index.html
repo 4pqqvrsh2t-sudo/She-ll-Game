@@ -8,6 +8,10 @@
 <div style="display:flex; height:100vh;">
 
   <!-- LEFT PANEL -->
+   <div style="flex:1; display:flex; flex-direction:column; gap:10px; overflow-y: auto; max-height: 100%;">
+    <div style="background:#ccc; padding:10px;">
+        <h1>Shell Designer v0.3.2</h1>
+        <p>Design tank shells and other munitions to meet the demands of the frontline! Test your designs against enemy armor and learn their weaknesses to improve your shells. Can you make the Federation's best ammunition?</p>
   <div style="width:300px; background:#eee; padding:10px; display:flex; flex-direction:column; gap:10px;">
 
     <h3>Request</h3>
@@ -23,7 +27,7 @@
    <div id="ArmorDatabase" style="background:#fff; padding:10px; border:1px solid #ccc; height:100px; overflow:auto;">
         <p><strong>Known Armor Stats:</strong></p>
         <p id="knownStats">No data yet. Test shells to learn about enemy armor!</p>
-
+    </div> 
     <h3>Test Shell</h3>
     <button onclick="testShell()">Test Shell</button>
     <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
