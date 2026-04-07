@@ -5,14 +5,14 @@
 </head>
 
 <body style="margin:0; font-family:sans-serif;">
-<div style="display:flex; height:100vh;">
+<div style="display:flex; height:100vh; align-items:stretch; min-width:0;">
 
   <!-- LEFT PANEL -->
-   <div style="flex:1; display:flex; flex-direction:column; gap:10px; overflow-y: auto; max-height: 100%;">
+   <div style="width:320px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; max-height:100%; flex-shrink:0;">
     <div style="background:#ccc; padding:10px;">
         <h1>Shell Designer v0.3.2</h1>
         <p>Design tank shells and other munitions to meet the demands of the frontline! Test your designs against enemy armor and learn their weaknesses to improve your shells. Can you make the Federation's best ammunition?</p>
-  <div style="width:300px; background:#eee; padding:10px; display:flex; flex-direction:column; gap:10px;">
+  <div style="width:100%; max-width:300px; background:#eee; padding:10px; display:flex; flex-direction:column; gap:10px;">
 
     <h3>Request</h3>
     <p id="request" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
@@ -41,12 +41,12 @@
   </div>
 
   <!-- MIDDLE -->
-  <div style="flex:1; background:#fff; margin:10px; border:2px dashed #aaa; display:flex; align-items:center; justify-content:center;">
+  <div style="flex:1; min-width:0; background:#fff; margin:10px; border:2px dashed #aaa; display:flex; align-items:center; justify-content:center;">
     <p>Blueprint Placeholder</p>
   </div>
 
   <!-- RIGHT PANEL -->
-  <div style="width:200px; background:#ddd; padding:10px; display:flex; flex-direction:column; gap:10px;">
+  <div style="width:220px; flex-shrink:0; background:#ddd; padding:10px; display:flex; flex-direction:column; gap:10px;">
     <h3>Parts</h3>
 
     <button onclick="selectCore('heavy')" id="heavyCoreBtn">Heavy Core</button>
