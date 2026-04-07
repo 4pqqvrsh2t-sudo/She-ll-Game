@@ -19,6 +19,11 @@
     <h3>Stats</h3>
     <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
 
+    <h3>Database</h3>
+   <div id="ArmorDatabase" style="background:#fff; padding:10px; border:1px solid #ccc; height:100px; overflow:auto;">
+        <p><strong>Known Armor Stats:</strong></p>
+        <p id="knownStats">No data yet. Test shells to learn about enemy armor!</p>
+
     <h3>Test Shell</h3>
     <button onclick="testShell()">Test Shell</button>
     <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
@@ -115,14 +120,11 @@ function getKnownStatText(partType, partName, forTooltip = false) {
     armors.forEach((armor, i) => {
         const stat = knownStats[partType][partName][armor];
         if (stat && typeof stat === "object") {
-            // Check if it's an object or a single number
-            if (typeof stat === "object") {
-                text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
-            } else {
-                text += `${armor}: ???`;
-            }
-        if (i < armors.length - 1) text += forTooltip ? " | " : "\n"; // New line between armors
+            text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
+        } else {
+            text += `${armor}: ???`;
         }
+        if (i < armors.length - 1) text += forTooltip ? " | " : "\n"; // New line between armors
     });
     return text;
 }
@@ -176,6 +178,7 @@ function testShell() {
 
     updateDisplay();
     updateTooltip();
+    updateArmorDatabase();
 }
 
 // Function to recover a new armor sample
@@ -304,6 +307,26 @@ function updateDisplay() {
         "Core Info:\n " + (core ? getKnownStatText("core", core) : "None") + "\n" +
         "Casing Info:\n " + (casing ? getKnownStatText("casing", casing) : "None") + "\n" +
         "Powder Info:\n " + (powder ? getKnownStatText("powder", powder) : "None");
+}
+function updateArmorDatabase() {
+    let text = "";
+    let armors = ["Armor A", "Armor B", "Armor C"];
+    armors.forEach(armor => {
+        text += `=== ${armor} ===\n`;
+        ["core", "casing", "powder"].forEach(part => {
+            Object.keys(knownStats[part]).forEach(type => {
+                let stat = knownStats[part][type][armor];
+
+                if (stat) {
+                    text += `${part}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+                } else {
+                    text += `${part}: ???\n`;
+                }
+            });
+        });
+        text += "\n";
+    });
+    document.getElementById("ArmorDatabase").innerText = text;
 }
 
 // Core selection
