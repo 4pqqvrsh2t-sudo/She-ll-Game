@@ -4,17 +4,29 @@
     <title>Shell Designer v0.3.3</title>
     <style>
 .tab {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #aaa;
+    width: 40px; /* size of circle/ tab */
+    height: 20px;
+    rotate: -90deg; /* rotate based on custom property */
+    translate: -200px -50%; /* move pivot to center of the circle */
+    padding: 2px; /*thickness of the tab*/
+    margin-left: 100px; /*space between tab and content*/
+
+
+    border-radius: 26%; /* keeps it circular */
+
+    background: #aaa; /* Base color*/
+
     color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
+
     cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4); /*Showdoq strength*/
+
     transition: all 0.2s ease;
+
     font-weight: bold;
 }
         .tab.activate {
@@ -72,11 +84,11 @@
   </div>
 
   <!-- RIGHT PANEL -->
-  <div style="width:220px; flex-shrink:0; background:#9daaacba; padding:10px; display:flex; flex-direction:column; gap:10px; box-sizing:border-box;">
+  <div style="width:220px; flex-shrink:0; background:#9daaacba; padding:10px; display:flex; flex-direction:column; gap: 10px; box-sizing:border-box;">
 
     <h3>Parts</h3>
     <!-- Tabs -->
-    <div id="partTabs" style="display:flex; flex-direction: column; gap:10px; align-items: flex-end;">
+    <div id="partTabs" style="display:flex; flex-direction: column; gap: 35px; align-items: flex-end;">
     <div class="tab activate" data-tab="core">Core</div>
     <div class="tab" data-tab="casing">Casing</div>
     <div class="tab" data-tab="powder">Powder</div>
