@@ -4,58 +4,48 @@
     <title>Shell Designer v0.3.2</title>
 </head>
 
-<body style="margin:0; font-family:Arial, sans-serif; background:#f0f0f0;">
-
-<!-- Container for the entire UI -->
 <div style="display:flex; height:100vh;">
 
-  <!-- Right-hand parts panel -->
-  <div style="width:200px; background:#ddd; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:10px;">
-    <h3 style="margin-top:0;">Parts</h3>
+  <!-- LEFT PANEL -->
+  <div style="width:300px; background:#eee; padding:10px; display:flex; flex-direction:column; gap:10px;">
+
+    <h3>Request</h3>
+    <p id="request" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+
+    <h3>Current Build</h3>
+    <p id="build" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+
+    <h3>Stats</h3>
+    <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+
+    <h3>Test Shell</h3>
+    <button onclick="testShell()">Test Shell</button>
+    <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+
+    <button onclick="getNewArmor()">Recover Armor</button>
+    <button onclick="submitDesign()">Submit</button>
+
+    <p id="result" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+
+  </div>
+
+  <!-- MIDDLE -->
+  <div style="flex:1; background:#fff; margin:10px; border:2px dashed #aaa; display:flex; align-items:center; justify-content:center;">
+    <p>Blueprint Placeholder</p>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div style="width:200px; background:#ddd; padding:10px; display:flex; flex-direction:column; gap:10px;">
+    <h3>Parts</h3>
 
     <button onclick="selectCore('heavy')" id="heavyCoreBtn">Heavy Core</button>
-<button onclick="selectCore('light')" id="lightCoreBtn">Light Core</button>
+    <button onclick="selectCore('light')" id="lightCoreBtn">Light Core</button>
 
     <button onclick="selectCasing('reinforced')" id="reinforcedCasingBtn">Reinforced</button>
     <button onclick="selectCasing('cheap')" id="cheapCasingBtn">Cheap</button>
+
     <button onclick="selectPowder('fast')" id="fastPowderBtn">Fast Burn</button>
     <button onclick="selectPowder('stable')" id="stablePowderBtn">Stable Burn</button>
-  </div>
-
-  <!-- Middle blueprint area -->
-  <div style="flex:1; background:#fff; margin:10px; border:2px dashed #aaa; display:flex; align-items:center; justify-content:center; position:relative;">
-    <div style="text-align:center; color:#888;">
-      <p>Blueprint Placeholder</p>
-      <div style="width:150px; height:150px; background:#eee; border:1px solid #ccc; margin:auto;"></div>
-    </div>
-  </div>
-
-  <!-- Left stats & request panel -->
-<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
-   <h3>Recover New Armor Sample</h3>
-<button onclick="getNewArmor()">Recover New Armor Sample</button>
-<br><br>
-<button onclick="submitDesign()">Submit Design</button>
-</div>
-
-<p id="result" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;"></p>
-</div>
-<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
-   <h3>Current Build</h3>
-<p id="build" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;">No parts selected</p>
-  <div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
-</div>
-    <h3 style="margin-top:0;">Request</h3>
-    <p id="request" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:60px;">Order will appear here</p>
-</div>
-<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;">
-    <h3>Stats</h3>
-    <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:60px;">Stats info</p>
-</div>
-<div style="width:300px; background:#eee; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:15px;"></div>
-    <h3>Test Shell</h3>
-    <button onclick="testShell()">Test Shell</button>
-    <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc; min-height:40px;">Test results here</p>
   </div>
 
 </div>
