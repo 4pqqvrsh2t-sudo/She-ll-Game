@@ -4,83 +4,71 @@
     <title>Shell Designer v0.3.3</title>
     <style>
 .tab {
-    width: 80px; /* size of circle/ tab */
-    height: 40px;
-    position: relative;
-    rotate: -90deg; /* rotate based on custom property */
-    translate: -185px -50%; /* move pivot to center of the circle */
-    padding: 1px; /*thickness of the tab*/
-    margin-left: 100px; /*space between tab and content*/
-
-
-    border-radius: 6px 0 0 6px; /* keeps it circular */
-
-    background: #ccc; /* Base color*/
-    
-    color: #000;
+    position: absolute;
+    right: 0;
+    width: 170px;
+    min-height: 44px;
+    padding: 0 18px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    position: relative;
-    right: 12px;
-
-    font-size: 15px;
+    justify-content: flex-start;
+    background: #f2e6bc;
+    color: #111;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid #c6b78c;
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    clip-path: polygon(0 0, 94% 0, 100% 50%, 94% 100%, 0 100%);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
     white-space: nowrap;
     overflow: hidden;
-
-    transform: translateX(-15px); /* move it to the left of the content */
-    box-shadow: 0 3px 6px;
-
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-
-    font-weight: bold;
-
+    text-overflow: ellipsis;
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 
-.tab::after {
+.tab::before {
     content: "";
     position: absolute;
-    right: -20px;
+    left: -8px;
     top: 0;
-    width: 20px;
-    height: 100%;
-    background: #aaa;
-    clip-path: polygon(0 0, 100% 10%, 100% 90%, 0 100%);
-    border-radius: 0 6px 6px 0;
-    transition: all 0.2s ease;
+    bottom: 0;
+    width: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 0 0 0 0;
+    pointer-events: none;
 }
 
-.tab:nth-child(1) { z-index: 3; } /*Top Tab*/
-.tab:nth-child(2) { z-index: 2; } /*Middle Tab*/
-.tab:nth-child(3) { z-index: 1; } /*Bottom Tab*/
+.tab:nth-child(1) { top: 0; z-index: 3; background: #f8c1c0; }
+.tab:nth-child(2) { top: 28px; z-index: 2; background: #9fc6f7; }
+.tab:nth-child(3) { top: 56px; z-index: 1; background: #a7e3b8; }
 
-        .tab.activate {
-            background: #9daaacba;
-            box-shadow: none;
-            transform: translateX(-20px);
-            z-index: 10;
+.tab.activate {
+    transform: translateX(0);
+    z-index: 10;
+    background: #ffec95;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
 }
-        .tab.activate path {
-            fill: #9daaacba;
+
+.tab:not(.activate) {
+    transform: translateX(10px);
+    opacity: 0.98;
 }
-        .tab:not(.active) {
-            transform: translateX(-20px);
-            opacity: 0.85;
+
+.tab:hover {
+    transform: translateX(0);
 }
-        .tab:hover {
-            transform: translateY(-5px);
-            background: #ccc;
-}
+
 #partTabs {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-
-    gap: 20px;
+    width: 100%;
+    min-height: 130px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
 }
     </style>
 </head>
@@ -130,28 +118,17 @@
 
     <h3>Parts</h3>
     <!-- Tabs -->
-    <div id="partTabs" style="position: relative; height: 150px; ">
+    <div id="partTabs">
+        <button class="tab activate" data-tab="core">Core</button>
+        <button class="tab" data-tab="casing">Casing</button>
+        <button class="tab" data-tab="powder">Powder</button>
 
-    <svg class="tab activate" data-tab="core" width="80" height="40" viewBox="0 0 80 40">
-        <path d="M0, 40 Q40, 10 80, 40 Z" fill="#ccc" />
-        <text x="40" y="25" text-anchor="middle" font-size="14" fill="#000" pointer-events="none">Core</text>
-    </svg>
-    <svg class="tab" data-tab="casing" viewBox="0 0 80 40"></svg>
-        <path d="M0, 40 Q40, 10 80,40 L100,40 L0,40 Z" fill="#ccc">
-        <text x="40" y="25" text-anchor="middle" font-size="14" fill="#000" pointer-events="none">Casing</text>
-    </svg>
-    <svg class="tab" data-tab="powder" style="top: 110px;" viewBox="0 0 80 40">
-        <path d="M0, 40 Q40, 10 80, 40 Z" fill="#ccc" />
-        <text x="40" y="25" text-anchor="middle" font-size="14" fill="#000" pointer-events="none">Powder</text>
-    </svg>
-
-    <!-- Content Area -->
-     <div id="tabContent" style="margin-top:10px; width:100%; background:#fff; padding:10px; border:1px solid #ccc; box-sizing:border-box;">
-        <button onclick="selectCore('heavy')" id="heavyCoreBtn">Heavy Core</button>
-        <button onclick="selectCore('light')" id="lightCoreBtn">Light Core</button>
-  </div>
-
-</div>
+        <!-- Content Area -->
+        <div id="tabContent" style="margin-top:92px; width:100%; background:#fff; padding:10px; border:1px solid #ccc; box-sizing:border-box; border-radius: 12px;">
+            <button onclick="selectCore('heavy')" id="heavyCoreBtn">Heavy Core</button>
+            <button onclick="selectCore('light')" id="lightCoreBtn">Light Core</button>
+        </div>
+    </div>
 
 
 <script>
