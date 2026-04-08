@@ -4,9 +4,9 @@
     <title>Shell Designer v0.3.3</title>
     <style>
 .tab {
-    width: 100px; /* size of circle/ tab */
+    width: 80px; /* size of circle/ tab */
     height: 40px;
-
+    position: relative;
     rotate: -90deg; /* rotate based on custom property */
     translate: -185px -50%; /* move pivot to center of the circle */
     padding: 1px; /*thickness of the tab*/
@@ -60,16 +60,27 @@
         .tab.activate {
             background: #9daaacba;
             box-shadow: none;
-            transform: translateX(5px);
-            z-index: 5;
+            transform: translateX(-20px);
+            z-index: 10;
+}
+        .tab.activate path {
+            fill: #9daaacba;
 }
         .tab:not(.active) {
-            transform: translateX(0);
-            height: 34px;
+            transform: translateX(-20px);
+            opacity: 0.85;
 }
         .tab:hover {
             transform: translateY(-5px);
             background: #ccc;
+}
+#partTabs {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 20px;
 }
     </style>
 </head>
@@ -122,11 +133,17 @@
     <div id="partTabs" style="position: relative; height: 150px; ">
 
     <svg class="tab activate" data-tab="core" width="80" height="40" viewBox="0 0 80 40">
-        <path d="M0, 40 Q40, 10 80, 40 Z" fill=""#aaa" />
+        <path d="M0, 40 Q40, 10 80, 40 Z" fill="#ccc" />
         <text x="40" y="25" text-anchor="middle" font-size="14" fill="#000" pointer-events="none">Core</text>
     </svg>
-    <svg class="tab" data-tab="casing" style="top: 55px;">Casing</svg>
-    <svg class="tab" data-tab="powder" style="top: 110px;">Powder</svg>
+    <svg class="tab" data-tab="casing" viewBox="0 0 80 40"></svg>
+        <path d="M0, 40 Q40, 10 80,40 L100,40 L0,40 Z" fill="#ccc">
+        <text x="40" y="25" text-anchor="middle" font-size="14" fill="#000" pointer-events="none">Casing</text>
+    </svg>
+    <svg class="tab" data-tab="powder" style="top: 110px;" viewBox="0 0 80 40">
+        <path d="M0, 40 Q40, 10 80, 40 Z" fill="#ccc" />
+        <text x="40" y="25" text-anchor="middle" font-size="14" fill="#000" pointer-events="none">Powder</text>
+    </svg>
 
     <!-- Content Area -->
      <div id="tabContent" style="margin-top:10px; width:100%; background:#fff; padding:10px; border:1px solid #ccc; box-sizing:border-box;">
