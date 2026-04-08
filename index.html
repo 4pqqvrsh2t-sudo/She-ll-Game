@@ -4,41 +4,72 @@
     <title>Shell Designer v0.3.3</title>
     <style>
 .tab {
-    width: 40px; /* size of circle/ tab */
-    height: 20px;
+    width: 100px; /* size of circle/ tab */
+    height: 40px;
+
     rotate: -90deg; /* rotate based on custom property */
-    translate: -200px -50%; /* move pivot to center of the circle */
-    padding: 2px; /*thickness of the tab*/
+    translate: -185px -50%; /* move pivot to center of the circle */
+    padding: 1px; /*thickness of the tab*/
     margin-left: 100px; /*space between tab and content*/
 
 
-    border-radius: 26%; /* keeps it circular */
+    border-radius: 6px 0 0 6px; /* keeps it circular */
 
-    background: #aaa; /* Base color*/
-
+    background: #ccc; /* Base color*/
+    
     color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    right: 12px;
+
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+
+    transform: translateX(-15px); /* move it to the left of the content */
+    box-shadow: 0 3px 6px;
+
 
     cursor: pointer;
-
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4); /*Showdoq strength*/
 
     transition: all 0.2s ease;
 
     font-weight: bold;
+
 }
+
+.tab::after {
+    content: "";
+    position: absolute;
+    right: -20px;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    background: #aaa;
+    clip-path: polygon(0 0, 100% 10%, 100% 90%, 0 100%);
+    border-radius: 0 6px 6px 0;
+    transition: all 0.2s ease;
+}
+
+.tab:nth-child(1) { z-index: 3; } /*Top Tab*/
+.tab:nth-child(2) { z-index: 2; } /*Middle Tab*/
+.tab:nth-child(3) { z-index: 1; } /*Bottom Tab*/
+
         .tab.activate {
-            background: #6a9cdb;
+            background: #9daaacba;
             box-shadow: none;
-            transform: translateX(0);
+            transform: translateX(5px);
+            z-index: 5;
 }
         .tab:not(.active) {
             transform: translateX(0);
+            height: 34px;
 }
         .tab:hover {
-            transform: translateX(0);
+            transform: translateY(-5px);
+            background: #ccc;
 }
     </style>
 </head>
@@ -88,10 +119,11 @@
 
     <h3>Parts</h3>
     <!-- Tabs -->
-    <div id="partTabs" style="display:flex; flex-direction: column; gap: 35px; align-items: flex-end;">
-    <div class="tab activate" data-tab="core">Core</div>
-    <div class="tab" data-tab="casing">Casing</div>
-    <div class="tab" data-tab="powder">Powder</div>
+    <div id="partTabs" style="position: relative; height: 150px; ">
+
+    <div class="tab activate" data-tab="core" style="top: 0px;">Core</div>
+    <div class="tab" data-tab="casing" style="top: 55px;">Casing</div>
+    <div class="tab" data-tab="powder" style="top: 110px;">Powder</div>
 
     <!-- Content Area -->
      <div id="tabContent" style="margin-top:10px; width:100%; background:#fff; padding:10px; border:1px solid #ccc; box-sizing:border-box;">
