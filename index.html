@@ -125,8 +125,7 @@
 
         <!-- Content Area -->
         <div id="tabContent" style="margin-top:92px; width:100%; background:#fff; padding:10px; border:1px solid #ccc; box-sizing:border-box; border-radius: 12px;">
-            <button onclick="selectCore('heavy')" id="heavyCoreBtn">Heavy Core</button>
-            <button onclick="selectCore('light')" id="lightCoreBtn">Light Core</button>
+            <!-- Tab content will be populated by JavaScript -->
         </div>
     </div>
 
@@ -168,29 +167,35 @@ let cost = 0;
 let stability = 0;
 
 //Testing System
-let currentArmor ="Armor A";
+let currentArmor ="Standard Polar Domain Armor";
 let armorDurability = 4;
 
-//Knowledge system( What the player has learned about the enemy armor)
+//Knowledge system (what the player has learned about the enemy armor)
 let knownStats = {
     core: {
-        heavy: {},
-        light: {}
+        APCR: {},
+        TAP: {},
+        AP: {},
+        "Light-AP": {}
     },
     casing: {
-        reinforced: {},
-        cheap: {}
+        Reinforced: {},
+        "High-Carbon": {},
+        Standard: {},
+        "Low-Carbon": {}
     },
     powder: {
-        fast: {},
-        stable: {}
+        "Fine-Powder": {},
+        "Semi-Fine-Powder": {},
+        "Coarse-Powder": {},
+        "Unrefined-Powder": {}
     }
 };
 
 // New version that shows all armors with ??? for unknown ones
 function getKnownStatText(partType, partName, forTooltip = false) {
     let text = "";
-    let armors = ["Armor A", "Armor B", "Armor C"];
+    let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
     armors.forEach((armor, i) => {
         const stat = knownStats[partType][partName][armor];
         if (stat && typeof stat === "object") {
@@ -203,27 +208,117 @@ function getKnownStatText(partType, partName, forTooltip = false) {
     return text;
 }
 
-// Update tooltips with known stats
+// Update tooltips for all buttons based on current knowledge
 function updateTooltip() {
-   document.getElementById("heavyCoreBtn").title = getKnownStatText("core", "heavy", true);
-   document.getElementById("lightCoreBtn").title = getKnownStatText("core", "light", true);
-   document.getElementById("reinforcedCasingBtn").title = getKnownStatText("casing", "reinforced", true);
-   document.getElementById("cheapCasingBtn").title = getKnownStatText("casing", "cheap", true);
-   document.getElementById("fastPowderBtn").title = getKnownStatText("powder", "fast", true);
-   document.getElementById("stablePowderBtn").title = getKnownStatText("powder", "stable", true);
+    const mappings = [
+        { id: "heavyCoreBtn", part: "core", type: "APCR" },
+        { id: "tungstenAPBtn", part: "core", type: "TAP" },
+        { id: "mediumCoreBtn", part: "core", type: "AP" },
+        { id: "lightCoreBtn", part: "core", type: "Light-AP" },
+        { id: "reinforcedCasingBtn", part: "casing", type: "Reinforced" },
+        { id: "highCarbonCasingBtn", part: "casing", type: "High-Carbon" },
+        { id: "standardCasingBtn", part: "casing", type: "Standard" },
+        { id: "lowCarbonCasingBtn", part: "casing", type: "Low-Carbon" },
+        { id: "finePowderBtn", part: "powder", type: "Fine-Powder" },
+        { id: "semiFinePowderBtn", part: "powder", type: "Semi-Fine-Powder" },
+        { id: "coarsePowderBtn", part: "powder", type: "Coarse-Powder" },
+        { id: "unrefinedPowderBtn", part: "powder", type: "Unrefined-Powder" }
+    ];
+
+    mappings.forEach(({ id, part, type }) => {
+        const button = document.getElementById(id);
+        if (button) {
+            button.title = getKnownStatText(part, type, true);
+        }
+    });
 }
 
+// Variation settings for each part type and armor type
+const variationSettings = {
+    core: {
+        APCR: { power: 0.12, cost: 0.0, stability: 0.05 },
+        TAP: { power: 0.10, cost: 0.0, stability: 0.04 },
+        AP: { power: 0.08, cost: 0.0, stability: 0.03 },
+        "Light-AP": { power: 0.06, cost: 0.0, stability: 0.02 }
+    },
+    casing: {
+        Reinforced: { power: 0.05, cost: 0.0, stability: 0.10 },
+        "High-Carbon": { power: 0.04, cost: 0.0, stability: 0.08 },
+        Standard: { power: 0.03, cost: 0.0, stability: 0.06 },
+        "Low-Carbon": { power: 0.02, cost: 0.0, stability: 0.04 }
+    },
+    powder: {
+        "Fine-Powder": { power: 0.14, cost: 0.0, stability: 0.08 },
+        "Semi-Fine-Powder": { power: 0.12, cost: 0.0, stability: 0.06 },
+        "Coarse-Powder": { power: 0.10, cost: 0.0, stability: 0.04 },
+        "Unrefined-Powder": { power: 0.08, cost: 0.0, stability: 0.02 }
+    }
+};
+
+// Multiplier for how much the variation affects the stats based on the armor type
+const armorVariationMultiplier = {
+    core: {
+        "Standard Polar Domain Armor": 1.0,
+        "Light Polar Domain Armor": 0.8,
+        "Heavy Polar Domain Armor": 1.2,
+        "Polar Domain Civilian Buildings": 0.7,
+        "Polar Domain Military Buildings": 1.4
+    },
+    casing: {
+        "Standard Polar Domain Armor": 1.1,
+        "Light Polar Domain Armor": 0.9,
+        "Heavy Polar Domain Armor": 1.3,
+        "Polar Domain Civilian Buildings": 0.8,
+        "Polar Domain Military Buildings": 1.5
+    },
+    powder: {
+        "Standard Polar Domain Armor": 0.9,
+        "Light Polar Domain Armor": 1.0,
+        "Heavy Polar Domain Armor": 1.1,
+        "Polar Domain Civilian Buildings": 0.8,
+        "Polar Domain Military Buildings": 1.2
+    }
+};
+
+function setVariation(part, type, stat, amount) {
+    if (variationSettings[part] && variationSettings[part][type] && variationSettings[part][type][stat] !== undefined) {
+        variationSettings[part][type][stat] = Math.max(0, Math.min(1, amount));
+    }
+}
+
+// Function to calculate the effective stat of a component against a specific armor, incorporating variation
+function varyComponentStat(part, type, statKey, armor) {
+    const baseTables = { core: coreStats, casing: casingStats, powder: powderStats };
+    const base = baseTables[part][type][statKey];
+    const variation = variationSettings[part][type][statKey] || 0;
+    const armorFactor = armorVariationMultiplier[part][armor] || 1.0;
+    const effectiveVariation = variation * armorFactor;
+    const delta = (Math.random() * 2 - 1) * effectiveVariation * Math.max(1, Math.abs(base));
+    return Math.max(0, Math.round((base + delta) * 10) / 10);
+}
+
+// Function to calculate the shell's effective stats against the current armor, incorporating variation for each component and armor type
 function calculateArmorStats(core, casing, powder, armor) {
-    //multipliers for each armor type
     let armorMultiplier = {
-        "Armor A": 1.0,
-        "Armor B": 0.5,
-        "Armor C": 1.5
+        "Standard Polar Domain Armor": 1.0,
+        "Light Polar Domain Armor": 0.5,
+        "Heavy Polar Domain Armor": 1.5,
+        "Polar Domain Civilian Buildings": 0.3,
+        "Polar Domain Military Buildings": 1.8
     };
+
+    const actualCorePower = varyComponentStat("core", core, "power", armor);
+    const actualPowderPower = varyComponentStat("powder", powder, "power", armor);
+    const actualCoreCost = varyComponentStat("core", core, "cost", armor);
+    const actualCasingCost = varyComponentStat("casing", casing, "cost", armor);
+    const actualPowderCost = varyComponentStat("powder", powder, "cost", armor);
+    const actualCasingStability = varyComponentStat("casing", casing, "stability", armor);
+    const actualPowderStability = varyComponentStat("powder", powder, "stability", armor);
+
     return {
-        power: Math.round(coreStats[core].power + powderStats[powder].power * armorMultiplier[armor]),
-        cost: Math.round(coreStats[core].cost + casingStats[casing].cost + powderStats[powder].cost),
-        stability: Math.round(casingStats[casing].stability * armorMultiplier[armor])
+        power: Math.round((actualCorePower + actualPowderPower * armorMultiplier[armor]) * 10) / 10,
+        cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost) * 10) / 10,
+        stability: Math.round((actualCasingStability * armorMultiplier[armor] + actualPowderStability * 0.3) * 10) / 10
     };
 }
 // Function to test the shell against the current armor
@@ -257,11 +352,14 @@ function testShell() {
 
 // Function to recover a new armor sample
 function getNewArmor() {
-    let armorTypes = ["Armor A", "Armor B", "Armor C"];
+    let armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
     currentArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
     armorDurability = 4; // Reset durability for new armor
 
     document.getElementById("testResult").innerText = "New Armor Sample Recovered: " + currentArmor;
+    updateDisplay();
+    updateTooltip();
+    updateArmorDatabase();
 }
 
 // Function to generate a new order
@@ -299,28 +397,32 @@ let description;
         } else {
         
     // Base stats for the order
-    let pMin = 5, pMax = 9;
-    let cMin = 4, cMax = 8;
-    let sMin = 1, sMax = 3;
+    let pMin = 6, pMax = 10;
+    let cMin = 3, cMax = 7;
+    let sMin = 2, sMax = 4;
     
-    // Randomly chose a description
+    // Randomly choose a description
     let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
 
-    //Keywords in description that adjust the stat requirements
+    // Keywords in description that adjust the stat requirements
     if(description.includes("Reinforced") || description.includes("Heavily armored")) {
-        pMin += 2; 
+        pMin += 2;
         pMax += 2; // Increase power requirement for reinforced armor
+        cMin += 1;
+        cMax += 1; // Slightly higher cost expectations for heavy-duty shells
     }
     if(description.includes("Lightly Armored") || description.includes("Soft targets") || description.includes("Weak armor")) {
-        pMin -= 2; 
+        pMin -= 2;
         pMax -= 2; // Decrease power requirement for lightly armored targets
+        cMin -= 1;
+        cMax -= 1; // Lower cost expectations for softer targets
     }
     if(description.includes("Cost-Effective") || description.includes("Low") || description.includes("Mass Production") || description.includes("Tight Budget")) {
-        cMin -= 2; 
+        cMin -= 2;
         cMax -= 2; // Decrease cost requirement for cost-effective orders
     }
     if(description.includes("Stable") || description.includes("Wont break") || description.includes("Wont shatter") || description.includes("High Impact")) {
-        sMin += 1; 
+        sMin += 1;
         sMax += 1; // Increase stability requirement for stable/long-range orders
     }
 
@@ -329,8 +431,19 @@ let description;
     cMin = Math.max(0, cMin); cMax = Math.max(cMin, cMax);
     sMin = Math.max(0, sMin); sMax = Math.max(sMin, sMax);
 
-    requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
-    maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+    // Some orders are intentionally impossible: either unrealistic power targets or cost caps.
+    if (Math.random() < 0.25) {
+        requiredPower = pMax + Math.floor(Math.random() * 4 + 1); // beyond what any shell can reliably deliver
+    } else {
+        requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+    }
+
+    if (Math.random() < 0.25) {
+        maxCost = Math.max(0, cMin - Math.floor(Math.random() * 2 + 1)); // cost cap below realistic minimum
+    } else {
+        maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+    }
+
     requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
 
     currentOrderDescription = description;
@@ -352,21 +465,21 @@ const coreStats = {
     "APCR": {power:5, cost:3, stability:0},
     "TAP": {power:4.5, cost:2.5, stability:0},
     "AP": {power:3, cost:2, stability:0},
-    "light-AP": {power:2, cost:1, stability:0}
+    "Light-AP": {power:2, cost:1, stability:0}
 };
 
 const casingStats = {
-    "reinforced": {power:0, cost:5, stability:5},
+    "Reinforced": {power:0, cost:5, stability:5},
     "High-Carbon": {power:0, cost:3, stability:3},
-    "standard": {power:0, cost:2, stability:2},
+    "Standard": {power:0, cost:2, stability:2},
     "Low-Carbon": {power:0, cost:1, stability:-1}
 };
 
 const powderStats = {
-    "FinePowder": {power:3, cost:2, stability:-1},
-    "Semi-FinePowder": {power:2.5, cost:1.5, stability:2},
-    "CoarsePowder": {power:2, cost:1, stability:1},
-    "UnrefinedPowder": {power:0, cost:0.5, stability:-5}
+    "Fine-Powder": {power:3, cost:2, stability:-1},
+    "Semi-Fine-Powder": {power:2.5, cost:1.5, stability:2},
+    "Coarse-Powder": {power:2, cost:1, stability:1},
+    "Unrefined-Powder": {power:1, cost:0.5, stability:-5}
 };
 
 // Helper to clamp stats >= 0
@@ -390,7 +503,7 @@ function updateDisplay() {
 }
 function updateArmorDatabase() {
     let text = "";
-    let armors = ["Armor A", "Armor B", "Armor C"];
+    let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
     armors.forEach(armor => {
         text += `=== ${armor} ===\n`;
         ["core", "casing", "powder"].forEach(part => {
@@ -521,36 +634,40 @@ tabs.forEach(tab => {
     });
 });
 
+// Initialize the first tab content on page load
+showTabContent('core');
+
 function showTabContent(tab) {
     if (tab === 'core') {
     tabContent.innerHTML = `
     <button onclick="selectCore('APCR')" id="heavyCoreBtn">Tungsten Carbide Core</button>
     <button onclick="selectCore('TAP')" id="tungstenAPBtn">Tungsten Core</button>
     <button onclick="selectCore('AP')" id="mediumCoreBtn">Hardened Steel Core</button>
-    <button onclick="selectCore('light-AP')" id="lightCoreBtn">Low-Carbon Steel Core</button>
+    <button onclick="selectCore('Light-AP')" id="lightCoreBtn">Low-Carbon Steel Core</button>
     `;
     }
 
     if (tab === 'casing') {
     tabContent.innerHTML = `
-    <button onclick="selectCasing('reinforced')" id="reinforcedCasingBtn">Reinforced Casing</button>
+    <button onclick="selectCasing('Reinforced')" id="reinforcedCasingBtn">Reinforced Casing</button>
     <button onclick="selectCasing('High-Carbon')" id="highCarbonCasingBtn">High-Carbon Casing</button>
-    <button onclick="selectCasing('standard')" id="standardCasingBtn">Standard Casing</button>
+    <button onclick="selectCasing('Standard')" id="standardCasingBtn">Standard Casing</button>
     <button onclick="selectCasing('Low-Carbon')" id="lowCarbonCasingBtn">Low-Carbon Casing</button>
     `;
     }
 
     if (tab === 'powder') {
     tabContent.innerHTML = `
-    <button onclick="selectPowder('FinePowder')" id="finePowderBtn">Fine Powder</button>
-    <button onclick="selectPowder('Semi-FinePowder')" id="semiFinePowderBtn">Semi-Fine Powder</button>
-    <button onclick="selectPowder('CoarsePowder')" id="coarsePowderBtn">Coarse Powder</button> 
-    <button onclick="selectPowder('UnrefinedPowder')" id="unrefinedPowderBtn">Unrefined Powder</button>
+    <button onclick="selectPowder('Fine-Powder')" id="finePowderBtn">Fine Powder</button>
+    <button onclick="selectPowder('Semi-Fine-Powder')" id="semiFinePowderBtn">Semi-Fine Powder</button>
+    <button onclick="selectPowder('Coarse-Powder')" id="coarsePowderBtn">Coarse Powder</button> 
+    <button onclick="selectPowder('Unrefined-Powder')" id="unrefinedPowderBtn">Unrefined Powder</button>
     `;
     }
 //These guys will never NOT be at the bottom
 updateDisplay();
-updateTooltip();        
+updateTooltip();
+updateArmorDatabase();        
 }
 </script>
 
