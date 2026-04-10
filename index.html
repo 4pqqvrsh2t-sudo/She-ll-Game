@@ -117,6 +117,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 10px;
 }
 
 @keyframes fadeIn {
@@ -126,13 +127,15 @@
 
 .modal-content {
     background-color: #f9f9f9;
-    padding: 20px;
+    width: 100%;
+    height: 90vh;
+    max-width: none;
+    max-height: 90vh;
     border: 1px solid #888;
     border-radius: 8px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     animation: slideIn 0.3s ease;
 }
@@ -152,9 +155,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    padding: 20px;
     border-bottom: 2px solid #7eb8d4;
-    padding-bottom: 10px;
+    flex-shrink: 0;
+    background-color: #f9f9f9;
 }
 
 .modal-header h2 {
@@ -171,6 +175,7 @@
     cursor: pointer;
     font-size: 16px;
     transition: background 0.2s;
+    flex-shrink: 0;
 }
 
 .close-btn:hover {
@@ -178,13 +183,13 @@
 }
 
 .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
     font-family: monospace;
     white-space: pre-wrap;
     word-wrap: break-word;
     background: #fff;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     color: #333;
     line-height: 1.6;
 }
@@ -244,6 +249,18 @@
         </div>
     </div>
 
+<!-- Database Modal -->
+<div id="databaseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Armor Database</h2>
+            <button class="close-btn" onclick="closeDatabaseModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalDatabaseContent">
+            No data yet. Test shells to learn about enemy armor!
+        </div>
+    </div>
+</div>
 
 <script>
 
@@ -254,7 +271,20 @@ const orderDescriptions = [
     "Central Command: We need a Tank shell that can withstand High Impact but is Cost-Effective.",
     "Central Command: We need an all-rounder Tank shell that can handle various combat scenarios. Keep the cost Low.",
     "Central Command: We need a Tank shell that can deliver high power but is stable enough for Long-Range engagements.",
-    "Central Command: We need a Tank shell that can deliver high power but is Cost-Effective for mass production."
+    "Central Command: We need a Tank shell that can deliver high power but is Cost-Effective for mass production.",
+    "Frontline Report: Enemy fortifications are heavily defended. We need serious Armor-Piercing capability!",
+    //"Central Command: Close-Range Combat imminent. Prioritize high Power over Long-Range accuracy.",
+    "Frontline Report: Defensive positions report Heavy Armor encountered. Explosive payload urgently requested.",
+    //"Central Command: Breakthrough operation planned. Maximize Power with acceptable Stability for rapid deployment.",
+    "Frontline Report: Multiple Enemy vehicle types spotted. Need versatile all-purpose shell with High Impact.",
+    "Central Command: Supply lines are stretched thin. We need Cost-Effective ammunition without sacrificing Destructive potential.",
+    //"Frontline Report: Long-Range artillery support operation. Stability and accuracy are Critical demands.",
+    //"Central Command: Advanced Enemy armor detected. Standard ammunition ineffective. Enhanced Penetration capability Required.",
+    "Frontline Report: They're moving to fast. We need something that can Pack a Punch and get there in time.",
+    //"Central Command: Strategic bombardment operation planned. Maximize Explosive potential with moderate Stability for area effect.",
+    "Frontline Report: Mixed armor types reported. Need a Balanced shell - reasonable Power, Cost, and Stability.",
+    //"Central Command: Elite unit deployment requires Premium ammunition. Design our best shell regardless of Cost.",
+    "Frontline Report: Reconnaissance confirms Lightly Armored targets. Optimize for Light armor and High destructive Power."
 ];
 // Min & Max ranges for each stat
 const powerMin = 5, powerMax = 9;
@@ -606,7 +636,7 @@ let description;
         cMin += 1;
         cMax += 1; // Slightly higher cost expectations for heavy-duty shells
     }
-    if(description.includes("Lightly Armored") || description.includes("Soft targets") || description.includes("Weak armor")) {
+    if(description.includes("Lightly Armored") || description.includes("Soft targets") || description.includes("Weak armor") || description.includes("Light Armor")) {
         pMin -= 2;
         pMax -= 2; // Decrease power requirement for lightly armored targets
         cMin -= 1;
@@ -780,7 +810,10 @@ function updateArmorDatabase() {
         
         text += "\n";
     });
-    document.getElementById("modalDatabaseContent").innerText = text;
+    const modalContent = document.getElementById("modalDatabaseContent");
+    if (modalContent) {
+        modalContent.innerText = text;
+    }
 }
 
 // Core selection
@@ -947,6 +980,10 @@ function showTabContent(tab) {
     `;
     }
 //These guys will never NOT be at the bottom
+updateDisplay();
+updateTooltip();
+updateArmorDatabase();        
+}
 
 // Modal Functions
 function openDatabaseModal() {
@@ -964,25 +1001,7 @@ window.onclick = function(event) {
         closeDatabaseModal();
     }
 }
-
-updateDisplay();
-updateTooltip();
-updateArmorDatabase();        
-}
 </script>
-
-<!-- Database Modal -->
-<div id="databaseModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Armor Database</h2>
-            <button class="close-btn" onclick="closeDatabaseModal()">✕</button>
-        </div>
-        <div class="modal-body" id="modalDatabaseContent">
-            No data yet. Test shells to learn about enemy armor!
-        </div>
-    </div>
-</div>
 
 </body>
 </html>
