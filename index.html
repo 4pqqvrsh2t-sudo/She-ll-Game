@@ -174,7 +174,7 @@ const orderDescriptions = [
 const powerMin = 5, powerMax = 9;
 const costMin = 4, costMax = 8;
 const stabilityMin = 1, stabilityMax = 3;
-const explosiveMin = 0, explosiveMax = 8;
+const explosiveMin = 0, explosiveMax = 3;
 
 // Variables to hold current order
 let isWaiting = false;
@@ -503,7 +503,7 @@ let description;
     let pMin = 6, pMax = 10;
     let cMin = 3, cMax = 7;
     let sMin = 2, sMax = 4;
-    let eMin = 0, eMax = 5;
+    let eMin = 0, eMax = 0.2;
     
     // Randomly choose a description
     let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
@@ -532,8 +532,6 @@ let description;
     if(description.includes("Civilian Buildings")) {
         eMin += 6;
         eMax += 15; // Increase explosiveness requirement for civilian buildings
-        sMin += 2;
-        sMax += 2; // Increase stability requirement for civilian buildings
     }
     if(description.includes("Military Buildings") || description.includes("Bunker Buster")) {
         eMin += 0;
@@ -585,10 +583,10 @@ generateOrder();
 // Stats for each part
 const coreStats = {
     "Solid": {
-        "APCR": {power:5, cost:3, stability:0, explosiveness:0},
-        "TAP": {power:4.5, cost:2.5, stability:0, explosiveness:0},
-        "AP": {power:3, cost:2, stability:0, explosiveness:0},
-        "Light-AP": {power:2, cost:1, stability:0, explosiveness:0}
+        "APCR": {power:5, cost:3, stability:0, explosiveness:0.2},
+        "TAP": {power:4.5, cost:2.5, stability:0, explosiveness:0.2},
+        "AP": {power:3, cost:2, stability:0, explosiveness:0.2},
+        "Light-AP": {power:2, cost:1, stability:0, explosiveness:0.5}
     },
     "Chemical": {
         "RDX-Based": {power:2.5, cost:2.5, stability:-2, explosiveness:7},
@@ -605,10 +603,10 @@ const casingStats = {
 };
 
 const powderStats = {
-    "Fine-Powder": {power:3, cost:2, stability:-1},
-    "Semi-Fine-Powder": {power:2.5, cost:1.5, stability:2},
-    "Coarse-Powder": {power:2, cost:1, stability:1},
-    "Unrefined-Powder": {power:1, cost:0.5, stability:-5}
+    "Fine-Powder": {power:3, cost:2, stability:-1, explosiveness:0.5},
+    "Semi-Fine-Powder": {power:2.5, cost:1.5, stability:2, explosiveness:1},
+    "Coarse-Powder": {power:2, cost:1, stability:1, explosiveness:2},
+    "Unrefined-Powder": {power:1, cost:0.5, stability:-5, explosiveness:3}
 };
 
 // Helper to clamp stats >= 0
