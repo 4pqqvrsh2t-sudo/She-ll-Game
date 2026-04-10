@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shell Designer v0.3.3</title>
+    <title>She-ll Designer v0.3.5</title>
     <style>
 .tab {
     position: absolute;
@@ -99,6 +99,95 @@
 #tabContent h4:first-child {
     margin-top: 0;
 }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #7eb8d4;
+    padding-bottom: 10px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.close-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: #d32f2f;
+}
+
+.modal-body {
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    line-height: 1.6;
+}
     </style>
 </head>
 
@@ -108,7 +197,7 @@
   <!-- LEFT PANEL -->
   <div style="width:320px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; padding:10px; background:#ccc; box-sizing:border-box; flex-shrink:0;">
     <div style="width:100%; background:#9daaacba; padding:10px; display:flex; flex-direction:column; gap:10px; box-sizing:border-box;">
-      <h1>Shell Designer v0.3.3</h1>
+      <h1>She-ll Designer v0.3.5</h1>
       <p>Design tank shells and other munitions to meet the demands of the frontline! Test your designs against enemy armor and learn their weaknesses to improve your shells. Can you make the Federation's best ammunition?</p>
 
       <h3>Request</h3>
@@ -121,10 +210,7 @@
       <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
 
       <h3>Database</h3>
-      <div id="ArmorDatabase" style="background:#fff; padding:10px; border:1px solid #ccc; height:100px; overflow:auto; box-sizing:border-box;">
-        <p><strong>Known Armor Stats:</strong></p>
-        <p id="knownStats">No data yet. Test shells to learn about enemy armor!</p>
-      </div>
+      <button onclick="openDatabaseModal()" style="padding: 10px 20px; background: #7eb8d4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">Database</button>
 
       <h3>Test Shell</h3>
       <button onclick="testShell()">Test Shell</button>
@@ -197,6 +283,7 @@ let power = 0;
 let cost = 0;
 let stability = 0;
 let explosiveness = 0;
+let penetration = 0;
 
 //Testing System
 let currentArmor ="Standard Polar Domain Armor";
@@ -208,6 +295,7 @@ let knownStats = {
         "Solid": {
             "APCR": {},
             "TAP": {},
+            "APHE": {},
             "AP": {},
             "Light-AP": {}
         },
@@ -239,7 +327,7 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
         armors.forEach((armor, i) => {
             const stat = knownStats[partType][partCategory][partName][armor];
             if (stat && typeof stat === "object") {
-                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}`;
+                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}`;
             } else {
                 text += `${armor}: ???`;
             }
@@ -267,6 +355,7 @@ function updateTooltip() {
     const coreMapping = [
         { id: "heavyCoreBtn", category: "Solid", type: "APCR" },
         { id: "tungstenAPBtn", category: "Solid", type: "TAP" },
+        { id: "apheBtn", category: "Solid", type: "APHE" },
         { id: "mediumCoreBtn", category: "Solid", type: "AP" },
         { id: "lightCoreBtn", category: "Solid", type: "Light-AP" },
         { id: "rdxBtn", category: "Chemical", type: "RDX-Based" },
@@ -312,15 +401,16 @@ function updateTooltip() {
 const variationSettings = {
     core: {
         "Solid": {
-            "APCR": { power: 0.12, cost: 0.0, stability: 0.05, explosiveness: 0.2 },
-            "TAP": { power: 0.10, cost: 0.0, stability: 0.04, explosiveness: 0.2 },
-            "AP": { power: 0.08, cost: 0.0, stability: 0.03, explosiveness: 0.2 },
-            "Light-AP": { power: 0.06, cost: 0.0, stability: 0.02, explosiveness: 0.2 }
+            "APCR": { power: 0.12, cost: 0.0, stability: 0.05, explosiveness: 0.2, penetration: 0.15 },
+            "TAP": { power: 0.10, cost: 0.0, stability: 0.04, explosiveness: 0.2, penetration: 0.12 },
+            "APHE": { power: 0.09, cost: 0.0, stability: 0.03, explosiveness: 0.25, penetration: 0.10 },
+            "AP": { power: 0.08, cost: 0.0, stability: 0.03, explosiveness: 0.2, penetration: 0.10 },
+            "Light-AP": { power: 0.06, cost: 0.0, stability: 0.02, explosiveness: 0.2, penetration: 0.08 }
         },
         "Chemical": {
-            "RDX-Based": { power: 0.10, cost: 0.08, stability: 0.12, explosiveness: 0.15 },
-            "TNT-Based": { power: 0.08, cost: 0.06, stability: 0.10, explosiveness: 0.12 },
-            "PETN-Composite": { power: 0.11, cost: 0.09, stability: 0.14, explosiveness: 0.18 }
+            "RDX-Based": { power: 0.10, cost: 0.08, stability: 0.12, explosiveness: 0.15, penetration: 0.08 },
+            "TNT-Based": { power: 0.08, cost: 0.06, stability: 0.10, explosiveness: 0.12, penetration: 0.06 },
+            "PETN-Composite": { power: 0.11, cost: 0.09, stability: 0.14, explosiveness: 0.18, penetration: 0.08 }
         }
     },
     casing: {
@@ -405,6 +495,7 @@ function calculateArmorStats(core, casing, powder, armor) {
 
     const actualCorePower = varyComponentStat("core", core.category, core.type, "power", armor);
     const actualCoreExplosiveness = varyComponentStat("core", core.category, core.type, "explosiveness", armor);
+    const actualCorePenetration = varyComponentStat("core", core.category, core.type, "penetration", armor);
     const actualPowderPower = varyComponentStat("powder", powder, "power", armor);
     const actualCoreCost = varyComponentStat("core", core.category, core.type, "cost", armor);
     const actualCasingCost = varyComponentStat("casing", casing, "cost", armor);
@@ -419,7 +510,8 @@ function calculateArmorStats(core, casing, powder, armor) {
         power: Math.round((actualCorePower + actualPowderPower * armorMultiplier[armor] + explosiveBoost) * 10) / 10,
         explosiveness: Math.round(actualCoreExplosiveness * 10) / 10,
         cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost) * 10) / 10,
-        stability: Math.round((actualCasingStability * armorMultiplier[armor] + actualPowderStability * 0.3) * 10) / 10
+        stability: Math.round((actualCasingStability * armorMultiplier[armor] + actualPowderStability * 0.3) * 10) / 10,
+        penetration: Math.round(actualCorePenetration * 10) / 10
     };
 }
 // Function to test the shell against the current armor
@@ -438,12 +530,12 @@ function testShell() {
 
 
     //Store Knowledge for this part and armor
-   knownStats.core[core.category][core.type][currentArmor] = { power:actualStats.power, explosiveness:actualStats.explosiveness, cost:actualStats.cost, stability:actualStats.stability };
+   knownStats.core[core.category][core.type][currentArmor] = { power:actualStats.power, explosiveness:actualStats.explosiveness, cost:actualStats.cost, stability:actualStats.stability, penetration:actualStats.penetration };
    knownStats.casing[casing][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
    knownStats.powder[powder][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
   
   //Show results of the test
-  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
+  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Penetration: ${actualStats.penetration} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
     document.getElementById("testResult").innerText = resultText;
 
     updateDisplay();
@@ -496,12 +588,11 @@ let description;
                 " | Cost ≤ " + maxCost +
                 " | Stability ≥ " + requiredStability +
                 " | Explosiveness ≥ " + requiredExplosiveness;
-            orderSinceLastFailure = 0; // Reset counter after using a failed order
         } else {
         
     // Base stats for the order
     let pMin = 6, pMax = 10;
-    let cMin = 3, cMax = 7;
+    let cMin = 5, cMax = 12;
     let sMin = 2, sMax = 4;
     let eMin = 0, eMax = 0.2;
     
@@ -523,11 +614,11 @@ let description;
     }
     if(description.includes("Cost-Effective") || description.includes("Low") || description.includes("Mass Production") || description.includes("Tight Budget")) {
         cMin -= 2;
-        cMax -= 2; // Decrease cost requirement for cost-effective orders
+        cMax -= 4; // Decrease cost requirement for cost-effective orders
     }
     if(description.includes("Stable") || description.includes("Not break") || description.includes("Wont shatter") || description.includes("High Impact")) {
         sMin += 1;
-        sMax += 1; // Increase stability requirement for stable/long-range orders
+        sMax += 4; // Increase stability requirement for stable/long-range orders
     }
     if(description.includes("Civilian Buildings")) {
         eMin += 6;
@@ -583,15 +674,16 @@ generateOrder();
 // Stats for each part
 const coreStats = {
     "Solid": {
-        "APCR": {power:5, cost:3, stability:0, explosiveness:0.2},
-        "TAP": {power:4.5, cost:2.5, stability:0, explosiveness:0.2},
-        "AP": {power:3, cost:2, stability:0, explosiveness:0.2},
-        "Light-AP": {power:2, cost:1, stability:0, explosiveness:0.5}
+        "APCR": {power:5, cost:3, stability:0, explosiveness:0.2, penetration:4.5},
+        "TAP": {power:4.5, cost:2.5, stability:0, explosiveness:0.2, penetration:4},
+        "APHE": {power:3.5, cost:2.5, stability:0, explosiveness:2.5, penetration:2.5},
+        "AP": {power:3, cost:2, stability:0, explosiveness:0.2, penetration:2.5},
+        "Light-AP": {power:2, cost:1, stability:0, explosiveness:0.5, penetration:1.5}
     },
     "Chemical": {
-        "RDX-Based": {power:2.5, cost:2.5, stability:-2, explosiveness:7},
-        "TNT-Based": {power:2, cost:1.5, stability:-1, explosiveness:5},
-        "PETN-Composite": {power:3, cost:3.5, stability:-3, explosiveness:8}
+        "RDX-Based": {power:2.5, cost:2.5, stability:0, explosiveness:7, penetration:1.5},
+        "TNT-Based": {power:2, cost:1.5, stability:0, explosiveness:5, penetration:1.0},
+        "PETN-Composite": {power:3, cost:3.5, stability:0, explosiveness:8, penetration:1.5}
     }
 };
 
@@ -615,6 +707,7 @@ function clampStats() {
     cost = Math.max(0, cost);
     stability = Math.max(0, stability);
     explosiveness = Math.max(0, explosiveness);
+    penetration = Math.max(0, penetration);
 }
 
 // Update display
@@ -634,18 +727,19 @@ function updateDisplay() {
         "Casing Info:\n " + casingInfo + "\n" +
         "Powder Info:\n " + powderInfo;
 }
+// Update the armor database display with known stats
 function updateArmorDatabase() {
     let text = "";
-    let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
+    let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
     armors.forEach(armor => {
         text += `=== ${armor} ===\n`;
         
         // Solid Cores
         text += "Solid Cores:\n";
-        ["APCR", "TAP", "AP", "Light-AP"].forEach(type => {
+        ["APCR", "TAP", "APHE", "AP", "Light-AP"].forEach(type => {
             let stat = knownStats.core["Solid"][type][armor];
             if (stat) {
-                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
             } else {
                 text += `${type}: ???\n`;
             }
@@ -656,7 +750,7 @@ function updateArmorDatabase() {
         ["RDX-Based", "TNT-Based", "PETN-Composite"].forEach(type => {
             let stat = knownStats.core["Chemical"][type][armor];
             if (stat) {
-                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
             } else {
                 text += `${type}: ???\n`;
             }
@@ -686,7 +780,7 @@ function updateArmorDatabase() {
         
         text += "\n";
     });
-    document.getElementById("ArmorDatabase").innerText = text;
+    document.getElementById("modalDatabaseContent").innerText = text;
 }
 
 // Core selection
@@ -699,6 +793,7 @@ function selectCore(category, type) {
         cost -= coreStats[oldCategory][oldType].cost;
         stability -= coreStats[oldCategory][oldType].stability;
         explosiveness -= coreStats[oldCategory][oldType].explosiveness;
+        penetration -= coreStats[oldCategory][oldType].penetration;
     }
 
     // Assign new core
@@ -710,6 +805,7 @@ function selectCore(category, type) {
     cost += coreStats[category][type].cost;
     stability += coreStats[category][type].stability;
     explosiveness += coreStats[category][type].explosiveness;
+    penetration += coreStats[category][type].penetration;
 
     clampStats();
     updateDisplay();
@@ -820,6 +916,7 @@ function showTabContent(tab) {
         <h4 style="margin: 5px 0; color: #333;">Solid Cores</h4>
         <button onclick="selectCore('Solid', 'APCR')" id="heavyCoreBtn">Tungsten Carbide Core</button>
         <button onclick="selectCore('Solid', 'TAP')" id="tungstenAPBtn">Tungsten Core</button>
+        <button onclick="selectCore('Solid', 'APHE')" id="apheBtn">Hardened Steel-HE</button>
         <button onclick="selectCore('Solid', 'AP')" id="mediumCoreBtn">Hardened Steel Core</button>
         <button onclick="selectCore('Solid', 'Light-AP')" id="lightCoreBtn">Low-Carbon Steel Core</button>
     </div>
@@ -850,11 +947,42 @@ function showTabContent(tab) {
     `;
     }
 //These guys will never NOT be at the bottom
+
+// Modal Functions
+function openDatabaseModal() {
+    document.getElementById("databaseModal").classList.add("show");
+}
+
+function closeDatabaseModal() {
+    document.getElementById("databaseModal").classList.remove("show");
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById("databaseModal");
+    if (event.target === modal) {
+        closeDatabaseModal();
+    }
+}
+
 updateDisplay();
 updateTooltip();
 updateArmorDatabase();        
 }
 </script>
+
+<!-- Database Modal -->
+<div id="databaseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Armor Database</h2>
+            <button class="close-btn" onclick="closeDatabaseModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalDatabaseContent">
+            No data yet. Test shells to learn about enemy armor!
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
