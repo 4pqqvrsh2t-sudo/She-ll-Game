@@ -70,6 +70,35 @@
     box-shadow: none;
     overflow: visible;
 }
+
+#tabContent button {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    background: #e8f4ff;
+    color: #000;
+    border: 1px solid #7eb8d4;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#tabContent button:hover {
+    background: #c5e4f7;
+}
+
+#tabContent h4 {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #7eb8d4;
+    font-size: 13px;
+}
+
+#tabContent h4:first-child {
+    margin-top: 0;
+}
     </style>
 </head>
 
@@ -145,12 +174,14 @@ const orderDescriptions = [
 const powerMin = 5, powerMax = 9;
 const costMin = 4, costMax = 8;
 const stabilityMin = 1, stabilityMax = 3;
+const explosiveMin = 0, explosiveMax = 8;
 
 // Variables to hold current order
 let isWaiting = false;
 let requiredPower;
 let maxCost;
 let requiredStability;
+let requiredExplosiveness;
 // Remembering Failed Orders
 let failedOrders = []; //Store failed Orders
 let orderSinceLastFailure = 0; // Track Orders since last failed one
@@ -165,6 +196,7 @@ let powder = null;
 let power = 0;
 let cost = 0;
 let stability = 0;
+let explosiveness = 0;
 
 //Testing System
 let currentArmor ="Standard Polar Domain Armor";
@@ -173,10 +205,17 @@ let armorDurability = 4;
 //Knowledge system (what the player has learned about the enemy armor)
 let knownStats = {
     core: {
-        APCR: {},
-        TAP: {},
-        AP: {},
-        "Light-AP": {}
+        "Solid": {
+            "APCR": {},
+            "TAP": {},
+            "AP": {},
+            "Light-AP": {}
+        },
+        "Chemical": {
+            "RDX-Based": {},
+            "TNT-Based": {},
+            "PETN-Composite": {}
+        }
     },
     casing: {
         Reinforced: {},
@@ -193,42 +232,78 @@ let knownStats = {
 };
 
 // New version that shows all armors with ??? for unknown ones
-function getKnownStatText(partType, partName, forTooltip = false) {
-    let text = "";
-    let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
-    armors.forEach((armor, i) => {
-        const stat = knownStats[partType][partName][armor];
-        if (stat && typeof stat === "object") {
-            text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
-        } else {
-            text += `${armor}: ???`;
-        }
-        if (i < armors.length - 1) text += forTooltip ? " | " : "\n"; // New line between armors
-    });
-    return text;
+function getKnownStatText(partType, partCategory, partName, forTooltip = false) {
+    if (partType === "core") {
+        let text = "";
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+        armors.forEach((armor, i) => {
+            const stat = knownStats[partType][partCategory][partName][armor];
+            if (stat && typeof stat === "object") {
+                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}`;
+            } else {
+                text += `${armor}: ???`;
+            }
+            if (i < armors.length - 1) text += forTooltip ? " | " : "\n";
+        });
+        return text;
+    } else {
+        let text = "";
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+        armors.forEach((armor, i) => {
+            const stat = knownStats[partType][partName][armor];
+            if (stat && typeof stat === "object") {
+                text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
+            } else {
+                text += `${armor}: ???`;
+            }
+            if (i < armors.length - 1) text += forTooltip ? " | " : "\n";
+        });
+        return text;
+    }
 }
 
 // Update tooltips for all buttons based on current knowledge
 function updateTooltip() {
-    const mappings = [
-        { id: "heavyCoreBtn", part: "core", type: "APCR" },
-        { id: "tungstenAPBtn", part: "core", type: "TAP" },
-        { id: "mediumCoreBtn", part: "core", type: "AP" },
-        { id: "lightCoreBtn", part: "core", type: "Light-AP" },
+    const coreMapping = [
+        { id: "heavyCoreBtn", category: "Solid", type: "APCR" },
+        { id: "tungstenAPBtn", category: "Solid", type: "TAP" },
+        { id: "mediumCoreBtn", category: "Solid", type: "AP" },
+        { id: "lightCoreBtn", category: "Solid", type: "Light-AP" },
+        { id: "rdxBtn", category: "Chemical", type: "RDX-Based" },
+        { id: "tntBtn", category: "Chemical", type: "TNT-Based" },
+        { id: "petnBtn", category: "Chemical", type: "PETN-Composite" }
+    ];
+    const casingMapping = [
         { id: "reinforcedCasingBtn", part: "casing", type: "Reinforced" },
         { id: "highCarbonCasingBtn", part: "casing", type: "High-Carbon" },
         { id: "standardCasingBtn", part: "casing", type: "Standard" },
-        { id: "lowCarbonCasingBtn", part: "casing", type: "Low-Carbon" },
+        { id: "lowCarbonCasingBtn", part: "casing", type: "Low-Carbon" }
+    ];
+    const powderMapping = [
         { id: "finePowderBtn", part: "powder", type: "Fine-Powder" },
         { id: "semiFinePowderBtn", part: "powder", type: "Semi-Fine-Powder" },
         { id: "coarsePowderBtn", part: "powder", type: "Coarse-Powder" },
         { id: "unrefinedPowderBtn", part: "powder", type: "Unrefined-Powder" }
     ];
 
-    mappings.forEach(({ id, part, type }) => {
+    coreMapping.forEach(({ id, category, type }) => {
         const button = document.getElementById(id);
         if (button) {
-            button.title = getKnownStatText(part, type, true);
+            button.title = getKnownStatText("core", category, type, true);
+        }
+    });
+
+    casingMapping.forEach(({ id, part, type }) => {
+        const button = document.getElementById(id);
+        if (button) {
+            button.title = getKnownStatText(part, null, type, true);
+        }
+    });
+
+    powderMapping.forEach(({ id, part, type }) => {
+        const button = document.getElementById(id);
+        if (button) {
+            button.title = getKnownStatText(part, null, type, true);
         }
     });
 }
@@ -236,10 +311,17 @@ function updateTooltip() {
 // Variation settings for each part type and armor type
 const variationSettings = {
     core: {
-        APCR: { power: 0.12, cost: 0.0, stability: 0.05 },
-        TAP: { power: 0.10, cost: 0.0, stability: 0.04 },
-        AP: { power: 0.08, cost: 0.0, stability: 0.03 },
-        "Light-AP": { power: 0.06, cost: 0.0, stability: 0.02 }
+        "Solid": {
+            "APCR": { power: 0.12, cost: 0.0, stability: 0.05, explosiveness: 0.0 },
+            "TAP": { power: 0.10, cost: 0.0, stability: 0.04, explosiveness: 0.0 },
+            "AP": { power: 0.08, cost: 0.0, stability: 0.03, explosiveness: 0.0 },
+            "Light-AP": { power: 0.06, cost: 0.0, stability: 0.02, explosiveness: 0.0 }
+        },
+        "Chemical": {
+            "RDX-Based": { power: 0.10, cost: 0.08, stability: 0.12, explosiveness: 0.15 },
+            "TNT-Based": { power: 0.08, cost: 0.06, stability: 0.10, explosiveness: 0.12 },
+            "PETN-Composite": { power: 0.11, cost: 0.09, stability: 0.14, explosiveness: 0.18 }
+        }
     },
     casing: {
         Reinforced: { power: 0.05, cost: 0.0, stability: 0.10 },
@@ -287,11 +369,27 @@ function setVariation(part, type, stat, amount) {
 }
 
 // Function to calculate the effective stat of a component against a specific armor, incorporating variation
-function varyComponentStat(part, type, statKey, armor) {
-    const baseTables = { core: coreStats, casing: casingStats, powder: powderStats };
-    const base = baseTables[part][type][statKey];
-    const variation = variationSettings[part][type][statKey] || 0;
-    const armorFactor = armorVariationMultiplier[part][armor] || 1.0;
+function varyComponentStat(part, categoryOrType, typeOrStat, statKeyOrArmor, armor = null) {
+    let baseTables = { core: coreStats, casing: casingStats, powder: powderStats };
+    let base, variation, armorFactor;
+    
+    if (part === "core") {
+        // For cores: categoryOrType is category, typeOrStat is type, statKeyOrArmor is statKey, armor is armor
+        const category = categoryOrType;
+        const type = typeOrStat;
+        const statKey = statKeyOrArmor;
+        base = coreStats[category][type][statKey];
+        variation = variationSettings[part][category][type][statKey] || 0;
+    } else {
+        // For casing/powder: categoryOrType is type, typeOrStat is statKey, statKeyOrArmor is armor
+        const type = categoryOrType;
+        const statKey = typeOrStat;
+        armor = statKeyOrArmor;
+        base = baseTables[part][type][statKey];
+        variation = variationSettings[part][type][statKey] || 0;
+    }
+    
+    armorFactor = armorVariationMultiplier[part][armor] || 1.0;
     const effectiveVariation = variation * armorFactor;
     const delta = (Math.random() * 2 - 1) * effectiveVariation * Math.max(1, Math.abs(base));
     return Math.max(0, Math.round((base + delta) * 10) / 10);
@@ -303,20 +401,23 @@ function calculateArmorStats(core, casing, powder, armor) {
         "Standard Polar Domain Armor": 1.0,
         "Light Polar Domain Armor": 0.5,
         "Heavy Polar Domain Armor": 1.5,
-        "Polar Domain Civilian Buildings": 0.3,
-        "Polar Domain Military Buildings": 1.8
     };
 
-    const actualCorePower = varyComponentStat("core", core, "power", armor);
+    const actualCorePower = varyComponentStat("core", core.category, core.type, "power", armor);
+    const actualCoreExplosiveness = varyComponentStat("core", core.category, core.type, "explosiveness", armor);
     const actualPowderPower = varyComponentStat("powder", powder, "power", armor);
-    const actualCoreCost = varyComponentStat("core", core, "cost", armor);
+    const actualCoreCost = varyComponentStat("core", core.category, core.type, "cost", armor);
     const actualCasingCost = varyComponentStat("casing", casing, "cost", armor);
     const actualPowderCost = varyComponentStat("powder", powder, "cost", armor);
     const actualCasingStability = varyComponentStat("casing", casing, "stability", armor);
     const actualPowderStability = varyComponentStat("powder", powder, "stability", armor);
 
+    // Explosiveness boosts power by 15%
+    const explosiveBoost = actualCoreExplosiveness * 0.15;
+    
     return {
-        power: Math.round((actualCorePower + actualPowderPower * armorMultiplier[armor]) * 10) / 10,
+        power: Math.round((actualCorePower + actualPowderPower * armorMultiplier[armor] + explosiveBoost) * 10) / 10,
+        explosiveness: Math.round(actualCoreExplosiveness * 10) / 10,
         cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost) * 10) / 10,
         stability: Math.round((actualCasingStability * armorMultiplier[armor] + actualPowderStability * 0.3) * 10) / 10
     };
@@ -332,17 +433,17 @@ function testShell() {
         return;
     }
     armorDurability--;
-    //Caculate the actual stats of the shell against the current armor
+    //Calculate the actual stats of the shell against the current armor
     let actualStats = calculateArmorStats(core, casing, powder, currentArmor);
 
 
     //Store Knowledge for this part and armor
-   knownStats.core[core][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
+   knownStats.core[core.category][core.type][currentArmor] = { power:actualStats.power, explosiveness:actualStats.explosiveness, cost:actualStats.cost, stability:actualStats.stability };
    knownStats.casing[casing][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
    knownStats.powder[powder][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
   
   //Show results of the test
-  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
+  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
     document.getElementById("testResult").innerText = resultText;
 
     updateDisplay();
@@ -352,7 +453,7 @@ function testShell() {
 
 // Function to recover a new armor sample
 function getNewArmor() {
-    let armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
+    let armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
     currentArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
     armorDurability = 4; // Reset durability for new armor
 
@@ -384,6 +485,7 @@ let description;
             requiredPower = order.requiredPower;
             maxCost = order.maxCost;
             requiredStability = order.requiredStability;
+            requiredExplosiveness = order.requiredExplosiveness;
             
             failedOrders.splice(index, 1); // Remove from memory
             orderSinceLastFailure = 0; // Reset counter after using a failed order
@@ -392,7 +494,8 @@ let description;
                 "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
                 "Power ≥ " + requiredPower +
                 " | Cost ≤ " + maxCost +
-                " | Stability ≥ " + requiredStability;
+                " | Stability ≥ " + requiredStability +
+                " | Explosiveness ≥ " + requiredExplosiveness;
             orderSinceLastFailure = 0; // Reset counter after using a failed order
         } else {
         
@@ -400,6 +503,7 @@ let description;
     let pMin = 6, pMax = 10;
     let cMin = 3, cMax = 7;
     let sMin = 2, sMax = 4;
+    let eMin = 0, eMax = 5;
     
     // Randomly choose a description
     let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
@@ -421,15 +525,30 @@ let description;
         cMin -= 2;
         cMax -= 2; // Decrease cost requirement for cost-effective orders
     }
-    if(description.includes("Stable") || description.includes("Wont break") || description.includes("Wont shatter") || description.includes("High Impact")) {
+    if(description.includes("Stable") || description.includes("Not break") || description.includes("Wont shatter") || description.includes("High Impact")) {
         sMin += 1;
         sMax += 1; // Increase stability requirement for stable/long-range orders
+    }
+    if(description.includes("Civilian Buildings")) {
+        eMin += 6;
+        eMax += 15; // Increase explosiveness requirement for civilian buildings
+        sMin += 2;
+        sMax += 2; // Increase stability requirement for civilian buildings
+    }
+    if(description.includes("Military Buildings") || description.includes("Bunker Buster")) {
+        eMin += 0;
+        eMax += 8; // Moderate explosiveness requirement for military targets
+        pMin += 6;
+        pMax += 15; // Increase power requirement for military buildings
+        sMin += 6;
+        sMax += 12; // Increase stability requirement for military buildings
     }
 
     // Clamp values to ensure they stay within reasonable bounds
     pMin = Math.max(0, pMin); pMax = Math.max(pMin, pMax);
     cMin = Math.max(0, cMin); cMax = Math.max(cMin, cMax);
     sMin = Math.max(0, sMin); sMax = Math.max(sMin, sMax);
+    eMin = Math.max(0, eMin); eMax = Math.max(eMin, eMax);
 
     // Some orders are intentionally impossible: either unrealistic power targets or cost caps.
     if (Math.random() < 0.25) {
@@ -446,6 +565,8 @@ let description;
 
     requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
 
+    requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
+
     currentOrderDescription = description;
 
     //Pick a random description for the order
@@ -453,7 +574,8 @@ let description;
     description + "\n\n" +
         "Power ≥ " + requiredPower +
         " | Cost ≤ " + maxCost +
-        " | Stability ≥ " + requiredStability;
+        " | Stability ≥ " + requiredStability +
+        " | Explosiveness ≥ " + requiredExplosiveness;
     }
 }
 
@@ -462,10 +584,17 @@ generateOrder();
 
 // Stats for each part
 const coreStats = {
-    "APCR": {power:5, cost:3, stability:0},
-    "TAP": {power:4.5, cost:2.5, stability:0},
-    "AP": {power:3, cost:2, stability:0},
-    "Light-AP": {power:2, cost:1, stability:0}
+    "Solid": {
+        "APCR": {power:5, cost:3, stability:0, explosiveness:0},
+        "TAP": {power:4.5, cost:2.5, stability:0, explosiveness:0},
+        "AP": {power:3, cost:2, stability:0, explosiveness:0},
+        "Light-AP": {power:2, cost:1, stability:0, explosiveness:0}
+    },
+    "Chemical": {
+        "RDX-Based": {power:2.5, cost:2.5, stability:-2, explosiveness:7},
+        "TNT-Based": {power:2, cost:1.5, stability:-1, explosiveness:5},
+        "PETN-Composite": {power:3, cost:3.5, stability:-3, explosiveness:8}
+    }
 };
 
 const casingStats = {
@@ -487,57 +616,102 @@ function clampStats() {
     power = Math.max(0, power);
     cost = Math.max(0, cost);
     stability = Math.max(0, stability);
+    explosiveness = Math.max(0, explosiveness);
 }
 
 // Update display
 function updateDisplay() {
+    const coreDisplay = core ? `${core.category} - ${core.type}` : "None";
     document.getElementById("build").innerText =
-        "Core: " + (core ? core : "None") +
+        "Core: " + coreDisplay +
         " | Casing: " + (casing ? casing : "None") +
         " | Powder: " + (powder ? powder : "None");
 
+    const coreInfo = core ? getKnownStatText("core", core.category, core.type) : "None";
+    const casingInfo = casing ? getKnownStatText("casing", null, casing) : "None";
+    const powderInfo = powder ? getKnownStatText("powder", null, powder) : "None";
+    
     document.getElementById("stats").innerText =
-        "Core Info:\n " + (core ? getKnownStatText("core", core) : "None") + "\n" +
-        "Casing Info:\n " + (casing ? getKnownStatText("casing", casing) : "None") + "\n" +
-        "Powder Info:\n " + (powder ? getKnownStatText("powder", powder) : "None");
+        "Core Info:\n " + coreInfo + "\n" +
+        "Casing Info:\n " + casingInfo + "\n" +
+        "Powder Info:\n " + powderInfo;
 }
 function updateArmorDatabase() {
     let text = "";
     let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
     armors.forEach(armor => {
         text += `=== ${armor} ===\n`;
-        ["core", "casing", "powder"].forEach(part => {
-            Object.keys(knownStats[part]).forEach(type => {
-                let stat = knownStats[part][type][armor];
-
-                if (stat) {
-                    text += `${part}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-                } else {
-                    text += `${part}: ???\n`;
-                }
-            });
+        
+        // Solid Cores
+        text += "Solid Cores:\n";
+        ["APCR", "TAP", "AP", "Light-AP"].forEach(type => {
+            let stat = knownStats.core["Solid"][type][armor];
+            if (stat) {
+                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+            } else {
+                text += `${type}: ???\n`;
+            }
         });
+        
+        // Chemical Cores
+        text += "Chemical Cores:\n";
+        ["RDX-Based", "TNT-Based", "PETN-Composite"].forEach(type => {
+            let stat = knownStats.core["Chemical"][type][armor];
+            if (stat) {
+                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+            } else {
+                text += `${type}: ???\n`;
+            }
+        });
+        
+        // Casings
+        text += "Casings:\n";
+        ["Reinforced", "High-Carbon", "Standard", "Low-Carbon"].forEach(type => {
+            let stat = knownStats.casing[type][armor];
+            if (stat) {
+                text += `${type}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+            } else {
+                text += `${type}: ???\n`;
+            }
+        });
+        
+        // Powders
+        text += "Powders:\n";
+        ["Fine-Powder", "Semi-Fine-Powder", "Coarse-Powder", "Unrefined-Powder"].forEach(type => {
+            let stat = knownStats.powder[type][armor];
+            if (stat) {
+                text += `${type}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
+            } else {
+                text += `${type}: ???\n`;
+            }
+        });
+        
         text += "\n";
     });
     document.getElementById("ArmorDatabase").innerText = text;
 }
 
 // Core selection
-function selectCore(type) {
+function selectCore(category, type) {
     // Remove old stats
     if(core) {
-        power -= coreStats[core].power;
-        cost -= coreStats[core].cost;
-        stability -= coreStats[core].stability;
+        const oldCategory = core.category;
+        const oldType = core.type;
+        power -= coreStats[oldCategory][oldType].power;
+        cost -= coreStats[oldCategory][oldType].cost;
+        stability -= coreStats[oldCategory][oldType].stability;
+        explosiveness -= coreStats[oldCategory][oldType].explosiveness;
     }
 
     // Assign new core
-    core = type;
+    core = { category, type };
 
-    // Add new stats
-    power += coreStats[type].power;
-    cost += coreStats[type].cost;
-    stability += coreStats[type].stability;
+    // Add new stats and apply explosiveness boost to power
+    const explosiveBoost = coreStats[category][type].explosiveness * 0.15; // 15% of explosiveness adds to power
+    power += coreStats[category][type].power + explosiveBoost;
+    cost += coreStats[category][type].cost;
+    stability += coreStats[category][type].stability;
+    explosiveness += coreStats[category][type].explosiveness;
 
     clampStats();
     updateDisplay();
@@ -596,13 +770,17 @@ function submitDesign() {
     if (stability < requiredStability) {
         failures.push("Shell Stability is too low.");
     }
+    if (explosiveness < requiredExplosiveness) {
+        failures.push("Not enough explosiveness.");
+    }
     if (failures.length > 0) {
         // Store failed order details for potential reuse
         failedOrders.push({
             description: currentOrderDescription,
             requiredPower,
             maxCost,
-            requiredStability
+            requiredStability,
+            requiredExplosiveness
         });
         orderSinceLastFailure = 0; // Reset counter on failure
     }
@@ -640,10 +818,19 @@ showTabContent('core');
 function showTabContent(tab) {
     if (tab === 'core') {
     tabContent.innerHTML = `
-    <button onclick="selectCore('APCR')" id="heavyCoreBtn">Tungsten Carbide Core</button>
-    <button onclick="selectCore('TAP')" id="tungstenAPBtn">Tungsten Core</button>
-    <button onclick="selectCore('AP')" id="mediumCoreBtn">Hardened Steel Core</button>
-    <button onclick="selectCore('Light-AP')" id="lightCoreBtn">Low-Carbon Steel Core</button>
+    <div style="margin-bottom: 15px;">
+        <h4 style="margin: 5px 0; color: #333;">Solid Cores</h4>
+        <button onclick="selectCore('Solid', 'APCR')" id="heavyCoreBtn">Tungsten Carbide Core</button>
+        <button onclick="selectCore('Solid', 'TAP')" id="tungstenAPBtn">Tungsten Core</button>
+        <button onclick="selectCore('Solid', 'AP')" id="mediumCoreBtn">Hardened Steel Core</button>
+        <button onclick="selectCore('Solid', 'Light-AP')" id="lightCoreBtn">Low-Carbon Steel Core</button>
+    </div>
+    <div>
+        <h4 style="margin: 5px 0; color: #333;">Chemical Cores</h4>
+        <button onclick="selectCore('Chemical', 'RDX-Based')" id="rdxBtn">RDX-Based Core</button>
+        <button onclick="selectCore('Chemical', 'TNT-Based')" id="tntBtn">TNT-Based Core</button>
+        <button onclick="selectCore('Chemical', 'PETN-Composite')" id="petnBtn">PETN-Composite Core</button>
+    </div>
     `;
     }
 
