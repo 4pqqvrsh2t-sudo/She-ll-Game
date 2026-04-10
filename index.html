@@ -193,6 +193,133 @@
     color: #333;
     line-height: 1.6;
 }
+
+/* Tech Tree Styles */
+.tech-tree-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.tech-tree-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tech-tree-section h3 {
+    background: linear-gradient(135deg, #7eb8d4, #9d7bb8);
+    color: white;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 0;
+}
+
+.tree-root {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.tree-level {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.tech-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-width: 120px;
+}
+
+.tech-item {
+    background: #e8f4ff;
+    border: 2px solid #7eb8d4;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    position: relative;
+    z-index: 2;
+}
+
+.tech-item:hover:not(.locked) {
+    background: #c5e4f7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tech-item.locked {
+    background: #ddd;
+    border-color: #999;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tech-item.unlocked {
+    background: #c8e6c9;
+    border-color: #4caf50;
+}
+
+.tech-item-name {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.tech-item-status {
+    font-size: 11px;
+    color: #666;
+}
+
+.tech-item.locked .tech-item-status {
+    color: #999;
+}
+
+.tech-item.unlocked .tech-item-status {
+    color: #2e7d32;
+}
+
+/* Tree connector lines */
+.tree-connector {
+    width: 2px;
+    height: 20px;
+    background: #7eb8d4;
+    margin: 0 auto;
+    position: relative;
+}
+
+.tree-horizontal {
+    position: absolute;
+    height: 2px;
+    background: #7eb8d4;
+    top: -20px;
+}
+
+.items-container {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
     </style>
 </head>
 
@@ -216,6 +343,9 @@
 
       <h3>Database</h3>
       <button onclick="openDatabaseModal()" style="padding: 10px 20px; background: #7eb8d4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">Database</button>
+
+      <h3>R&D</h3>
+      <button onclick="openTechTreeModal()" style="padding: 10px 20px; background: #9d7bb8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">R&D Tree</button>
 
       <h3>Test Shell</h3>
       <button onclick="testShell()">Test Shell</button>
@@ -258,6 +388,19 @@
         </div>
         <div class="modal-body" id="modalDatabaseContent">
             No data yet. Test shells to learn about enemy armor!
+        </div>
+    </div>
+</div>
+
+<!-- Tech Tree Modal -->
+<div id="techTreeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>R&D Tech Tree</h2>
+            <button class="close-btn" onclick="closeTechTreeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="techTreeContent">
+            <!-- Tech tree will be populated by JavaScript -->
         </div>
     </div>
 </div>
@@ -348,6 +491,125 @@ let knownStats = {
         "Unrefined-Powder": {}
     }
 };
+
+// Tech Tree Unlock System
+let unlockedTechTree = {
+    cores: {
+        "Solid": {
+            "APCR": true,
+            "TAP": true,
+            "APHE": true,
+            "AP": true,  // Starter
+            "Light-AP": true  // Starter
+        },
+        "Chemical": {
+            "RDX-Based": true,
+            "TNT-Based": true,
+            "PETN-Composite": true
+        }
+    },
+    casings: {
+        "Reinforced": true,
+        "High-Carbon": true,
+        "Standard": true,  // Starter
+        "Low-Carbon": true  // Starter
+    },
+    powders: {
+        "Fine-Powder": true,
+        "Semi-Fine-Powder": true,  // Starter
+        "Coarse-Powder": true,  // Starter
+        "Unrefined-Powder": true  // Starter
+    }
+};
+
+// Tech Tree Requirements - what needs to be discovered to unlock each item
+const techTreeRequirements = {
+    cores: {
+        "Solid": {
+            "APCR": ["Light-AP"],
+            "TAP": ["AP"],
+            "APHE": ["AP"],
+            "AP": ["Light-AP"],
+            "Light-AP": []  // No requirements, starter
+        },
+        "Chemical": {
+            "RDX-Based": ["Light-AP", "Standard"],
+            "TNT-Based": ["Light-AP"],
+            "PETN-Composite": ["RDX-Based"]
+        }
+    },
+    casings: {
+        "Reinforced": ["Standard", "High-Carbon"],
+        "High-Carbon": ["Standard"],
+        "Standard": [],  // No requirements, starter
+        "Low-Carbon": []  // No requirements, starter
+    },
+    powders: {
+        "Fine-Powder": ["Coarse-Powder", "Semi-Fine-Powder"],
+        "Semi-Fine-Powder": ["Coarse-Powder"],
+        "Coarse-Powder": [],  // No requirements, starter
+        "Unrefined-Powder": []  // No requirements, starter
+    }
+};
+
+// Check if an item is unlocked
+function isTechUnlocked(partType, category, itemName) {
+    if (partType === "cores") {
+        return unlockedTechTree.cores[category][itemName];
+    } else if (partType === "casings") {
+        return unlockedTechTree.casings[itemName];
+    } else if (partType === "powders") {
+        return unlockedTechTree.powders[itemName];
+    }
+    return false;
+}
+
+// Check if requirements are met for an item
+function areRequirementsMet(partType, category, itemName) {
+    let requirements;
+    if (partType === "cores") {
+        requirements = techTreeRequirements.cores[category][itemName];
+    } else if (partType === "casings") {
+        requirements = techTreeRequirements.casings[itemName];
+    } else if (partType === "powders") {
+        requirements = techTreeRequirements.powders[itemName];
+    }
+
+    if (!requirements || requirements.length === 0) return true;
+
+    // For cores, requirements are checked across all categories
+    if (partType === "cores") {
+        return requirements.every(req => {
+            return Object.values(unlockedTechTree.cores).some(catItems => catItems[req]);
+        });
+    } else {
+        return requirements.every(req => unlockedTechTree[partType][req]);
+    }
+}
+
+// Unlock tech based on discovery (when testing)
+function unlockTechBasedOnTest() {
+    if (core) {
+        const isUnlocked = unlockedTechTree.cores[core.category][core.type];
+        if (!isUnlocked && areRequirementsMet("cores", core.category, core.type)) {
+            unlockedTechTree.cores[core.category][core.type] = true;
+        }
+    }
+    if (casing) {
+        const isUnlocked = unlockedTechTree.casings[casing];
+        if (!isUnlocked && areRequirementsMet("casings", null, casing)) {
+            unlockedTechTree.casings[casing] = true;
+        }
+    }
+    if (powder) {
+        const isUnlocked = unlockedTechTree.powders[powder];
+        if (!isUnlocked && areRequirementsMet("powders", null, powder)) {
+            unlockedTechTree.powders[powder] = true;
+        }
+    }
+    updateTechTreeDisplay();
+}
+
 
 // New version that shows all armors with ??? for unknown ones
 function getKnownStatText(partType, partCategory, partName, forTooltip = false) {
@@ -571,6 +833,7 @@ function testShell() {
     updateDisplay();
     updateTooltip();
     updateArmorDatabase();
+    unlockTechBasedOnTest();  // Unlock tech items based on testing
 }
 
 // Function to recover a new armor sample
@@ -994,11 +1257,181 @@ function closeDatabaseModal() {
     document.getElementById("databaseModal").classList.remove("show");
 }
 
+// Tech Tree Modal Functions
+function openTechTreeModal() {
+    updateTechTreeDisplay();
+    document.getElementById("techTreeModal").classList.add("show");
+}
+
+function closeTechTreeModal() {
+    document.getElementById("techTreeModal").classList.remove("show");
+}
+
+function updateTechTreeDisplay() {
+    const container = document.getElementById("techTreeContent");
+    let html = '<div class="tech-tree-container">';
+
+    // Solid Cores Tree
+    html += '<div class="tech-tree-section">';
+    html += '<h3>Solid Cores</h3>';
+    html += '<div class="tree-root">';
+    
+    // Root level: AP and Light-AP
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("Solid", "AP", unlockedTechTree.cores["Solid"]["AP"], [], true);
+    html += '</div>';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("Solid", "Light-AP", unlockedTechTree.cores["Solid"]["Light-AP"], [], true);
+    html += '</div>';
+    
+    html += '</div>'; // Close tree-root
+    
+    // Second level
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("Solid", "APHE", unlockedTechTree.cores["Solid"]["APHE"], ["AP"], false);
+    html += '</div>';
+    
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("Solid", "TAP", unlockedTechTree.cores["Solid"]["TAP"], ["AP"], false);
+    html += '</div>';
+    
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("Solid", "APCR", unlockedTechTree.cores["Solid"]["APCR"], ["Light-AP"], false);
+    html += '</div>';
+    html += '</div>'; // Close tree-level
+    
+    html += '</div>'; // Close section
+
+    // Chemical Cores Tree
+    html += '<div class="tech-tree-section">';
+    html += '<h3>Chemical Cores</h3>';
+    html += '<div class="tree-root">';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("Chemical", "TNT-Based", unlockedTechTree.cores["Chemical"]["TNT-Based"], ["Light-AP"], false);
+    html += '</div>';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("Chemical", "RDX-Based", unlockedTechTree.cores["Chemical"]["RDX-Based"], ["Light-AP"], false);
+    html += '</div>';
+    
+    html += '</div>';
+    
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("Chemical", "PETN-Composite", unlockedTechTree.cores["Chemical"]["PETN-Composite"], ["RDX-Based"], false);
+    html += '</div>';
+    html += '</div>';
+    
+    html += '</div>'; // Close section
+
+    // Casings Tree
+    html += '<div class="tech-tree-section">';
+    html += '<h3>Casings</h3>';
+    html += '<div class="tree-root">';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("casing", "Standard", unlockedTechTree.casings["Standard"], [], true);
+    html += '</div>';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("casing", "Low-Carbon", unlockedTechTree.casings["Low-Carbon"], [], true);
+    html += '</div>';
+    
+    html += '</div>';
+    
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("casing", "High-Carbon", unlockedTechTree.casings["High-Carbon"], ["Standard"], false);
+    html += '</div>';
+    html += '</div>';
+    
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("casing", "Reinforced", unlockedTechTree.casings["Reinforced"], ["Standard", "High-Carbon"], false);
+    html += '</div>';
+    html += '</div>';
+    
+    html += '</div>'; // Close section
+
+    // Powders Tree
+    html += '<div class="tech-tree-section">';
+    html += '<h3>Powders</h3>';
+    html += '<div class="tree-root">';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("powder", "Coarse-Powder", unlockedTechTree.powders["Coarse-Powder"], [], true);
+    html += '</div>';
+    
+    html += '<div class="tech-node">';
+    html += createTechItemHTML("powder", "Unrefined-Powder", unlockedTechTree.powders["Unrefined-Powder"], [], true);
+    html += '</div>';
+    
+    html += '</div>';
+    
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("powder", "Semi-Fine-Powder", unlockedTechTree.powders["Semi-Fine-Powder"], ["Coarse-Powder"], false);
+    html += '</div>';
+    html += '</div>';
+    
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node">';
+    html += '<div class="tree-connector"></div>';
+    html += createTechItemHTML("powder", "Fine-Powder", unlockedTechTree.powders["Fine-Powder"], ["Coarse-Powder", "Semi-Fine-Powder"], false);
+    html += '</div>';
+    html += '</div>';
+    
+    html += '</div>'; // Close section
+
+    html += '</div>'; // Close container
+    container.innerHTML = html;
+}
+
+function createTechItemHTML(category, itemName, unlocked, requirements, isStarter = false) {
+    let status = "🔒 Locked";
+    let statusClass = "locked";
+
+    if (unlocked) {
+        status = isStarter ? "⭐ Starter" : "✓ Unlocked";
+        statusClass = "unlocked";
+    } else if (requirements.length === 0 || areRequirementsMet(getCategoryType(category), category === "Solid" || category === "Chemical" ? category : null, itemName)) {
+        status = "🔓 Ready";
+    }
+
+    return `
+        <div class="tech-item ${statusClass}">
+            <div class="tech-item-name">${itemName}</div>
+            <div class="tech-item-status">${status}</div>
+        </div>
+    `;
+}
+
+function getCategoryType(category) {
+    if (category === "Solid" || category === "Chemical") return "cores";
+    if (category === "casing") return "casings";
+    if (category === "powder") return "powders";
+    return category;
+}
+
 // Close modal when clicking outside of it
 window.onclick = function(event) {
-    const modal = document.getElementById("databaseModal");
-    if (event.target === modal) {
+    const databaseModal = document.getElementById("databaseModal");
+    const techTreeModal = document.getElementById("techTreeModal");
+    if (event.target === databaseModal) {
         closeDatabaseModal();
+    }
+    if (event.target === techTreeModal) {
+        closeTechTreeModal();
     }
 }
 </script>
