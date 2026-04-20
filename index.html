@@ -3,72 +3,99 @@
 <head>
     <title>She-ll Designer v0.3.5</title>
     <style>
+/*
+ * TAB BAR — the narrow vertical strip on the LEFT of the parts panel.
+ * It's a flex column so each .tab stacks top-to-bottom.
+ * width is fixed at 34px to match the tab buttons.
+ * z-index:1 keeps it above the content box so the overlap shadow shows.
+ */
+.tab-bar {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 34px;
+    position: relative;
+    z-index: 1;
+}
+
+/*
+ * INDIVIDUAL TAB — styled like a plastic notebook divider tab.
+ *
+ * Key tricks used here:
+ *   writing-mode: vertical-rl + rotate(180deg)  →  rotates the text to read bottom-to-top
+ *   border-right: none                           →  open right edge connects flush to content box
+ *   border-radius: 8px 0 0 8px                  →  rounded on the LEFT only (outer edge)
+ *   margin-bottom: -10px                        →  negative margin makes each tab OVERLAP the next,
+ *                                                  creating the stacked notebook-divider effect
+ *   position: relative + z-index on each child  →  controls which tab appears ON TOP of the others
+ */
 .tab {
-    position: absolute;
-    right: 0;
-    width: 170px;
-    min-height: 44px;
-    padding: 0 18px;
+    width: 34px;
+    min-height: 60px;
+    padding: 10px 6px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    /* No rotation — vertical-rl alone reads top-to-bottom, which is correct */
     background: #f2e6bc;
     color: #111;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 700;
     border: 1px solid #c6b78c;
-    border-left: none;
-    border-radius: 0 10px 10px 0;
-    clip-path: polygon(0 0, 94% 0, 100% 50%, 94% 100%, 0 100%);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    cursor: pointer;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    transition: background 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    position: relative;
+    margin-bottom: -10px;
+    box-shadow: none;
 }
 
-.tab::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 0;
-    bottom: 0;
-    width: 8px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 0 0 0 0;
-    pointer-events: none;
-}
+/* Each tab gets its own colour and sits behind the one above it */
+.tab:nth-child(1) { z-index: 3; background: #f8c1c0; border-color: #e0a0a0; }
+.tab:nth-child(2) { z-index: 2; background: #9fc6f7; border-color: #7aaad4; }
+.tab:nth-child(3) { z-index: 1; background: #a7e3b8; border-color: #7ac49a; }
 
-.tab:nth-child(1) { top: 0; z-index: 3; background: #f8c1c0; }
-.tab:nth-child(2) { top: 28px; z-index: 2; background: #9fc6f7; }
-.tab:nth-child(3) { top: 56px; z-index: 1; background: #a7e3b8; }
-
+/*
+ * ACTIVE TAB — jumps to z-index 10 so it always renders on top.
+ * margin-right: -1px bleeds it 1px into the content box border,
+ * hiding the gap and making it look like one connected card.
+ */
 .tab.activate {
-    transform: translateX(0);
-    z-index: 10;
     background: #ffec95;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+    border-color: #c6b78c;
+    box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.18);
+    z-index: 10;
+    margin-right: -1px;
 }
 
 .tab:not(.activate) {
-    transform: translateX(10px);
-    opacity: 0.98;
+    opacity: 0.8;
 }
 
 .tab:hover {
-    transform: translateX(0);
+    opacity: 1;
+    filter: brightness(1.06);
 }
 
+/*
+ * PART TABS WRAPPER — flex row so .tab-bar sits LEFT and #tabContent sits RIGHT.
+ * align-items: stretch makes the content box fill the same height as the tab strip.
+ */
 #partTabs {
     position: relative;
     width: 100%;
-    min-height: 130px;
+    display: flex;
+    flex-direction: row;
     padding: 0;
     background: transparent;
     border: none;
-    border-radius: 0;
     box-shadow: none;
     overflow: visible;
+    align-items: stretch;
 }
 
 #tabContent button {
@@ -194,32 +221,129 @@
     line-height: 1.6;
 }
 
-/* Tech Tree Styles */
+/*
+ * TECH TREE MODAL — full-screen override.
+ * We override the shared .modal.show padding and centering so the
+ * tech tree content fills every pixel of the viewport, KSP-style.
+ */
+#techTreeModal.show {
+    padding: 0;
+    align-items: stretch;
+    background-color: rgba(0, 0, 0, 0.92);
+}
+
+#techTreeModal .modal-content {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+    background: #0e1a1f;
+    box-shadow: none;
+}
+
+#techTreeModal .modal-header {
+    background: #0e1a1f;
+    border-bottom: 2px solid #2a4a3a;
+    padding: 14px 24px;
+}
+
+#techTreeModal .modal-header h2 {
+    color: #7fffd4;
+    font-family: monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+/* The scrollable body where the tree nodes live */
+#techTreeModal .modal-body {
+    background: #0e1a1f;
+    color: #c8e6c9;
+    font-family: monospace;
+    overflow: auto;
+    padding: 40px 60px;
+    white-space: normal;
+}
+
+/* ── Tech Tree Layout ── */
+
+/*
+ * Outer wrapper: sections stack top-to-bottom so the player scrolls DOWN.
+ * Each section is an accordion — click the header to expand/collapse it.
+ */
 .tech-tree-container {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 12px;
+    align-items: stretch;
+    padding-bottom: 40px;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
+/* Each section (Solid Cores, Chemical Cores, Casings, Powders) */
 .tech-tree-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-.tech-tree-section h3 {
-    background: linear-gradient(135deg, #7eb8d4, #9d7bb8);
-    color: white;
-    padding: 12px;
+    gap: 0;
+    border: 1px solid #2a4a3a;
     border-radius: 6px;
-    margin: 0;
+    overflow: hidden;
 }
 
+/*
+ * Section heading — acts as the clickable toggle button.
+ * The ▶/▼ arrow is set via CSS ::after so it flips when collapsed.
+ */
+.tech-tree-section h3 {
+    background: linear-gradient(135deg, #1a3a2a, #0d2a20);
+    color: #7fffd4;
+    padding: 14px 20px;
+    margin: 0;
+    border: none;
+    font-family: monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 14px;
+    text-align: left;
+    box-shadow: 0 0 8px rgba(127, 255, 212, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+}
+
+.tech-tree-section h3::after {
+    content: "▼";
+    font-size: 11px;
+    transition: transform 0.2s ease;
+}
+
+/* When collapsed, flip the arrow to ▶ and hide the tree content */
+.tech-tree-section.collapsed h3::after {
+    transform: rotate(-90deg);
+}
+
+.tech-tree-section-body {
+    padding: 20px;
+    background: #0a1510;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.tech-tree-section.collapsed .tech-tree-section-body {
+    display: none;
+}
+
+/* Root row — the starter nodes */
 .tree-root {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     justify-content: center;
-    margin: 20px 0;
     flex-wrap: wrap;
 }
 
@@ -227,81 +351,108 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
 }
 
+/* Each subsequent level of nodes */
 .tree-level {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
     width: 100%;
 }
 
+/* Wrapper around a single node + its connector line */
 .tech-node {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    min-width: 120px;
+    min-width: 130px;
 }
 
+/* ── Individual node card ── */
 .tech-item {
-    background: #e8f4ff;
-    border: 2px solid #7eb8d4;
-    border-radius: 8px;
-    padding: 12px;
+    background: #122a1e;
+    border: 2px solid #2a6a4a;
+    border-radius: 6px;
+    padding: 12px 14px;
     text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 120px;
+    cursor: default;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    min-width: 130px;
     position: relative;
     z-index: 2;
 }
 
 .tech-item:hover:not(.locked) {
-    background: #c5e4f7;
+    border-color: #7fffd4;
+    box-shadow: 0 0 12px rgba(127, 255, 212, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Locked node — dark and muted */
 .tech-item.locked {
-    background: #ddd;
-    border-color: #999;
-    color: #666;
-    cursor: not-allowed;
-    opacity: 0.6;
+    background: #0a1510;
+    border-color: #1e3a28;
+    color: #3a5a48;
+    opacity: 0.7;
 }
 
+/* Unlocked node — bright green glow */
 .tech-item.unlocked {
-    background: #c8e6c9;
+    background: #0d2e1e;
     border-color: #4caf50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.25);
 }
 
 .tech-item-name {
     font-weight: bold;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     font-size: 12px;
+    color: #a8e6c8;
+    letter-spacing: 0.5px;
+}
+
+.tech-item.locked .tech-item-name {
+    color: #3a5a48;
 }
 
 .tech-item-status {
     font-size: 11px;
-    color: #666;
+    color: #5a9a78;
 }
 
 .tech-item.locked .tech-item-status {
-    color: #999;
+    color: #2a4a38;
 }
 
 .tech-item.unlocked .tech-item-status {
-    color: #2e7d32;
+    color: #4caf50;
 }
 
-/* Tree connector lines */
+/* Cost line shown on each tech node card — dimmer than the status */
+.tech-item-cost {
+    font-size: 10px;
+    color: #4a7a60;
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+}
+
+.tech-item.locked .tech-item-cost {
+    color: #2a4a38;
+}
+
+.tech-item.unlocked .tech-item-cost {
+    color: #2e6a30;
+}
+
+/* Vertical connector line between levels */
 .tree-connector {
     width: 2px;
     height: 20px;
-    background: #7eb8d4;
+    background: linear-gradient(to bottom, #2a6a4a, #4caf5088);
     margin: 0 auto;
     position: relative;
 }
@@ -309,31 +460,151 @@
 .tree-horizontal {
     position: absolute;
     height: 2px;
-    background: #7eb8d4;
+    background: #2a6a4a;
     top: -20px;
 }
 
 .items-container {
     display: flex;
-    gap: 40px;
+    gap: 30px;
     justify-content: center;
     flex-wrap: wrap;
     width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOP REQUEST BAR
+   Full-width bar pinned to the top of the viewport.
+   The R&D button is a "tab" that hangs below the bar's bottom edge
+   using position:absolute + bottom: negative value.
+   ═══════════════════════════════════════════════════════════════ */
+.top-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #2a1f0e;
+    border-bottom: 3px solid #7a5c28;
+    padding: 10px 20px;
+    min-height: 64px;
+    flex-shrink: 0;       /* won't shrink when the panels need height */
+    position: relative;   /* needed so the hanging tab can use absolute positioning */
+    z-index: 20;          /* stays above the panels below it */
+    overflow: visible;    /* lets the hanging tab bleed past the bar's bottom */
+}
+
+.top-bar-label {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #8a6a30;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* The request text — truncates with … if too long */
+#topRequest {
+    flex: 1;
+    font-size: 13px;
+    color: #f0d9a0;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: sans-serif;
+}
+
+/* RP and money counters on the right side of the bar */
+.top-bar-counters {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-family: monospace;
+    font-size: 12px;
+    color: #8a9aaa;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-right: 110px; /* leave room for the hanging tab so they don't overlap */
+}
+
+.top-bar-counters .counter-val {
+    font-weight: bold;
+    color: #7fffd4;
+}
+
+/*
+ * The hanging R&D tab.
+ * bottom: -34px pulls it 34px below the bar's bottom edge.
+ * border-top: none makes it look like it's attached to the bar.
+ * border-radius only on the bottom corners gives the folder-tab shape.
+ */
+.rnd-tab {
+    position: absolute;
+    bottom: -34px;
+    right: 30px;
+    background: #3a2060;
+    color: #c8a8ff;
+    border: 2px solid #7a4ab8;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 7px 22px;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    z-index: 21;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+    text-transform: uppercase;
+}
+
+.rnd-tab:hover {
+    background: #5a3a9a;
 }
     </style>
 </head>
 
 <body style="margin:0; font-family:sans-serif; background:#dd9a4dba;">
-<div style="display:flex; height:100vh; min-width:0;">
+
+<!--
+  Outer wrapper: flex COLUMN so the top bar stacks above the panels.
+  height:100vh locks the whole game to the screen height.
+-->
+<div style="display:flex; flex-direction:column; height:100vh; min-width:0; overflow:hidden;">
+
+  <!-- ═══ TOP REQUEST BAR ═══════════════════════════════════════════════════
+       Shows the current active order from Command.
+       RP and money counters sit on the right.
+       The R&D tab hangs below the bar's bottom edge via absolute positioning.
+  ════════════════════════════════════════════════════════════════════════ -->
+  <div class="top-bar">
+    <span class="top-bar-label">Order</span>
+    <!-- id="request" kept for backward-compat with JS that writes to it -->
+    <p id="request" style="flex:1; font-size:13px; color:#f0d9a0; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0; padding:0; background:none; border:none;"></p>
+
+    <!-- Research Points and Money — groundwork display (values set by JS) -->
+    <div class="top-bar-counters">
+      <span>RP: <span class="counter-val" id="rpDisplay">0</span></span>
+      <span>₵ <span class="counter-val" id="moneyDisplay">1000</span></span>
+    </div>
+
+    <!-- R&D tab: hangs below the bar via bottom:-34px absolute position -->
+    <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
+  </div>
+
+  <!-- ═══ MAIN ROW — panels sit below the top bar, fill remaining height ══ -->
+  <div style="display:flex; flex:1; min-height:0; overflow:hidden;">
 
   <!-- LEFT PANEL -->
   <div style="width:320px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; padding:10px; background:#ccc; box-sizing:border-box; flex-shrink:0;">
     <div style="width:100%; background:#9daaacba; padding:10px; display:flex; flex-direction:column; gap:10px; box-sizing:border-box;">
       <h1>She-ll Designer v0.3.5</h1>
       <p>Design tank shells and other munitions to meet the demands of the frontline! Test your designs against enemy armor and learn their weaknesses to improve your shells. Can you make the Federation's best ammunition?</p>
-
-      <h3>Request</h3>
-      <p id="request" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
 
       <h3>Current Build</h3>
       <p id="build" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
@@ -343,9 +614,6 @@
 
       <h3>Database</h3>
       <button onclick="openDatabaseModal()" style="padding: 10px 20px; background: #7eb8d4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">Database</button>
-
-      <h3>R&D</h3>
-      <button onclick="openTechTreeModal()" style="padding: 10px 20px; background: #9d7bb8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">R&D Tree</button>
 
       <h3>Test Shell</h3>
       <button onclick="testShell()">Test Shell</button>
@@ -369,15 +637,20 @@
     <h3>Parts</h3>
     <!-- Tabs -->
     <div id="partTabs">
-        <button class="tab activate" data-tab="core">Core</button>
-        <button class="tab" data-tab="casing">Casing</button>
-        <button class="tab" data-tab="powder">Powder</button>
+        <div class="tab-bar">
+            <button class="tab activate" data-tab="core">Core</button>
+            <button class="tab" data-tab="casing">Casing</button>
+            <button class="tab" data-tab="powder">Powder</button>
+        </div>
 
         <!-- Content Area -->
-        <div id="tabContent" style="margin-top:92px; width:100%; background:#fff; padding:10px; border:1px solid #ccc; box-sizing:border-box; border-radius: 12px;">
+        <div id="tabContent" style="flex:1; background:#fff; padding:10px; border:1px solid #c6b78c; border-left:none; box-sizing:border-box; border-radius: 0 10px 10px 0; min-height:120px;">
             <!-- Tab content will be populated by JavaScript -->
         </div>
     </div>
+
+  </div><!-- close right panel -->
+  </div><!-- close main row -->
 
 <!-- Database Modal -->
 <div id="databaseModal" class="modal">
@@ -492,33 +765,117 @@ let knownStats = {
     }
 };
 
-// Tech Tree Unlock System
-let unlockedTechTree = {
+/*
+ * ── ECONOMY GROUNDWORK ──────────────────────────────────────────────────────
+ * researchPoints (RP) — earned by running armor tests. Spent to unlock new
+ *   tech tree items.
+ * money (₵) — the budget. Earned by fulfilling orders. Spent on materials and
+ *   tech unlocks.
+ *
+ * These are not yet wired to the unlock flow — this is the foundation.
+ * To add spending: call spendResources(rpCost, moneyCost) before unlocking.
+ * To award resources: call awardRP(amount) or awardMoney(amount).
+ * ────────────────────────────────────────────────────────────────────────── */
+let researchPoints = 0;
+let money = 1000;
+
+/*
+ * RP and money costs per tech tree item.
+ * Format: { rp: <int>, money: <int> }
+ * These are placeholder values — tune them as the game design evolves.
+ */
+const techTreeCosts = {
     cores: {
         "Solid": {
-            "APCR": true,
-            "TAP": true,
-            "APHE": true,
-            "AP": true,  // Starter
-            "Light-AP": true  // Starter
+            "Light-AP":       { rp: 0,   money: 0    }, // starter
+            "AP":             { rp: 10,  money: 200  },
+            "APHE":           { rp: 20,  money: 400  },
+            "TAP":            { rp: 25,  money: 450  },
+            "APCR":           { rp: 30,  money: 600  }
         },
         "Chemical": {
-            "RDX-Based": true,
-            "TNT-Based": true,
-            "PETN-Composite": true
+            "TNT-Based":      { rp: 15,  money: 300  },
+            "RDX-Based":      { rp: 20,  money: 400  },
+            "PETN-Composite": { rp: 40,  money: 800  }
         }
     },
     casings: {
-        "Reinforced": true,
-        "High-Carbon": true,
-        "Standard": true,  // Starter
-        "Low-Carbon": true  // Starter
+        "Standard":  { rp: 0,  money: 0   }, // starter
+        "Low-Carbon":{ rp: 0,  money: 0   }, // starter
+        "High-Carbon":{ rp: 15, money: 250 },
+        "Reinforced":{ rp: 30, money: 500 }
     },
     powders: {
-        "Fine-Powder": true,
-        "Semi-Fine-Powder": true,  // Starter
-        "Coarse-Powder": true,  // Starter
-        "Unrefined-Powder": true  // Starter
+        "Coarse-Powder":   { rp: 0,  money: 0   }, // starter
+        "Unrefined-Powder":{ rp: 0,  money: 0   }, // starter
+        "Semi-Fine-Powder":{ rp: 12, money: 200 },
+        "Fine-Powder":     { rp: 25, money: 450 }
+    }
+};
+
+/* Update the RP and money counters shown in the top bar */
+function updateEconomyDisplay() {
+    const rpEl = document.getElementById("rpDisplay");
+    const moneyEl = document.getElementById("moneyDisplay");
+    if (rpEl) rpEl.textContent = researchPoints;
+    if (moneyEl) moneyEl.textContent = money;
+}
+
+/* Award RP to the player (call after a test) */
+function awardRP(amount) {
+    researchPoints += amount;
+    updateEconomyDisplay();
+}
+
+/* Award money to the player (call after a successful order) */
+function awardMoney(amount) {
+    money += amount;
+    updateEconomyDisplay();
+}
+
+/* Check whether the player can afford an unlock */
+function canAfford(rpCost, moneyCost) {
+    return researchPoints >= rpCost && money >= moneyCost;
+}
+
+/* Spend resources — returns false if insufficient (does not deduct) */
+function spendResources(rpCost, moneyCost) {
+    if (!canAfford(rpCost, moneyCost)) return false;
+    researchPoints -= rpCost;
+    money -= moneyCost;
+    updateEconomyDisplay();
+    return true;
+}
+
+// Tech Tree Unlock System
+// Only items with no requirements (starters) begin as true.
+// Everything else starts false and is unlocked by testing shells (see unlockTechBasedOnTest).
+let unlockedTechTree = {
+    cores: {
+        "Solid": {
+            "APCR": false,       // requires Light-AP
+            "TAP": false,        // requires AP
+            "APHE": false,       // requires AP
+            "AP": false,         // requires Light-AP
+            "Light-AP": true     // Starter — no requirements
+        },
+        "Chemical": {
+            "RDX-Based": false,      // requires Light-AP + Standard
+            "TNT-Based": false,      // requires Light-AP
+            "PETN-Composite": false  // requires RDX-Based
+        }
+    },
+    casings: {
+        "Reinforced": false,   // requires Standard + High-Carbon
+        "High-Carbon": false,  // requires Standard
+        "Standard": true,      // Starter — no requirements
+        "Low-Carbon": true     // Starter — no requirements
+    },
+    powders: {
+        "Fine-Powder": false,       // requires Coarse-Powder + Semi-Fine-Powder
+        "Semi-Fine-Powder": false,  // requires Coarse-Powder
+        "Coarse-Powder": true,      // Starter — no requirements
+        "Unrefined-Powder": true    // Starter — no requirements
     }
 };
 
@@ -587,7 +944,13 @@ function areRequirementsMet(partType, category, itemName) {
     }
 }
 
-// Unlock tech based on discovery (when testing)
+/*
+ * unlockTechBasedOnTest — called after every test fire.
+ * Checks if the currently equipped core/casing/powder can be unlocked
+ * (i.e. it isn't already unlocked AND its requirements are all met),
+ * then refreshes both the R&D tree display AND the part-selection buttons
+ * so newly unlocked items appear immediately without needing a tab click.
+ */
 function unlockTechBasedOnTest() {
     if (core) {
         const isUnlocked = unlockedTechTree.cores[core.category][core.type];
@@ -607,7 +970,13 @@ function unlockTechBasedOnTest() {
             unlockedTechTree.powders[powder] = true;
         }
     }
+
+    // Refresh the R&D tree modal
     updateTechTreeDisplay();
+
+    // Re-render whichever tab is currently open so lock/unlock state updates immediately
+    const activeTab = document.querySelector('#partTabs .tab.activate');
+    if (activeTab) showTabContent(activeTab.dataset.tab);
 }
 
 
@@ -861,19 +1230,19 @@ let description;
     }
 
     if (useFailedOrder) {
-            // Pick a random failed order
+            // Pick a random failed order and reuse it
             let index = Math.floor(Math.random() * failedOrders.length);
             let order = failedOrders[index];
 
+            // Re-use the stored requirements — no need to re-roll stats
             description = "Central Command: The previous shells were ineffective." + order.description;
-
             requiredPower = order.requiredPower;
             maxCost = order.maxCost;
             requiredStability = order.requiredStability;
             requiredExplosiveness = order.requiredExplosiveness;
             
-            failedOrders.splice(index, 1); // Remove from memory
-            orderSinceLastFailure = 0; // Reset counter after using a failed order
+            failedOrders.splice(index, 1); // Remove from memory so it isn't reused again
+            orderSinceLastFailure = 0;     // Reset counter after using a failed order
             currentOrderDescription = description;
             document.getElementById("request").innerText =
                 "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
@@ -882,15 +1251,15 @@ let description;
                 " | Stability ≥ " + requiredStability +
                 " | Explosiveness ≥ " + requiredExplosiveness;
         } else {
-        
-    // Base stats for the order
+
+    // Base stat ranges — keywords in the description push these up or down below
     let pMin = 6, pMax = 10;
     let cMin = 5, cMax = 12;
     let sMin = 2, sMax = 4;
     let eMin = 0, eMax = 0.2;
     
-    // Randomly choose a description
-    let description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+    // Randomly choose a description (reuse the outer `description` variable — no re-declaration)
+    description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
 
     // Keywords in description that adjust the stat requirements
     if(description.includes("Reinforced") || description.includes("Heavily armored")) {
@@ -1205,47 +1574,74 @@ tabs.forEach(tab => {
 // Initialize the first tab content on page load
 showTabContent('core');
 
+// Seed the RP / money counters in the top bar on first load
+updateEconomyDisplay();
+
+/*
+ * partBtn — helper that renders a single part-selection button.
+ * If the part is locked in the tech tree it shows as disabled (greyed out, not clickable).
+ * If unlocked, it renders a normal clickable button.
+ *
+ *   partType  : "cores" | "casings" | "powders"
+ *   category  : the category string for cores (e.g. "Solid"), null for casings/powders
+ *   itemName  : the specific part key (e.g. "APCR", "Reinforced")
+ *   label     : the display text shown on the button
+ *   id        : the element id (used by updateTooltip to attach hover text)
+ *   onclick   : JS string to call when clicked
+ */
+function partBtn(partType, category, itemName, label, id, onclick) {
+    const unlocked = isTechUnlocked(partType, category, itemName);
+    if (unlocked) {
+        return `<button onclick="${onclick}" id="${id}">${label}</button>`;
+    } else {
+        // Disabled: pointer-events:none stops clicks, title explains why
+        return `<button id="${id}" disabled title="Locked — unlock via R&D tree"
+            style="opacity:0.4; cursor:not-allowed;">🔒 ${label}</button>`;
+    }
+}
+
 function showTabContent(tab) {
     if (tab === 'core') {
+    // Each button goes through partBtn() so locked items can't be selected
     tabContent.innerHTML = `
     <div style="margin-bottom: 15px;">
         <h4 style="margin: 5px 0; color: #333;">Solid Cores</h4>
-        <button onclick="selectCore('Solid', 'APCR')" id="heavyCoreBtn">Tungsten Carbide Core</button>
-        <button onclick="selectCore('Solid', 'TAP')" id="tungstenAPBtn">Tungsten Core</button>
-        <button onclick="selectCore('Solid', 'APHE')" id="apheBtn">Hardened Steel-HE</button>
-        <button onclick="selectCore('Solid', 'AP')" id="mediumCoreBtn">Hardened Steel Core</button>
-        <button onclick="selectCore('Solid', 'Light-AP')" id="lightCoreBtn">Low-Carbon Steel Core</button>
+        ${partBtn("cores","Solid","APCR","Tungsten Carbide Core","heavyCoreBtn","selectCore('Solid','APCR')")}
+        ${partBtn("cores","Solid","TAP","Tungsten Core","tungstenAPBtn","selectCore('Solid','TAP')")}
+        ${partBtn("cores","Solid","APHE","Hardened Steel-HE","apheBtn","selectCore('Solid','APHE')")}
+        ${partBtn("cores","Solid","AP","Hardened Steel Core","mediumCoreBtn","selectCore('Solid','AP')")}
+        ${partBtn("cores","Solid","Light-AP","Low-Carbon Steel Core","lightCoreBtn","selectCore('Solid','Light-AP')")}
     </div>
     <div>
         <h4 style="margin: 5px 0; color: #333;">Chemical Cores</h4>
-        <button onclick="selectCore('Chemical', 'RDX-Based')" id="rdxBtn">RDX-Based Core</button>
-        <button onclick="selectCore('Chemical', 'TNT-Based')" id="tntBtn">TNT-Based Core</button>
-        <button onclick="selectCore('Chemical', 'PETN-Composite')" id="petnBtn">PETN-Composite Core</button>
+        ${partBtn("cores","Chemical","RDX-Based","RDX-Based Core","rdxBtn","selectCore('Chemical','RDX-Based')")}
+        ${partBtn("cores","Chemical","TNT-Based","TNT-Based Core","tntBtn","selectCore('Chemical','TNT-Based')")}
+        ${partBtn("cores","Chemical","PETN-Composite","PETN-Composite Core","petnBtn","selectCore('Chemical','PETN-Composite')")}
     </div>
     `;
     }
 
     if (tab === 'casing') {
     tabContent.innerHTML = `
-    <button onclick="selectCasing('Reinforced')" id="reinforcedCasingBtn">Reinforced Casing</button>
-    <button onclick="selectCasing('High-Carbon')" id="highCarbonCasingBtn">High-Carbon Casing</button>
-    <button onclick="selectCasing('Standard')" id="standardCasingBtn">Standard Casing</button>
-    <button onclick="selectCasing('Low-Carbon')" id="lowCarbonCasingBtn">Low-Carbon Casing</button>
+        ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
+        ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
+        ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
+        ${partBtn("casings",null,"Low-Carbon","Low-Carbon Casing","lowCarbonCasingBtn","selectCasing('Low-Carbon')")}
     `;
     }
 
     if (tab === 'powder') {
     tabContent.innerHTML = `
-    <button onclick="selectPowder('Fine-Powder')" id="finePowderBtn">Fine Powder</button>
-    <button onclick="selectPowder('Semi-Fine-Powder')" id="semiFinePowderBtn">Semi-Fine Powder</button>
-    <button onclick="selectPowder('Coarse-Powder')" id="coarsePowderBtn">Coarse Powder</button> 
-    <button onclick="selectPowder('Unrefined-Powder')" id="unrefinedPowderBtn">Unrefined Powder</button>
+        ${partBtn("powders",null,"Fine-Powder","Fine Powder","finePowderBtn","selectPowder('Fine-Powder')")}
+        ${partBtn("powders",null,"Semi-Fine-Powder","Semi-Fine Powder","semiFinePowderBtn","selectPowder('Semi-Fine-Powder')")}
+        ${partBtn("powders",null,"Coarse-Powder","Coarse Powder","coarsePowderBtn","selectPowder('Coarse-Powder')")}
+        ${partBtn("powders",null,"Unrefined-Powder","Unrefined Powder","unrefinedPowderBtn","selectPowder('Unrefined-Powder')")}
     `;
     }
-//These guys will never NOT be at the bottom
-updateDisplay();
-updateTooltip();
-updateArmorDatabase();        
+    // Always refresh these after re-rendering tab content — they depend on which buttons exist in the DOM
+    updateDisplay();
+    updateTooltip();
+    updateArmorDatabase();
 }
 
 // Modal Functions
@@ -1267,136 +1663,120 @@ function closeTechTreeModal() {
     document.getElementById("techTreeModal").classList.remove("show");
 }
 
+/*
+ * toggleTechSection — called when the player clicks a section header.
+ * Finds the section by its id and toggles the "collapsed" class on/off.
+ * "collapsed" hides .tech-tree-section-body via CSS (display:none).
+ */
+function toggleTechSection(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+}
+
+/*
+ * updateTechTreeDisplay — rebuilds the full tech tree HTML and injects it.
+ *
+ * Each section starts COLLAPSED so the screen isn't cluttered.
+ * The player clicks a header to expand just that category.
+ *
+ * Structure per section:
+ *   <div class="tech-tree-section collapsed" id="sec-X">
+ *     <h3 onclick="toggleTechSection('sec-X')">...</h3>
+ *     <div class="tech-tree-section-body">
+ *       rows of .tree-root / .tree-level nodes
+ *     </div>
+ *   </div>
+ */
 function updateTechTreeDisplay() {
     const container = document.getElementById("techTreeContent");
     let html = '<div class="tech-tree-container">';
 
-    // Solid Cores Tree
-    html += '<div class="tech-tree-section">';
-    html += '<h3>Solid Cores</h3>';
-    html += '<div class="tree-root">';
-    
-    // Root level: AP and Light-AP
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("Solid", "AP", unlockedTechTree.cores["Solid"]["AP"], [], true);
-    html += '</div>';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("Solid", "Light-AP", unlockedTechTree.cores["Solid"]["Light-AP"], [], true);
-    html += '</div>';
-    
-    html += '</div>'; // Close tree-root
-    
-    // Second level
-    html += '<div class="tree-level">';
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("Solid", "APHE", unlockedTechTree.cores["Solid"]["APHE"], ["AP"], false);
-    html += '</div>';
-    
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("Solid", "TAP", unlockedTechTree.cores["Solid"]["TAP"], ["AP"], false);
-    html += '</div>';
-    
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("Solid", "APCR", unlockedTechTree.cores["Solid"]["APCR"], ["Light-AP"], false);
-    html += '</div>';
-    html += '</div>'; // Close tree-level
-    
-    html += '</div>'; // Close section
+    // ── Solid Cores ──────────────────────────────────────────────────────────
+    html += '<div class="tech-tree-section collapsed" id="sec-solid">';
+    html += '<h3 onclick="toggleTechSection(\'sec-solid\')">Solid Cores</h3>';
+    html += '<div class="tech-tree-section-body">';
 
-    // Chemical Cores Tree
-    html += '<div class="tech-tree-section">';
-    html += '<h3>Chemical Cores</h3>';
+    // Level 1: starters
     html += '<div class="tree-root">';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("Chemical", "TNT-Based", unlockedTechTree.cores["Chemical"]["TNT-Based"], ["Light-AP"], false);
+    html += '<div class="tech-node">' + createTechItemHTML("Solid", "Light-AP", unlockedTechTree.cores["Solid"]["Light-AP"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createTechItemHTML("Solid", "AP", unlockedTechTree.cores["Solid"]["AP"], ["Light-AP"], false) + '</div>';
     html += '</div>';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("Chemical", "RDX-Based", unlockedTechTree.cores["Chemical"]["RDX-Based"], ["Light-AP"], false);
-    html += '</div>';
-    
-    html += '</div>';
-    
-    html += '<div class="tree-level">';
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("Chemical", "PETN-Composite", unlockedTechTree.cores["Chemical"]["PETN-Composite"], ["RDX-Based"], false);
-    html += '</div>';
-    html += '</div>';
-    
-    html += '</div>'; // Close section
 
-    // Casings Tree
-    html += '<div class="tech-tree-section">';
-    html += '<h3>Casings</h3>';
+    // Level 2: unlocks from AP / Light-AP
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APHE", unlockedTechTree.cores["Solid"]["APHE"], ["AP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "TAP", unlockedTechTree.cores["Solid"]["TAP"], ["AP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR", unlockedTechTree.cores["Solid"]["APCR"], ["Light-AP"], false) + '</div>';
+    html += '</div>';
+
+    html += '</div></div>'; // close body + section
+
+    // ── Chemical Cores ───────────────────────────────────────────────────────
+    html += '<div class="tech-tree-section collapsed" id="sec-chemical">';
+    html += '<h3 onclick="toggleTechSection(\'sec-chemical\')">Chemical Cores</h3>';
+    html += '<div class="tech-tree-section-body">';
+
     html += '<div class="tree-root">';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("casing", "Standard", unlockedTechTree.casings["Standard"], [], true);
+    html += '<div class="tech-node">' + createTechItemHTML("Chemical", "TNT-Based", unlockedTechTree.cores["Chemical"]["TNT-Based"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node">' + createTechItemHTML("Chemical", "RDX-Based", unlockedTechTree.cores["Chemical"]["RDX-Based"], ["Light-AP"], false) + '</div>';
     html += '</div>';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("casing", "Low-Carbon", unlockedTechTree.casings["Low-Carbon"], [], true);
-    html += '</div>';
-    
-    html += '</div>';
-    
-    html += '<div class="tree-level">';
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("casing", "High-Carbon", unlockedTechTree.casings["High-Carbon"], ["Standard"], false);
-    html += '</div>';
-    html += '</div>';
-    
-    html += '<div class="tree-level">';
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("casing", "Reinforced", unlockedTechTree.casings["Reinforced"], ["Standard", "High-Carbon"], false);
-    html += '</div>';
-    html += '</div>';
-    
-    html += '</div>'; // Close section
 
-    // Powders Tree
-    html += '<div class="tech-tree-section">';
-    html += '<h3>Powders</h3>';
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite", unlockedTechTree.cores["Chemical"]["PETN-Composite"], ["RDX-Based"], false) + '</div>';
+    html += '</div>';
+
+    html += '</div></div>';
+
+    // ── Casings ──────────────────────────────────────────────────────────────
+    html += '<div class="tech-tree-section collapsed" id="sec-casings">';
+    html += '<h3 onclick="toggleTechSection(\'sec-casings\')">Casings</h3>';
+    html += '<div class="tech-tree-section-body">';
+
     html += '<div class="tree-root">';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("powder", "Coarse-Powder", unlockedTechTree.powders["Coarse-Powder"], [], true);
+    html += '<div class="tech-node">' + createTechItemHTML("casing", "Standard", unlockedTechTree.casings["Standard"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createTechItemHTML("casing", "Low-Carbon", unlockedTechTree.casings["Low-Carbon"], [], true) + '</div>';
     html += '</div>';
-    
-    html += '<div class="tech-node">';
-    html += createTechItemHTML("powder", "Unrefined-Powder", unlockedTechTree.powders["Unrefined-Powder"], [], true);
-    html += '</div>';
-    
-    html += '</div>';
-    
-    html += '<div class="tree-level">';
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("powder", "Semi-Fine-Powder", unlockedTechTree.powders["Semi-Fine-Powder"], ["Coarse-Powder"], false);
-    html += '</div>';
-    html += '</div>';
-    
-    html += '<div class="tree-level">';
-    html += '<div class="tech-node">';
-    html += '<div class="tree-connector"></div>';
-    html += createTechItemHTML("powder", "Fine-Powder", unlockedTechTree.powders["Fine-Powder"], ["Coarse-Powder", "Semi-Fine-Powder"], false);
-    html += '</div>';
-    html += '</div>';
-    
-    html += '</div>'; // Close section
 
-    html += '</div>'; // Close container
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "High-Carbon", unlockedTechTree.casings["High-Carbon"], ["Standard"], false) + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced", unlockedTechTree.casings["Reinforced"], ["Standard", "High-Carbon"], false) + '</div>';
+    html += '</div>';
+
+    html += '</div></div>';
+
+    // ── Powders ──────────────────────────────────────────────────────────────
+    html += '<div class="tech-tree-section collapsed" id="sec-powders">';
+    html += '<h3 onclick="toggleTechSection(\'sec-powders\')">Powders</h3>';
+    html += '<div class="tech-tree-section-body">';
+
+    html += '<div class="tree-root">';
+    html += '<div class="tech-node">' + createTechItemHTML("powder", "Coarse-Powder", unlockedTechTree.powders["Coarse-Powder"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createTechItemHTML("powder", "Unrefined-Powder", unlockedTechTree.powders["Unrefined-Powder"], [], true) + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Semi-Fine-Powder", unlockedTechTree.powders["Semi-Fine-Powder"], ["Coarse-Powder"], false) + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder", unlockedTechTree.powders["Fine-Powder"], ["Coarse-Powder", "Semi-Fine-Powder"], false) + '</div>';
+    html += '</div>';
+
+    html += '</div></div>'; // close body + section
+
+    html += '</div>'; // close .tech-tree-container
     container.innerHTML = html;
 }
 
+/*
+ * createTechItemHTML — builds one tech node card.
+ *
+ * Looks up the cost from techTreeCosts and renders it inside the card so
+ * the player can see what the unlock will cost even before spending is wired in.
+ * Starters show "Free" instead of a cost.
+ */
 function createTechItemHTML(category, itemName, unlocked, requirements, isStarter = false) {
     let status = "🔒 Locked";
     let statusClass = "locked";
@@ -1408,10 +1788,31 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
         status = "🔓 Ready";
     }
 
+    // Look up the cost for this item from the economy table
+    let costLine = "";
+    try {
+        let costEntry;
+        if (category === "Solid" || category === "Chemical") {
+            costEntry = techTreeCosts.cores[category][itemName];
+        } else if (category === "casing") {
+            costEntry = techTreeCosts.casings[itemName];
+        } else if (category === "powder") {
+            costEntry = techTreeCosts.powders[itemName];
+        }
+        if (costEntry) {
+            if (costEntry.rp === 0 && costEntry.money === 0) {
+                costLine = `<div class="tech-item-cost">Free</div>`;
+            } else {
+                costLine = `<div class="tech-item-cost">${costEntry.rp} RP · ₵${costEntry.money}</div>`;
+            }
+        }
+    } catch(e) { /* cost lookup is best-effort */ }
+
     return `
         <div class="tech-item ${statusClass}">
             <div class="tech-item-name">${itemName}</div>
             <div class="tech-item-status">${status}</div>
+            ${costLine}
         </div>
     `;
 }
@@ -1436,5 +1837,6 @@ window.onclick = function(event) {
 }
 </script>
 
+</div><!-- close outer column flex wrapper -->
 </body>
 </html>
