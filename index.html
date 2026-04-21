@@ -1,512 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>She-ll Designer v0.3.5</title>
+    <title>She-ll Designer v0.3.7</title>
     <style>
-/*
- * TAB BAR — the narrow vertical strip on the LEFT of the parts panel.
- * It's a flex column so each .tab stacks top-to-bottom.
- * width is fixed at 34px to match the tab buttons.
- * z-index:1 keeps it above the content box so the overlap shadow shows.
- */
-.tab-bar {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    width: 34px;
-    position: relative;
-    z-index: 1;
+/* ══════════════════════════════════════════════════════════════════════════
+   FEDERATION ORDNANCE TERMINAL — She-ll Designer v0.3.7
+   Primary palette : Deep navy blues
+   Accent palette  : Dark brown + amber/tan
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* ── Background layers ── */
+    --bg-deep:     #050c18;   /* page / outermost background */
+    --bg-panel:    #080f1e;   /* panel fill */
+    --bg-card:     #0b1726;   /* card / input surface */
+    --bg-brown:    #110804;   /* command bar / brown accent */
+
+    /* ── Borders ── */
+    --bdr-dim:     #121e30;   /* barely-visible seam */
+    --bdr-blue:    #1c3654;   /* standard border */
+    --bdr-mid:     #2a5a90;   /* active / highlight border */
+    --bdr-bright:  #3a84c8;   /* hot border */
+    --bdr-brown:   #3a1c06;   /* brown zone border */
+    --bdr-tan:     #6a3e10;   /* amber accent border */
+
+    /* ── Glow colours ── */
+    --glow-blue:   #4a9ed8;
+    --glow-amber:  #c87a30;
+
+    /* ── Text ── */
+    --txt-head:    #7ab8e8;   /* headings / primary label */
+    --txt-main:    #6a9ab8;   /* body text */
+    --txt-muted:   #354e62;   /* muted / secondary */
+    --txt-tan:     #c8905a;   /* amber label */
+    --txt-tan-hi:  #e8b070;   /* bright amber */
+    --txt-elec:    #5ac8ff;   /* electric blue highlight */
+    --txt-dim:     #162030;   /* near-invisible */
 }
 
-/*
- * INDIVIDUAL TAB — styled like a plastic notebook divider tab.
- *
- * Key tricks used here:
- *   writing-mode: vertical-rl + rotate(180deg)  →  rotates the text to read bottom-to-top
- *   border-right: none                           →  open right edge connects flush to content box
- *   border-radius: 8px 0 0 8px                  →  rounded on the LEFT only (outer edge)
- *   margin-bottom: -10px                        →  negative margin makes each tab OVERLAP the next,
- *                                                  creating the stacked notebook-divider effect
- *   position: relative + z-index on each child  →  controls which tab appears ON TOP of the others
- */
-.tab {
-    width: 34px;
-    min-height: 60px;
-    padding: 10px 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    /* No rotation — vertical-rl alone reads top-to-bottom, which is correct */
-    background: #f2e6bc;
-    color: #111;
-    font-size: 11px;
-    font-weight: 700;
-    border: 1px solid #c6b78c;
-    border-right: none;
-    border-radius: 8px 0 0 8px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-    position: relative;
-    margin-bottom: -10px;
-    box-shadow: none;
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background: var(--bg-deep);
+    color: var(--txt-main);
 }
 
-/* Each tab gets its own colour and sits behind the one above it */
-.tab:nth-child(1) { z-index: 3; background: #f8c1c0; border-color: #e0a0a0; }
-.tab:nth-child(2) { z-index: 2; background: #9fc6f7; border-color: #7aaad4; }
-.tab:nth-child(3) { z-index: 1; background: #a7e3b8; border-color: #7ac49a; }
-
-/*
- * ACTIVE TAB — jumps to z-index 10 so it always renders on top.
- * margin-right: -1px bleeds it 1px into the content box border,
- * hiding the gap and making it look like one connected card.
- */
-.tab.activate {
-    background: #ffec95;
-    border-color: #c6b78c;
-    box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.18);
-    z-index: 10;
-    margin-right: -1px;
-}
-
-.tab:not(.activate) {
-    opacity: 0.8;
-}
-
-.tab:hover {
-    opacity: 1;
-    filter: brightness(1.06);
-}
-
-/*
- * PART TABS WRAPPER — flex row so .tab-bar sits LEFT and #tabContent sits RIGHT.
- * align-items: stretch makes the content box fill the same height as the tab strip.
- */
-#partTabs {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    overflow: visible;
-    align-items: stretch;
-}
-
-#tabContent button {
+/* Thin utility label — all-caps with tracking */
+.fed-label {
     display: block;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 5px;
-    background: #e8f4ff;
-    color: #000;
-    border: 1px solid #7eb8d4;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-#tabContent button:hover {
-    background: #c5e4f7;
-}
-
-#tabContent h4 {
-    margin-top: 12px;
-    margin-bottom: 8px;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #7eb8d4;
-    font-size: 13px;
-}
-
-#tabContent h4:first-child {
-    margin-top: 0;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.3s ease;
-}
-
-.modal.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal-content {
-    background-color: #f9f9f9;
-    width: 100%;
-    height: 90vh;
-    max-width: none;
-    max-height: 90vh;
-    border: 1px solid #888;
-    border-radius: 8px;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 2px solid #7eb8d4;
-    flex-shrink: 0;
-    background-color: #f9f9f9;
-}
-
-.modal-header h2 {
-    margin: 0;
-    color: #333;
-}
-
-.close-btn {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.2s;
-    flex-shrink: 0;
-}
-
-.close-btn:hover {
-    background: #d32f2f;
-}
-
-.modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    font-family: monospace;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    background: #fff;
-    color: #333;
-    line-height: 1.6;
-}
-
-/*
- * TECH TREE MODAL — full-screen override.
- * We override the shared .modal.show padding and centering so the
- * tech tree content fills every pixel of the viewport, KSP-style.
- */
-#techTreeModal.show {
-    padding: 0;
-    align-items: stretch;
-    background-color: rgba(0, 0, 0, 0.92);
-}
-
-#techTreeModal .modal-content {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-    border-radius: 0;
-    border: none;
-    background: #0e1a1f;
-    box-shadow: none;
-}
-
-#techTreeModal .modal-header {
-    background: #0e1a1f;
-    border-bottom: 2px solid #2a4a3a;
-    padding: 14px 24px;
-}
-
-#techTreeModal .modal-header h2 {
-    color: #7fffd4;
-    font-family: monospace;
-    letter-spacing: 2px;
+    font-size: 8px;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    font-size: 18px;
-}
-
-/* The scrollable body where the tree nodes live */
-#techTreeModal .modal-body {
-    background: #0e1a1f;
-    color: #c8e6c9;
-    font-family: monospace;
-    overflow: auto;
-    padding: 40px 60px;
-    white-space: normal;
-}
-
-/* ── Tech Tree Layout ── */
-
-/*
- * Outer wrapper: sections stack top-to-bottom so the player scrolls DOWN.
- * Each section is an accordion — click the header to expand/collapse it.
- */
-.tech-tree-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-    padding-bottom: 40px;
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-/* Each section (Solid Cores, Chemical Cores, Casings, Powders) */
-.tech-tree-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid #2a4a3a;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-/*
- * Section heading — acts as the clickable toggle button.
- * The ▶/▼ arrow is set via CSS ::after so it flips when collapsed.
- */
-.tech-tree-section h3 {
-    background: linear-gradient(135deg, #1a3a2a, #0d2a20);
-    color: #7fffd4;
-    padding: 14px 20px;
-    margin: 0;
-    border: none;
-    font-family: monospace;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-size: 14px;
-    text-align: left;
-    box-shadow: 0 0 8px rgba(127, 255, 212, 0.1);
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    user-select: none;
-}
-
-.tech-tree-section h3::after {
-    content: "▼";
-    font-size: 11px;
-    transition: transform 0.2s ease;
-}
-
-/* When collapsed, flip the arrow to ▶ and hide the tree content */
-.tech-tree-section.collapsed h3::after {
-    transform: rotate(-90deg);
-}
-
-.tech-tree-section-body {
-    padding: 20px;
-    background: #0a1510;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
-}
-
-.tech-tree-section.collapsed .tech-tree-section-body {
-    display: none;
-}
-
-/* Root row — the starter nodes */
-.tree-root {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.tree-branch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-/* Each subsequent level of nodes */
-.tree-level {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-/* Wrapper around a single node + its connector line */
-.tech-node {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    min-width: 130px;
-}
-
-/* ── Individual node card ── */
-.tech-item {
-    background: #122a1e;
-    border: 2px solid #2a6a4a;
-    border-radius: 6px;
-    padding: 12px 14px;
-    text-align: center;
-    cursor: default;
-    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-    min-width: 130px;
-    position: relative;
-    z-index: 2;
-}
-
-.tech-item:hover:not(.locked) {
-    border-color: #7fffd4;
-    box-shadow: 0 0 12px rgba(127, 255, 212, 0.3);
-    transform: translateY(-2px);
-}
-
-/* Locked node — dark and muted */
-.tech-item.locked {
-    background: #0a1510;
-    border-color: #1e3a28;
-    color: #3a5a48;
-    opacity: 0.7;
-}
-
-/* Unlocked node — bright green glow */
-.tech-item.unlocked {
-    background: #0d2e1e;
-    border-color: #4caf50;
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.25);
-}
-
-.tech-item-name {
-    font-weight: bold;
+    color: var(--txt-muted);
     margin-bottom: 5px;
-    font-size: 12px;
-    color: #a8e6c8;
-    letter-spacing: 0.5px;
 }
 
-.tech-item.locked .tech-item-name {
-    color: #3a5a48;
-}
-
-.tech-item-status {
-    font-size: 11px;
-    color: #5a9a78;
-}
-
-.tech-item.locked .tech-item-status {
-    color: #2a4a38;
-}
-
-.tech-item.unlocked .tech-item-status {
-    color: #4caf50;
-}
-
-/* Cost line shown on each tech node card — dimmer than the status */
-.tech-item-cost {
-    font-size: 10px;
-    color: #4a7a60;
-    margin-top: 4px;
-    letter-spacing: 0.3px;
-}
-
-.tech-item.locked .tech-item-cost {
-    color: #2a4a38;
-}
-
-.tech-item.unlocked .tech-item-cost {
-    color: #2e6a30;
-}
-
-/* Vertical connector line between levels */
-.tree-connector {
-    width: 2px;
-    height: 20px;
-    background: linear-gradient(to bottom, #2a6a4a, #4caf5088);
-    margin: 0 auto;
-    position: relative;
-}
-
-.tree-horizontal {
-    position: absolute;
-    height: 2px;
-    background: #2a6a4a;
-    top: -20px;
-}
-
-.items-container {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   TOP REQUEST BAR
-   Full-width bar pinned to the top of the viewport.
-   The R&D button is a "tab" that hangs below the bar's bottom edge
-   using position:absolute + bottom: negative value.
-   ═══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════
+   TOP COMMAND / DISPATCH BAR
+   Brown accent zone — contrasts against the blue panels.
+   The R&D tab hangs below the bar's bottom edge (position: absolute).
+   ══════════════════════════════════════════════════════════════════════════ */
 .top-bar {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: #2a1f0e;
-    border-bottom: 3px solid #7a5c28;
+    background: var(--bg-brown);
+    border-bottom: 2px solid var(--bdr-tan);
+    box-shadow: 0 2px 20px rgba(200, 122, 48, 0.1);
     padding: 10px 20px;
-    min-height: 64px;
-    flex-shrink: 0;       /* won't shrink when the panels need height */
-    position: relative;   /* needed so the hanging tab can use absolute positioning */
-    z-index: 20;          /* stays above the panels below it */
-    overflow: visible;    /* lets the hanging tab bleed past the bar's bottom */
+    min-height: 56px;
+    flex-shrink: 0;
+    position: relative;   /* anchor for the hanging R&D tab */
+    z-index: 20;
+    overflow: visible;    /* let the tab bleed below */
 }
 
 .top-bar-label {
     font-family: monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #8a6a30;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--txt-tan);
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
+    opacity: 0.7;
 }
 
-/* The request text — truncates with … if too long */
-#topRequest {
+/* Active order text in the dispatch bar */
+#request {
     flex: 1;
-    font-size: 13px;
-    color: #f0d9a0;
+    font-size: 11px;
+    color: var(--txt-tan-hi);
     font-style: italic;
     white-space: nowrap;
     overflow: hidden;
@@ -515,142 +101,868 @@
     padding: 0;
     background: none;
     border: none;
-    font-family: sans-serif;
+    font-family: monospace;
+    letter-spacing: 0.3px;
 }
 
-/* RP and money counters on the right side of the bar */
+/* RP + money counters, right side of bar */
 .top-bar-counters {
     display: flex;
     gap: 18px;
     align-items: center;
     font-family: monospace;
-    font-size: 12px;
-    color: #8a9aaa;
+    font-size: 10px;
+    color: var(--txt-muted);
     white-space: nowrap;
     flex-shrink: 0;
-    margin-right: 110px; /* leave room for the hanging tab so they don't overlap */
+    margin-right: 110px;   /* breathing room so R&D tab doesn't overlap */
 }
 
-.top-bar-counters .counter-val {
+.counter-val {
     font-weight: bold;
-    color: #7fffd4;
+    color: var(--txt-elec);
 }
 
 /*
- * The hanging R&D tab.
- * bottom: -34px pulls it 34px below the bar's bottom edge.
- * border-top: none makes it look like it's attached to the bar.
- * border-radius only on the bottom corners gives the folder-tab shape.
+ * R&D hanging folder tab.
+ * bottom: -34px pulls it below the bar's lower edge.
+ * border-top: none merges it visually with the bar above.
+ * Rounded only on the bottom two corners → folder-tab silhouette.
  */
 .rnd-tab {
     position: absolute;
     bottom: -34px;
     right: 30px;
-    background: #3a2060;
-    color: #c8a8ff;
-    border: 2px solid #7a4ab8;
+    background: var(--bg-brown);
+    color: var(--txt-tan);
+    border: 2px solid var(--bdr-tan);
     border-top: none;
-    border-radius: 0 0 10px 10px;
-    padding: 7px 22px;
+    border-radius: 0 0 8px 8px;
+    padding: 7px 24px;
     font-family: monospace;
     font-weight: bold;
-    font-size: 13px;
-    letter-spacing: 1px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     cursor: pointer;
     z-index: 21;
     white-space: nowrap;
-    transition: background 0.15s ease;
-    text-transform: uppercase;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
 .rnd-tab:hover {
-    background: #5a3a9a;
+    background: #1a0c02;
+    color: var(--txt-tan-hi);
+    box-shadow: 0 6px 16px rgba(200, 122, 48, 0.25);
 }
+
+/*
+ * DISPATCH BAR FLASH — incoming transmission effect.
+ *
+ * When a new order arrives, .bar-flash is briefly added to .top-bar.
+ * The @keyframes:
+ *   0%  → normal state
+ *   15% → peak flash: bright amber border + outer glow + slightly lighter bg
+ *   45% → settling back
+ *   100% → back to normal
+ *
+ * The JS removes the class on animationend so it can fire again on the next order.
+ */
+@keyframes dispatchFlash {
+    0%   {
+        border-bottom-color: var(--bdr-tan);
+        box-shadow: 0 2px 20px rgba(200,122,48,0.1);
+        background: var(--bg-brown);
+    }
+    15%  {
+        border-bottom-color: var(--glow-amber);
+        box-shadow: 0 0 0 2px rgba(200,122,48,0.4), 0 0 30px rgba(200,122,48,0.5);
+        background: #1e1006;
+    }
+    45%  {
+        border-bottom-color: #8a5420;
+        box-shadow: 0 2px 14px rgba(200,122,48,0.15);
+        background: #160c04;
+    }
+    100% {
+        border-bottom-color: var(--bdr-tan);
+        box-shadow: 0 2px 20px rgba(200,122,48,0.1);
+        background: var(--bg-brown);
+    }
+}
+
+.top-bar.bar-flash {
+    animation: dispatchFlash 1s ease-out;
+}
+
+/*
+ * The #request text also briefly brightens during the flash
+ * so the player's eye is drawn to the new order text.
+ */
+@keyframes requestBrighten {
+    0%   { color: var(--txt-tan-hi); opacity: 1; }
+    20%  { color: #fff8e0;           opacity: 1; }
+    100% { color: var(--txt-tan-hi); opacity: 1; }
+}
+
+.top-bar.bar-flash #request {
+    animation: requestBrighten 1s ease-out;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PANELS
+   ══════════════════════════════════════════════════════════════════════════ */
+.panel-left {
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--bdr-blue);
+    flex-shrink: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bdr-blue) var(--bg-panel);
+}
+
+.panel-right {
+    width: 200px;
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--bdr-blue);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Blueprint / middle canvas — dark with subtle grid */
+.panel-middle {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-image:
+        linear-gradient(rgba(30, 80, 150, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 80, 150, 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+/* Panel title strip */
+.panel-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--bdr-blue);
+    flex-shrink: 0;
+}
+
+.panel-header h1 {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-head);
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Content blocks inside the left panel */
+.panel-section {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--bdr-dim);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Terminal-style data readout box */
+.readout {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr-blue);
+    border-left: 3px solid var(--bdr-mid);
+    padding: 7px 10px;
+    font-family: monospace;
+    font-size: 10px;
+    color: var(--txt-main);
+    line-height: 1.65;
+    min-height: 32px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+}
+
+/* Base tactical button */
+.fed-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-deep);
+    color: var(--txt-head);
+    border: 1px solid var(--bdr-blue);
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
+}
+
+.fed-btn:hover {
+    background: var(--bg-card);
+    border-color: var(--bdr-bright);
+    box-shadow: 0 0 10px rgba(74, 158, 216, 0.2);
+    color: var(--txt-elec);
+}
+
+/* Primary — blue tint border */
+.fed-btn-primary {
+    border-color: var(--bdr-mid);
+}
+
+.fed-btn-primary:hover {
+    background: #0a1e38;
+    box-shadow: 0 0 14px rgba(74, 158, 216, 0.35);
+}
+
+/* Amber — fire / test actions */
+.fed-btn-amber {
+    border-color: var(--bdr-tan);
+    color: var(--txt-tan);
+}
+
+.fed-btn-amber:hover {
+    background: #1a0c02;
+    border-color: var(--glow-amber);
+    box-shadow: 0 0 12px rgba(200, 122, 48, 0.3);
+    color: var(--txt-tan-hi);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PARTS PANEL — VERTICAL TAB SELECTOR
+   Tab bar is a slim strip on the left; content fills the right.
+   Active tab: bright left-edge indicator line (like an IDE sidebar).
+   ══════════════════════════════════════════════════════════════════════════ */
+#partTabs {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: stretch;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.tab-bar {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 28px;
+    background: var(--bg-deep);
+    border-right: 1px solid var(--bdr-blue);
+    position: relative;
+    z-index: 1;
+}
+
+/* Individual tab — slim military selector strip */
+.tab {
+    width: 28px;
+    flex: 1;
+    padding: 6px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    /* No rotation — vertical-rl reads top-to-bottom */
+    background: var(--bg-deep);
+    color: var(--txt-muted);
+    font-size: 8px;
+    font-weight: 700;
+    font-family: monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-bottom: 1px solid var(--bdr-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+    margin-bottom: 0;
+    box-shadow: none;
+}
+
+.tab:last-child { border-bottom: none; }
+
+/* Active tab — right edge flush to content, blue indicator bar */
+.tab.activate {
+    background: var(--bg-card);
+    color: var(--txt-elec);
+    border-right: none;
+    margin-right: -1px;
+    z-index: 10;
+}
+
+/* The glowing blue left-edge indicator on the active tab */
+.tab.activate::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--glow-blue);
+    box-shadow: 0 0 8px rgba(74, 158, 216, 0.7);
+}
+
+.tab:not(.activate) { opacity: 0.5; }
+
+.tab:hover {
+    opacity: 1;
+    background: var(--bg-card);
+    color: var(--txt-head);
+}
+
+/* Parts content pane */
+#tabContent {
+    flex: 1;
+    background: var(--bg-card);
+    padding: 8px;
+    border: none;
+    overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bdr-blue) var(--bg-card);
+}
+
+/* Dynamically generated part buttons */
+#tabContent button {
+    display: block;
+    width: 100%;
+    padding: 7px 9px;
+    margin-bottom: 3px;
+    background: var(--bg-deep);
+    color: var(--txt-main);
+    border: 1px solid var(--bdr-blue);
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+#tabContent button:hover {
+    background: var(--bg-card);
+    border-color: var(--bdr-bright);
+    color: var(--txt-elec);
+}
+
+#tabContent button:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+    border-color: var(--txt-dim);
+    color: var(--txt-dim);
+}
+
+/*
+ * SELECTED PART STATE
+ * When a part is the currently active selection it gets a bright blue border,
+ * a blue-tinted background, and the text turns electric blue.
+ * The ::before pseudo adds a left-edge glow bar (same trick as the tab indicator).
+ */
+#tabContent button.part-selected {
+    background: rgba(74, 158, 216, 0.08);
+    border-color: var(--glow-blue);
+    color: var(--txt-elec);
+    position: relative;
+}
+#tabContent button.part-selected::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--glow-blue);
+    box-shadow: 0 0 6px rgba(74,158,216,0.6);
+}
+
+/*
+ * PART STAT HINT LINE
+ * Shown inside each part button as a secondary line of micro text.
+ * Uses display:block so it sits below the part name.
+ */
+.part-hint {
+    display: block;
+    margin-top: 3px;
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    opacity: 0.55;
+    font-family: monospace;
+}
+#tabContent button.part-selected .part-hint {
+    opacity: 0.75;
+}
+
+/*
+ * TAB FILLED INDICATOR
+ * After a part is chosen for a slot, the tab gets the .filled class.
+ * A small dim dot appears at the top-right corner of the tab.
+ */
+.tab.filled::after {
+    content: "●";
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    font-size: 6px;
+    color: var(--glow-blue);
+    opacity: 0.7;
+}
+
+/*
+ * RESULT READOUT STATES
+ * .readout-success → soft green left edge
+ * .readout-fail    → amber/red left edge
+ * Applied dynamically in JS after submit.
+ */
+.readout-success {
+    border-left-color: #3aaa72 !important;
+}
+.readout-fail {
+    border-left-color: #cc4444 !important;
+}
+
+/* Per-stat check and cross symbols used inside the stats readout */
+.stat-ok   { color: #3aaa72; }
+.stat-warn { color: #e09530; }
+.stat-fail { color: #cc4444; }
+
+#tabContent h4 {
+    margin: 10px 0 5px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--bdr-blue);
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--txt-muted);
+    font-family: monospace;
+}
+
+#tabContent h4:first-child { margin-top: 0; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODALS
+   ══════════════════════════════════════════════════════════════════════════ */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(2, 6, 18, 0.88);
+    animation: fadeIn 0.2s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal-content {
+    background: var(--bg-panel);
+    width: 100%;
+    height: 85vh;
+    max-width: 680px;
+    max-height: 85vh;
+    border: 1px solid var(--bdr-mid);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 40px rgba(42, 90, 144, 0.3);
+    animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-24px); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--bdr-blue);
+    flex-shrink: 0;
+    background: var(--bg-card);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--txt-head);
+    font-family: monospace;
+}
+
+.close-btn {
+    background: transparent;
+    color: var(--txt-muted);
+    border: 1px solid var(--bdr-blue);
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: monospace;
+    transition: border-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+
+.close-btn:hover {
+    border-color: #903030;
+    color: #e05050;
+}
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    font-family: monospace;
+    font-size: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: var(--bg-panel);
+    color: var(--txt-main);
+    line-height: 1.7;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bdr-blue) var(--bg-panel);
+}
+
+/* ── Tech tree modal overrides: full-screen ── */
+#techTreeModal.show {
+    padding: 0;
+    align-items: stretch;
+    background-color: rgba(2, 6, 18, 0.95);
+}
+
+#techTreeModal .modal-content {
+    width: 100%; height: 100%;
+    max-height: 100%; max-width: none;
+    border: none;
+    background: var(--bg-deep);
+    box-shadow: none;
+}
+
+#techTreeModal .modal-header {
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--bdr-blue);
+    padding: 14px 24px;
+}
+
+#techTreeModal .modal-header h2 {
+    color: var(--txt-head);
+    letter-spacing: 5px;
+    font-size: 11px;
+}
+
+#techTreeModal .modal-body {
+    background: var(--bg-deep);
+    color: var(--txt-main);
+    overflow: auto;
+    padding: 32px 48px;
+    white-space: normal;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TECH TREE
+   ══════════════════════════════════════════════════════════════════════════ */
+.tech-tree-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    padding-bottom: 40px;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+.tech-tree-section {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--bdr-blue);
+    overflow: hidden;
+}
+
+.tech-tree-section h3 {
+    background: var(--bg-card);
+    color: var(--txt-head);
+    padding: 12px 16px;
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid var(--bdr-blue);
+    font-family: monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-size: 10px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.tech-tree-section h3:hover {
+    background: #0d1e30;
+    color: var(--txt-elec);
+}
+
+.tech-tree-section h3::after {
+    content: "▼";
+    font-size: 9px;
+    color: var(--txt-muted);
+    transition: transform 0.2s ease;
+}
+
+.tech-tree-section.collapsed h3::after { transform: rotate(-90deg); }
+
+.tech-tree-section-body {
+    padding: 18px;
+    background: var(--bg-panel);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.tech-tree-section.collapsed .tech-tree-section-body { display: none; }
+
+.tree-root {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.tree-level {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.tech-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-width: 120px;
+}
+
+.tech-item {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr-blue);
+    padding: 10px 12px;
+    text-align: center;
+    cursor: default;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 120px;
+    position: relative;
+    z-index: 2;
+}
+
+.tech-item:hover:not(.locked) {
+    border-color: var(--bdr-bright);
+    box-shadow: 0 0 10px rgba(74, 158, 216, 0.2);
+}
+
+.tech-item.locked {
+    background: var(--bg-deep);
+    border-color: var(--txt-dim);
+    opacity: 0.55;
+}
+
+.tech-item.unlocked {
+    border-color: var(--bdr-mid);
+    border-left: 3px solid var(--glow-blue);
+    box-shadow: 0 0 8px rgba(74, 158, 216, 0.15);
+}
+
+.tech-item-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: var(--txt-head);
+    letter-spacing: 0.5px;
+    font-family: monospace;
+}
+
+.tech-item.locked .tech-item-name { color: var(--txt-dim); }
+
+.tech-item-status {
+    font-size: 9px;
+    color: var(--txt-muted);
+    font-family: monospace;
+}
+
+.tech-item.locked  .tech-item-status { color: var(--txt-dim); }
+.tech-item.unlocked .tech-item-status { color: var(--glow-blue); }
+
+.tech-item-cost {
+    font-size: 8px;
+    color: var(--txt-dim);
+    margin-top: 4px;
+    font-family: monospace;
+}
+
+.tech-item.unlocked .tech-item-cost { color: var(--txt-muted); }
+
+.tree-connector {
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(to bottom, var(--bdr-mid), transparent);
+    margin: 0 auto;
+    position: relative;
+}
+
+.tree-horizontal {
+    position: absolute;
+    height: 1px;
+    background: var(--bdr-mid);
+    top: -14px;
+}
+
+.items-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* (old tab-bar stub removed — new .tab-bar is defined above in the redesign) */
+
     </style>
 </head>
 
-<body style="margin:0; font-family:sans-serif; background:#dd9a4dba;">
+<body>
 
-<!--
-  Outer wrapper: flex COLUMN so the top bar stacks above the panels.
-  height:100vh locks the whole game to the screen height.
--->
-<div style="display:flex; flex-direction:column; height:100vh; min-width:0; overflow:hidden;">
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     FEDERATION ORDNANCE TERMINAL
+     Outer flex COLUMN: top dispatch bar + main panel row beneath it.
+═══════════════════════════════════════════════════════════════════════════ -->
+<div style="display:flex; flex-direction:column; height:100vh; overflow:hidden;">
 
-  <!-- ═══ TOP REQUEST BAR ═══════════════════════════════════════════════════
-       Shows the current active order from Command.
-       RP and money counters sit on the right.
-       The R&D tab hangs below the bar's bottom edge via absolute positioning.
-  ════════════════════════════════════════════════════════════════════════ -->
+  <!-- ── TOP DISPATCH BAR ────────────────────────────────────────────────── -->
   <div class="top-bar">
-    <span class="top-bar-label">Order</span>
-    <!-- id="request" kept for backward-compat with JS that writes to it -->
-    <p id="request" style="flex:1; font-size:13px; color:#f0d9a0; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0; padding:0; background:none; border:none;"></p>
+    <span class="top-bar-label">Dispatch</span>
 
-    <!-- Research Points and Money — groundwork display (values set by JS) -->
+    <!--
+      #request — JS writes the current order text here.
+      All styling comes from the CSS #request rule (no inline styles needed).
+    -->
+    <p id="request"></p>
+
+    <!-- RP and money counters — populated by updateEconomyDisplay() -->
     <div class="top-bar-counters">
-      <span>RP: <span class="counter-val" id="rpDisplay">0</span></span>
-      <span>₵ <span class="counter-val" id="moneyDisplay">1000</span></span>
+      <span>RP&nbsp;<span class="counter-val" id="rpDisplay">0</span></span>
+      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">1000</span></span>
     </div>
 
-    <!-- R&D tab: hangs below the bar via bottom:-34px absolute position -->
+    <!--
+      R&D hanging tab — anchored to the bottom of the dispatch bar
+      via position:absolute + bottom:-34px in the CSS.
+    -->
     <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
   </div>
 
-  <!-- ═══ MAIN ROW — panels sit below the top bar, fill remaining height ══ -->
+  <!-- ── MAIN PANEL ROW ─────────────────────────────────────────────────── -->
   <div style="display:flex; flex:1; min-height:0; overflow:hidden;">
 
-  <!-- LEFT PANEL -->
-  <div style="width:320px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; padding:10px; background:#ccc; box-sizing:border-box; flex-shrink:0;">
-    <div style="width:100%; background:#9daaacba; padding:10px; display:flex; flex-direction:column; gap:10px; box-sizing:border-box;">
-      <h1>She-ll Designer v0.3.5</h1>
-      <p>Design tank shells and other munitions to meet the demands of the frontline! Test your designs against enemy armor and learn their weaknesses to improve your shells. Can you make the Federation's best ammunition?</p>
+    <!-- LEFT PANEL — build info, stats, actions -->
+    <div class="panel-left">
 
-      <h3>Current Build</h3>
-      <p id="build" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+      <div class="panel-header">
+        <h1>She-ll Designer&nbsp;<span style="color:var(--txt-muted); font-weight:400;">v0.3.5</span></h1>
+      </div>
 
-      <h3>Stats</h3>
-      <p id="stats" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+      <div class="panel-section" style="font-size:9px; color:var(--txt-muted); line-height:1.8;">
+        Design ordnance for frontline deployment. Test against enemy armor profiles and fulfil command orders.
+      </div>
 
-      <h3>Database</h3>
-      <button onclick="openDatabaseModal()" style="padding: 10px 20px; background: #7eb8d4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">Database</button>
+      <div class="panel-section">
+        <span class="fed-label">Current Build</span>
+        <p id="build" class="readout"></p>
+      </div>
 
-      <h3>Test Shell</h3>
-      <button onclick="testShell()">Test Shell</button>
-      <p id="testResult" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+      <div class="panel-section">
+        <span class="fed-label">Shell Statistics</span>
+        <p id="stats" class="readout"></p>
+      </div>
 
-      <button onclick="getNewArmor()">Recover Armor</button>
-      <button onclick="submitDesign()">Submit</button>
+      <div class="panel-section">
+        <button class="fed-btn fed-btn-primary" onclick="openDatabaseModal()">▶ Armor Database</button>
+      </div>
 
-      <p id="result" style="background:#fff; padding:10px; border:1px solid #ccc;"></p>
+      <div class="panel-section">
+        <span class="fed-label">Testing Range</span>
+        <button class="fed-btn fed-btn-amber" onclick="testShell()">▶ Fire Test Round</button>
+        <p id="testResult" class="readout" style="margin-top:6px;"></p>
+        <button class="fed-btn" onclick="getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
+      </div>
+
+      <div class="panel-section">
+        <button class="fed-btn fed-btn-primary" onclick="submitDesign()">▶ Submit to Command</button>
+        <p id="result" class="readout" style="margin-top:6px;"></p>
+      </div>
+
+    </div><!-- /panel-left -->
+
+    <!-- MIDDLE — Blueprint canvas with grid lines -->
+    <div class="panel-middle">
+      <span style="font-family:monospace; font-size:9px; letter-spacing:4px; color:var(--txt-dim); text-transform:uppercase;">[ Blueprint ]</span>
     </div>
-  </div>
 
-  <!-- MIDDLE -->
-  <div style="flex:1; min-width:0; margin:10px; background:#6a9cdb91; border:2px dashed #aaa; display:flex; align-items:center; justify-content:center;">
-    <p>Blueprint Placeholder</p>
-  </div>
+    <!-- RIGHT PANEL — Component selector tabs -->
+    <div class="panel-right">
 
-  <!-- RIGHT PANEL -->
-  <div style="width:220px; flex-shrink:0; background:#9daaacba; padding:10px; display:flex; flex-direction:column; gap: 10px; box-sizing:border-box;">
+      <div class="panel-header">
+        <span style="font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--txt-muted); font-family:monospace;">Component Select</span>
+      </div>
 
-    <h3>Parts</h3>
-    <!-- Tabs -->
-    <div id="partTabs">
+      <!--
+        #partTabs — flex row: .tab-bar (left strip) + #tabContent (right pane).
+        flex:1 makes it expand to fill the remaining panel height.
+      -->
+      <div id="partTabs">
         <div class="tab-bar">
-            <button class="tab activate" data-tab="core">Core</button>
-            <button class="tab" data-tab="casing">Casing</button>
-            <button class="tab" data-tab="powder">Powder</button>
+          <button class="tab activate" data-tab="core">Core</button>
+          <button class="tab" data-tab="casing">Casing</button>
+          <button class="tab" data-tab="powder">Powder</button>
         </div>
-
-        <!-- Content Area -->
-        <div id="tabContent" style="flex:1; background:#fff; padding:10px; border:1px solid #c6b78c; border-left:none; box-sizing:border-box; border-radius: 0 10px 10px 0; min-height:120px;">
-            <!-- Tab content will be populated by JavaScript -->
+        <div id="tabContent">
+          <!-- populated by showTabContent() in JS -->
         </div>
-    </div>
+      </div>
 
-  </div><!-- close right panel -->
-  </div><!-- close main row -->
+    </div><!-- /panel-right -->
+
+  </div><!-- /main row -->
 
 <!-- Database Modal -->
 <div id="databaseModal" class="modal">
@@ -1244,12 +1556,14 @@ let description;
             failedOrders.splice(index, 1); // Remove from memory so it isn't reused again
             orderSinceLastFailure = 0;     // Reset counter after using a failed order
             currentOrderDescription = description;
-            document.getElementById("request").innerText =
+            typewriterDispatch(
                 "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
                 "Power ≥ " + requiredPower +
                 " | Cost ≤ " + maxCost +
                 " | Stability ≥ " + requiredStability +
-                " | Explosiveness ≥ " + requiredExplosiveness;
+                " | Explosiveness ≥ " + requiredExplosiveness
+            );
+            flashDispatchBar();
         } else {
 
     // Base stat ranges — keywords in the description push these up or down below
@@ -1321,17 +1635,80 @@ let description;
     currentOrderDescription = description;
 
     //Pick a random description for the order
-    document.getElementById("request").innerText =
-    description + "\n\n" +
+    typewriterDispatch(
+        description + "\n\n" +
         "Power ≥ " + requiredPower +
         " | Cost ≤ " + maxCost +
         " | Stability ≥ " + requiredStability +
-        " | Explosiveness ≥ " + requiredExplosiveness;
+        " | Explosiveness ≥ " + requiredExplosiveness
+    );
+    flashDispatchBar();
     }
+}
+
+// Tracks which tab is currently open so selectCore/Casing/Powder can re-render it
+let activeTab = 'core';
+
+/*
+ * typewriterDispatch — types `text` into #request char by char at `speed` ms per char.
+ *
+ * This makes each new order feel like it's coming through a terminal feed.
+ * Any in-progress typing is cancelled first (via the `_twTimer` handle on the
+ * element) so rapid order generation never leaves orphaned animations.
+ */
+function typewriterDispatch(text) {
+    const el = document.getElementById("request");
+    if (!el) return;
+    if (el._twTimer) { clearTimeout(el._twTimer); el._twTimer = null; }
+    el.innerText = "";
+    let i = 0;
+    function step() {
+        if (i < text.length) {
+            el.innerText += text[i++];
+            el._twTimer = setTimeout(step, 14);
+        } else {
+            el._twTimer = null;
+        }
+    }
+    step();
+}
+
+/*
+ * updateTabBadges — adds/removes the .filled class on each tab button so a
+ * small blue dot appears on tabs that have a part selected.
+ */
+function updateTabBadges() {
+    const tabEls = document.querySelectorAll('#partTabs .tab');
+    tabEls.forEach(t => {
+        const slot = t.dataset.tab;
+        const filled =
+            (slot === 'core'   && core   !== null) ||
+            (slot === 'casing' && casing !== null) ||
+            (slot === 'powder' && powder !== null);
+        t.classList.toggle('filled', filled);
+    });
 }
 
 // Call once at start to generate the first order
 generateOrder();
+
+/*
+ * flashDispatchBar — triggers the incoming-transmission amber flash
+ * on the dispatch bar whenever a new order is written to #request.
+ *
+ * Technique: add .bar-flash → CSS animation fires → remove class on
+ * animationend (so it can be retriggered on the very next order).
+ * void bar.offsetWidth forces a reflow between remove+add, which resets
+ * the animation even if called twice in quick succession.
+ */
+function flashDispatchBar() {
+    const bar = document.querySelector('.top-bar');
+    if (!bar) return;
+    bar.classList.remove('bar-flash');
+    void bar.offsetWidth;               // reflow: lets browser see the removal
+    bar.classList.add('bar-flash');
+    bar.addEventListener('animationend', () => bar.classList.remove('bar-flash'), { once: true });
+}
 
 // Stats for each part
 const coreStats = {
@@ -1372,22 +1749,55 @@ function clampStats() {
     penetration = Math.max(0, penetration);
 }
 
-// Update display
-function updateDisplay() {
-    const coreDisplay = core ? `${core.category} - ${core.type}` : "None";
-    document.getElementById("build").innerText =
-        "Core: " + coreDisplay +
-        " | Casing: " + (casing ? casing : "None") +
-        " | Powder: " + (powder ? powder : "None");
+/*
+ * statTag — returns a small colored span showing pass/fail/warn state
+ * for a single stat value vs its requirement.
+ *
+ *   val      : current value
+ *   req      : required threshold
+ *   mode     : "min" (val ≥ req) or "max" (val ≤ req)
+ *   label    : display label e.g. "Pwr"
+ */
+function statTag(val, req, mode, label) {
+    if (req === null || req === undefined) return `${label}: ${val}`;
+    const pass = mode === "min" ? val >= req : val <= req;
+    const cls  = pass ? "stat-ok" : "stat-fail";
+    const icon = pass ? "✓" : "✗";
+    return `<span class="${cls}">${icon}</span> ${label}: <b>${val}</b> (req ${mode === "min" ? "≥" : "≤"}${req})`;
+}
 
-    const coreInfo = core ? getKnownStatText("core", core.category, core.type) : "None";
-    const casingInfo = casing ? getKnownStatText("casing", null, casing) : "None";
-    const powderInfo = powder ? getKnownStatText("powder", null, powder) : "None";
-    
-    document.getElementById("stats").innerText =
-        "Core Info:\n " + coreInfo + "\n" +
-        "Casing Info:\n " + casingInfo + "\n" +
-        "Powder Info:\n " + powderInfo;
+// Update display — uses innerHTML so the ✓/✗ colored spans render correctly
+function updateDisplay() {
+    const coreDisplay = core   ? `${core.category} — ${core.type}` : '<span style="opacity:0.4">— unassigned —</span>';
+    const casingDisplay = casing ? casing : '<span style="opacity:0.4">— unassigned —</span>';
+    const powderDisplay = powder ? powder : '<span style="opacity:0.4">— unassigned —</span>';
+
+    document.getElementById("build").innerHTML =
+        `Core: ${coreDisplay}<br>` +
+        `Casing: ${casingDisplay}<br>` +
+        `Powder: ${powderDisplay}`;
+
+    // Stat requirement thresholds from the current order
+    const rPow  = typeof requiredPower        !== "undefined" ? requiredPower        : null;
+    const rCst  = typeof maxCost              !== "undefined" ? maxCost              : null;
+    const rStb  = typeof requiredStability    !== "undefined" ? requiredStability    : null;
+    const rExpl = typeof requiredExplosiveness !== "undefined" ? requiredExplosiveness : null;
+
+    const coreInfo   = core   ? getKnownStatText("core",   core.category, core.type) : '<span style="opacity:0.4">none</span>';
+    const casingInfo = casing ? getKnownStatText("casing", null, casing)              : '<span style="opacity:0.4">none</span>';
+    const powderInfo = powder ? getKnownStatText("powder", null, powder)              : '<span style="opacity:0.4">none</span>';
+
+    document.getElementById("stats").innerHTML =
+        `${statTag(power,        rPow,  "min", "Power")}<br>` +
+        `${statTag(cost,         rCst,  "max", "Cost")}<br>` +
+        `${statTag(stability,    rStb,  "min", "Stability")}<br>` +
+        `${statTag(explosiveness,rExpl, "min", "Explosiveness")}<br>` +
+        `<br>` +
+        `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
+        `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
+        `<span style="opacity:0.5;font-size:8px;">POWDER</span> ${powderInfo}`;
+
+    updateTabBadges();
 }
 // Update the armor database display with known stats
 function updateArmorDatabase() {
@@ -1474,6 +1884,8 @@ function selectCore(category, type) {
 
     clampStats();
     updateDisplay();
+    // Re-render the open tab so the selected button gets .part-selected
+    showTabContent(activeTab);
 }
 
 // Casing selection
@@ -1492,6 +1904,7 @@ function selectCasing(type) {
 
     clampStats();
     updateDisplay();
+    showTabContent(activeTab);
 }
 
 // Powder selection
@@ -1510,6 +1923,7 @@ function selectPowder(type) {
 
     clampStats();
     updateDisplay();
+    showTabContent(activeTab);
 }
 
 // Submit design
@@ -1543,11 +1957,26 @@ function submitDesign() {
         });
         orderSinceLastFailure = 0; // Reset counter on failure
     }
-    // Display result
+    // Display result — per-criterion ✓/✗ using innerHTML for colored spans
+    const resultEl = document.getElementById("result");
+    const checks = [
+        { label: "Power",         pass: power        >= requiredPower,         detail: `${power} / ≥${requiredPower}` },
+        { label: "Cost",          pass: cost         <= maxCost,               detail: `${cost} / ≤${maxCost}` },
+        { label: "Stability",     pass: stability    >= requiredStability,     detail: `${stability} / ≥${requiredStability}` },
+        { label: "Explosiveness", pass: explosiveness>= requiredExplosiveness, detail: `${explosiveness} / ≥${requiredExplosiveness}` },
+    ];
     if (failures.length === 0) {
-        document.getElementById("result").innerText = "Order Fulfilled! Great job!";
+        resultEl.classList.add("readout-success");
+        resultEl.classList.remove("readout-fail");
+        resultEl.innerHTML = `<span class="stat-ok">✓ Order Fulfilled</span><br><span style="opacity:0.6;font-size:9px;">All requirements met. Dispatching to Command.</span>`;
     } else {
-        document.getElementById("result").innerText = "Order requirements not met:\n" + failures.join("\n");
+        resultEl.classList.add("readout-fail");
+        resultEl.classList.remove("readout-success");
+        resultEl.innerHTML =
+            `<span class="stat-fail">✗ Requirements Not Met</span><br>` +
+            checks.map(c =>
+                `<span class="${c.pass ? 'stat-ok' : 'stat-fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}: ${c.detail}`
+            ).join("<br>");
     }
     setTimeout( () => {
         generateOrder();
@@ -1566,6 +1995,8 @@ tabs.forEach(tab => {
         tabs.forEach(t => t.classList.remove('activate'));
         //activate clicked tab
         tab.classList.add('activate');
+        // track which tab is open so part selectors can re-render it
+        activeTab = tab.dataset.tab;
         //update content based on tab
         showTabContent(tab.dataset.tab);
     });
@@ -1578,26 +2009,52 @@ showTabContent('core');
 updateEconomyDisplay();
 
 /*
- * partBtn — helper that renders a single part-selection button.
- * If the part is locked in the tech tree it shows as disabled (greyed out, not clickable).
- * If unlocked, it renders a normal clickable button.
+ * partBtn — renders a single component selection button.
  *
- *   partType  : "cores" | "casings" | "powders"
- *   category  : the category string for cores (e.g. "Solid"), null for casings/powders
- *   itemName  : the specific part key (e.g. "APCR", "Reinforced")
- *   label     : the display text shown on the button
- *   id        : the element id (used by updateTooltip to attach hover text)
- *   onclick   : JS string to call when clicked
+ * Three states:
+ *   locked    → dim, 🔒 prefix, not clickable, tooltip says to use R&D
+ *   selected  → .part-selected class, blue glow border, ✓ prefix
+ *   default   → normal clickable button
+ *
+ * A .part-hint span is added below the label showing key stats at a glance
+ * so the player can make informed choices without opening a separate screen.
+ *
+ * Stat hint content:
+ *   cores   → Pwr / Cst / Expl
+ *   casings → Stb / Cst
+ *   powders → Pwr / Stb
  */
 function partBtn(partType, category, itemName, label, id, onclick) {
     const unlocked = isTechUnlocked(partType, category, itemName);
-    if (unlocked) {
-        return `<button onclick="${onclick}" id="${id}">${label}</button>`;
-    } else {
-        // Disabled: pointer-events:none stops clicks, title explains why
-        return `<button id="${id}" disabled title="Locked — unlock via R&D tree"
-            style="opacity:0.4; cursor:not-allowed;">🔒 ${label}</button>`;
+
+    // Build a short stat hint string from the relevant stats table
+    let hint = "";
+    if (partType === "cores" && category && coreStats[category] && coreStats[category][itemName]) {
+        const s = coreStats[category][itemName];
+        hint = `Pwr ${s.power}  Cst ${s.cost}  Expl ${s.explosiveness}`;
+    } else if (partType === "casings" && casingStats[itemName]) {
+        const s = casingStats[itemName];
+        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${s.cost}`;
+    } else if (partType === "powders" && powderStats[itemName]) {
+        const s = powderStats[itemName];
+        hint = `Pwr +${s.power}  Stb ${s.stability > 0 ? '+' : ''}${s.stability}`;
     }
+    const hintEl = hint ? `<span class="part-hint">${hint}</span>` : "";
+
+    if (!unlocked) {
+        return `<button id="${id}" disabled title="Locked — unlock via R&D">🔒 ${label}${hintEl}</button>`;
+    }
+
+    // Check if this item is the currently active selection
+    const isSel =
+        (partType === "cores"   && core   && core.category === category && core.type === itemName) ||
+        (partType === "casings" && casing === itemName) ||
+        (partType === "powders" && powder === itemName);
+
+    const prefix = isSel ? "✓ " : "";
+    const selClass = isSel ? " part-selected" : "";
+
+    return `<button onclick="${onclick}" id="${id}" class="${selClass.trim()}">${prefix}${label}${hintEl}</button>`;
 }
 
 function showTabContent(tab) {
@@ -1605,7 +2062,7 @@ function showTabContent(tab) {
     // Each button goes through partBtn() so locked items can't be selected
     tabContent.innerHTML = `
     <div style="margin-bottom: 15px;">
-        <h4 style="margin: 5px 0; color: #333;">Solid Cores</h4>
+        <h4>Solid Cores</h4>
         ${partBtn("cores","Solid","APCR","Tungsten Carbide Core","heavyCoreBtn","selectCore('Solid','APCR')")}
         ${partBtn("cores","Solid","TAP","Tungsten Core","tungstenAPBtn","selectCore('Solid','TAP')")}
         ${partBtn("cores","Solid","APHE","Hardened Steel-HE","apheBtn","selectCore('Solid','APHE')")}
@@ -1613,7 +2070,7 @@ function showTabContent(tab) {
         ${partBtn("cores","Solid","Light-AP","Low-Carbon Steel Core","lightCoreBtn","selectCore('Solid','Light-AP')")}
     </div>
     <div>
-        <h4 style="margin: 5px 0; color: #333;">Chemical Cores</h4>
+        <h4>Chemical Cores</h4>
         ${partBtn("cores","Chemical","RDX-Based","RDX-Based Core","rdxBtn","selectCore('Chemical','RDX-Based')")}
         ${partBtn("cores","Chemical","TNT-Based","TNT-Based Core","tntBtn","selectCore('Chemical','TNT-Based')")}
         ${partBtn("cores","Chemical","PETN-Composite","PETN-Composite Core","petnBtn","selectCore('Chemical','PETN-Composite')")}
