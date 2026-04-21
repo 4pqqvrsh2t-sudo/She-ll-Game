@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>She-ll Designer v0.3.7</title>
+    <title>She-ll Designer v0.3.5</title>
     <style>
 /* ══════════════════════════════════════════════════════════════════════════
-   FEDERATION ORDNANCE TERMINAL — She-ll Designer v0.3.7
+   FEDERATION ORDNANCE TERMINAL — She-ll Designer v0.3.5
    Primary palette : Deep navy blues
    Accent palette  : Dark brown + amber/tan
    ══════════════════════════════════════════════════════════════════════════ */
 
 :root {
     /* ── Background layers ── */
-    --bg-deep:     #050c18;   /* page / outermost background */
-    --bg-panel:    #080f1e;   /* panel fill */
-    --bg-card:     #0b1726;   /* card / input surface */
-    --bg-brown:    #110804;   /* command bar / brown accent */
+    --bg-deep:     #030814;   /* page / outermost background */
+    --bg-panel:    #07101e;   /* panel fill */
+    --bg-card:     #0a1727;   /* card / input surface */
+    --bg-brown:    #140a05;   /* command bar / brown accent */
 
     /* ── Borders ── */
     --bdr-dim:     #121e30;   /* barely-visible seam */
-    --bdr-blue:    #1c3654;   /* standard border */
-    --bdr-mid:     #2a5a90;   /* active / highlight border */
-    --bdr-bright:  #3a84c8;   /* hot border */
-    --bdr-brown:   #3a1c06;   /* brown zone border */
-    --bdr-tan:     #6a3e10;   /* amber accent border */
+    --bdr-blue:    #203852;   /* standard border */
+    --bdr-mid:     #2e679f;   /* active / highlight border */
+    --bdr-bright:  #4f9ede;   /* hot border */
+    --bdr-brown:   #4a250b;   /* brown zone border */
+    --bdr-tan:     #84501a;   /* amber accent border */
 
     /* ── Glow colours ── */
-    --glow-blue:   #4a9ed8;
-    --glow-amber:  #c87a30;
+    --glow-blue:   #62b2eb;
+    --glow-amber:  #d48a3a;
 
     /* ── Text ── */
-    --txt-head:    #7ab8e8;   /* headings / primary label */
-    --txt-main:    #6a9ab8;   /* body text */
-    --txt-muted:   #354e62;   /* muted / secondary */
-    --txt-tan:     #c8905a;   /* amber label */
-    --txt-tan-hi:  #e8b070;   /* bright amber */
-    --txt-elec:    #5ac8ff;   /* electric blue highlight */
-    --txt-dim:     #162030;   /* near-invisible */
+    --txt-head:    #8bc0ef;   /* headings / primary label */
+    --txt-main:    #8aa4b9;   /* body text */
+    --txt-muted:   #42556b;   /* muted / secondary */
+    --txt-tan:     #cf9a62;   /* amber label */
+    --txt-tan-hi:  #efbd79;   /* bright amber */
+    --txt-elec:    #73cbff;   /* electric blue highlight */
+    --txt-dim:     #182030;   /* near-invisible */
 }
 
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     background: var(--bg-deep);
     color: var(--txt-main);
+    letter-spacing: 0.1px;
 }
 
 /* Thin utility label — all-caps with tracking */
@@ -55,6 +56,8 @@ body {
     text-transform: uppercase;
     color: var(--txt-muted);
     margin-bottom: 5px;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-weight: 700;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -78,7 +81,7 @@ body {
 }
 
 .top-bar-label {
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-size: 8px;
     letter-spacing: 3px;
     color: var(--txt-tan);
@@ -101,8 +104,9 @@ body {
     padding: 0;
     background: none;
     border: none;
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     letter-spacing: 0.3px;
+    line-height: 1.35;
 }
 
 /* RP + money counters, right side of bar */
@@ -110,7 +114,7 @@ body {
     display: flex;
     gap: 18px;
     align-items: center;
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-size: 10px;
     color: var(--txt-muted);
     white-space: nowrap;
@@ -139,7 +143,7 @@ body {
     border-top: none;
     border-radius: 0 0 8px 8px;
     padding: 7px 24px;
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-weight: bold;
     font-size: 10px;
     letter-spacing: 2px;
@@ -213,7 +217,7 @@ body {
    PANELS
    ══════════════════════════════════════════════════════════════════════════ */
 .panel-left {
-    width: 280px;
+    width: 320px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -225,7 +229,7 @@ body {
 }
 
 .panel-right {
-    width: 200px;
+    width: 320px;
     flex-shrink: 0;
     background: var(--bg-panel);
     border-left: 1px solid var(--bdr-blue);
@@ -265,7 +269,7 @@ body {
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--txt-head);
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-weight: bold;
 }
 
@@ -284,7 +288,7 @@ body {
     border: 1px solid var(--bdr-blue);
     border-left: 3px solid var(--bdr-mid);
     padding: 7px 10px;
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-size: 10px;
     color: var(--txt-main);
     line-height: 1.65;
@@ -302,7 +306,7 @@ body {
     background: var(--bg-deep);
     color: var(--txt-head);
     border: 1px solid var(--bdr-blue);
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-size: 10px;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -381,7 +385,7 @@ body {
     color: var(--txt-muted);
     font-size: 8px;
     font-weight: 700;
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     letter-spacing: 2px;
     text-transform: uppercase;
     border: none;
@@ -444,7 +448,7 @@ body {
     background: var(--bg-deep);
     color: var(--txt-main);
     border: 1px solid var(--bdr-blue);
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-size: 9px;
     letter-spacing: 0.5px;
     cursor: pointer;
@@ -536,6 +540,40 @@ body {
 .stat-warn { color: #e09530; }
 .stat-fail { color: #cc4444; }
 
+/*
+ * SCOUT LOG — displayed below the Recover Armor button while the timer runs.
+ * Amber left-edge accent to link it visually to the brown dispatch bar theme.
+ * White-space pre-wrap so newlines in the message string render correctly.
+ */
+.scout-log {
+    border-left-color: var(--bdr-tan) !important;
+    font-size: 10px;
+    line-height: 1.7;
+    color: var(--txt-tan-hi);
+    font-style: italic;
+}
+
+/*
+ * RECOVER BUTTON BUSY STATE
+ * When disabled the button gets a slow amber pulse on its border to signal
+ * that the scout team is actively in the field.
+ *
+ * @keyframes recoverPulse cycles the border glow every 1.6s.
+ * The JS adds class .recovering via dataset — we target button.recovering here.
+ */
+@keyframes recoverPulse {
+    0%, 100% { border-color: var(--bdr-tan);  box-shadow: 0 0  4px rgba(212,138,58,0.15); }
+    50%       { border-color: var(--glow-amber); box-shadow: 0 0 12px rgba(212,138,58,0.45); }
+}
+
+.fed-btn.recovering {
+    animation: recoverPulse 1.6s ease-in-out infinite;
+    opacity: 0.75;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: var(--txt-tan);
+}
+
 #tabContent h4 {
     margin: 10px 0 5px;
     padding-bottom: 4px;
@@ -544,7 +582,7 @@ body {
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--txt-muted);
-    font-family: monospace;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
 }
 
 #tabContent h4:first-child { margin-top: 0; }
@@ -923,7 +961,12 @@ body {
         <span class="fed-label">Testing Range</span>
         <button class="fed-btn fed-btn-amber" onclick="testShell()">▶ Fire Test Round</button>
         <p id="testResult" class="readout" style="margin-top:6px;"></p>
-        <button class="fed-btn" onclick="getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
+        <button class="fed-btn" id="recoverBtn" onclick="getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
+        <!--
+          #scoutLog — filled by getNewArmor() with timed scout team status messages.
+          Hidden by default (display:none) so it doesn't take space when idle.
+        -->
+        <p id="scoutLog" class="readout scout-log" style="display:none; margin-top:4px;"></p>
       </div>
 
       <div class="panel-section">
@@ -1517,16 +1560,99 @@ function testShell() {
     unlockTechBasedOnTest();  // Unlock tech items based on testing
 }
 
-// Function to recover a new armor sample
+/*
+ * getNewArmor — sends the scout team into the field.
+ *
+ * Timeline (60 seconds total):
+ *   The button is locked with a pulsing amber animation while the timer runs.
+ *   #scoutLog shows timed status messages so the player can follow the mission.
+ *   At 60s the armor sample is resolved and everything resets.
+ *
+ * Messages are stored as { delay, text } objects (delay in milliseconds).
+ * A running countdown [XX s] is updated every second via a separate interval.
+ */
 function getNewArmor() {
-    let armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
-    currentArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
-    armorDurability = 4; // Reset durability for new armor
+    const btn     = document.getElementById("recoverBtn");
+    const log     = document.getElementById("scoutLog");
 
-    document.getElementById("testResult").innerText = "New Armor Sample Recovered: " + currentArmor;
-    updateDisplay();
-    updateTooltip();
-    updateArmorDatabase();
+    // Guard — don't stack missions if one is already running
+    if (btn.classList.contains("recovering")) return;
+
+    // ── Pick the armor now (hidden from player until mission complete) ──────
+    const armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+    const chosenArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
+
+    // ── Lock the button ──────────────────────────────────────────────────────
+    btn.classList.add("recovering");
+    btn.textContent = "↺ Scouts Deployed…";
+    log.style.display = "";
+    log.textContent = "Deploying scout team to the engagement zone…";
+
+    // ── Timed narrative events ───────────────────────────────────────────────
+    const DURATION = 60; // seconds
+
+    const events = [
+        { at:  5, msg: "Scout Alpha: Entering hostile perimeter. No contact yet." },
+        { at: 12, msg: "Scout Alpha: Moving through debris field. Armor signatures detected ahead." },
+        { at: 20, msg: "Scout Bravo: Flanking east. Keeping comms tight." },
+        { at: 28, msg: "Scout Alpha: Visual on wreckage — possible sample site. Closing in." },
+        { at: 35, msg: "Scout Bravo: Hostile patrol nearby. Team going silent." },
+        { at: 42, msg: "Scout Alpha: Sample confirmed. Beginning extraction." },
+        { at: 49, msg: "⚠ Scout Bravo: Taking fire! Cover requested — extraction still in progress." },
+        { at: 55, msg: "Scout Alpha: Sample secured. Team pulling back to LZ." },
+        { at: 58, msg: "HQ: Extraction craft on approach. Stand by for handoff." },
+    ];
+
+    // Schedule each narrative event
+    events.forEach(e => {
+        setTimeout(() => {
+            if (log.style.display !== "none") {
+                log.innerHTML = e.msg + `<br><span style="opacity:0.5;font-size:9px;">[ ${DURATION - e.at}s remaining ]</span>`;
+            }
+        }, e.at * 1000);
+    });
+
+    // ── Countdown ticker — updates the log label every second ───────────────
+    let elapsed = 0;
+    const ticker = setInterval(() => {
+        elapsed++;
+        const remaining = DURATION - elapsed;
+
+        // Update the countdown suffix on whatever line is currently shown,
+        // but only if a narrative event hasn't just replaced the whole text
+        // (events use innerHTML so we refresh the span if it exists)
+        const span = log.querySelector("span");
+        if (span) span.textContent = `[ ${remaining}s remaining ]`;
+
+        // Show the button countdown label
+        btn.textContent = `↺ Scout Mission — ${remaining}s`;
+    }, 1000);
+
+    // ── Mission complete at 60s ──────────────────────────────────────────────
+    setTimeout(() => {
+        clearInterval(ticker);
+
+        // Apply the armor result
+        currentArmor    = chosenArmor;
+        armorDurability = 4;
+
+        // Final log entry
+        log.innerHTML =
+            `<span style="color:var(--stat-ok, #3aaa72);">✓ Sample delivered: <b>${chosenArmor}</b></span><br>` +
+            `<span style="opacity:0.5;font-size:9px;">Scout team safely back at base.</span>`;
+
+        // Update the test result readout
+        document.getElementById("testResult").innerHTML =
+            `<span class="stat-ok">✓</span> Armor Sample Recovered: <b>${chosenArmor}</b>`;
+
+        // Re-enable button
+        btn.classList.remove("recovering");
+        btn.textContent = "↺ Recover Armor";
+
+        updateDisplay();
+        updateTooltip();
+        updateArmorDatabase();
+    }, DURATION * 1000);
 }
 
 // Function to generate a new order
