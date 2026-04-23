@@ -91,6 +91,35 @@ body {
     opacity: 0.7;
 }
 
+.dispatch-icons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.dispatch-icon-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--bdr-tan);
+    background: rgba(20, 10, 5, 0.9);
+    color: var(--txt-tan-hi);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.dispatch-icon-btn:hover {
+    border-color: var(--glow-amber);
+    color: #fff3d2;
+}
+
+.top-tabs {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 /* Active order text in the dispatch bar */
 #request {
     flex: 1;
@@ -106,6 +135,7 @@ body {
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     letter-spacing: 0.3px;
     line-height: 1.35;
+    margin-left: 10px;
 }
 
 /* RP + money counters, right side of bar */
@@ -118,7 +148,7 @@ body {
     color: var(--txt-muted);
     white-space: nowrap;
     flex-shrink: 0;
-    margin-right: 110px;   /* breathing room so R&D tab doesn't overlap */
+    margin-right: 0;
 }
 
 .counter-val {
@@ -133,15 +163,12 @@ body {
  * Rounded only on the bottom two corners → folder-tab silhouette.
  */
 .rnd-tab {
-    position: absolute;
-    bottom: -34px;
-    right: 30px;
+    position: static;
     background: var(--bg-brown);
     color: var(--txt-tan);
     border: 2px solid var(--bdr-tan);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    padding: 7px 24px;
+    border-radius: 6px;
+    padding: 7px 12px;
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-weight: bold;
     font-size: 10px;
@@ -151,6 +178,11 @@ body {
     z-index: 21;
     white-space: nowrap;
     transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    margin-left: 0;
+}
+
+.budget-tab {
+    position: static;
 }
 
 .rnd-tab:hover {
@@ -1022,6 +1054,15 @@ body {
 
   <!-- ── TOP DISPATCH BAR ────────────────────────────────────────────────── -->
   <div class="top-bar">
+    <div class="dispatch-icons">
+      <button class="dispatch-icon-btn" title="Operations">☰</button>
+      <button class="dispatch-icon-btn" title="Notifications">🔔</button>
+      <button class="dispatch-icon-btn" title="Logistics">⬢</button>
+    </div>
+    <div class="top-tabs">
+      <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
+      <button class="rnd-tab budget-tab" onclick="openBudgetModal()">Budget</button>
+    </div>
     <span class="top-bar-label">Dispatch</span>
 
     <!--
@@ -1036,11 +1077,6 @@ body {
       <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">10000</span></span>
     </div>
 
-    <!--
-      R&D hanging tab — anchored to the bottom of the dispatch bar
-      via position:absolute + bottom:-34px in the CSS.
-    -->
-    <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
   </div>
 
   <!-- ── MAIN PANEL ROW ─────────────────────────────────────────────────── -->
@@ -1140,6 +1176,20 @@ body {
     </div>
 </div>
 
+<div id="budgetModal" class="modal">
+    <div class="modal-content" style="max-width:520px; height:auto; max-height:70vh;">
+        <div class="modal-header">
+            <h2>Budget Allocation</h2>
+            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
+            <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
+            <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
+        </div>
+    </div>
+</div>
+
 <!-- Tech Tree Modal -->
 <div id="techTreeModal" class="modal">
     <div class="modal-content">
@@ -1223,6 +1273,12 @@ let penetration = 0;
 //Testing System
 let currentArmor ="Standard Polar Domain Armor";
 let armorDurability = 4;
+let scoutTeamStatus = "ready"; // ready | training | needs_replacement
+let scoutTrainingEndsAt = 0;
+const SCOUT_KIA_CHANCE = 0.12;
+const SCOUT_CASUALTY_COST = 800;
+const SCOUT_RECRUIT_COST = 1500;
+const SCOUT_TRAINING_MS = 45000;
 
 //Knowledge system (what the player has learned about the enemy armor)
 let knownStats = {
@@ -1753,6 +1809,26 @@ function getNewArmor() {
     // Guard — don't stack missions if one is already running
     if (btn.classList.contains("recovering")) return;
 
+    updateScoutTeamUI();
+
+    if (scoutTeamStatus === "needs_replacement") {
+        if (money < SCOUT_RECRUIT_COST) {
+            if (log) {
+                log.style.display = "";
+                log.innerHTML = `<span class="stat-fail">✗ Not enough money to recruit new scouts.</span>`;
+            }
+            return;
+        }
+        awardMoney(-SCOUT_RECRUIT_COST);
+        scoutTeamStatus = "training";
+        scoutTrainingEndsAt = Date.now() + SCOUT_TRAINING_MS;
+        updateScoutTeamUI();
+        saveGame();
+        return;
+    }
+
+    if (scoutTeamStatus === "training") return;
+
     // ── Pick the armor now (hidden from player until mission complete) ──────
     const roll = Math.random();
     let cumulative = 0;
@@ -1815,6 +1891,21 @@ function getNewArmor() {
     setTimeout(() => {
         clearInterval(ticker);
 
+        const teamLost = Math.random() < SCOUT_KIA_CHANCE;
+        if (teamLost) {
+            scoutTeamStatus = "needs_replacement";
+            awardMoney(-SCOUT_CASUALTY_COST);
+            log.innerHTML =
+                `<span class="stat-fail">✗ Scout team lost in action.</span><br>` +
+                `<span style="opacity:0.6;font-size:9px;">Casualty and recovery loss: ${currencyText(SCOUT_CASUALTY_COST)}.</span>`;
+            document.getElementById("testResult").innerHTML =
+                `<span class="stat-fail">✗</span> No armor sample recovered.`;
+            btn.classList.remove("recovering");
+            updateScoutTeamUI();
+            saveGame();
+            return;
+        }
+
         // Apply the armor result
         currentArmor    = chosenArmor;
         armorDurability = 4;
@@ -1835,6 +1926,7 @@ function getNewArmor() {
         updateDisplay();
         updateTooltip();
         updateArmorDatabase();
+        saveGame();
     }, DURATION * 1000);
 }
 
@@ -2044,7 +2136,7 @@ function typewriterDispatch(text) {
     function step() {
         if (i < text.length) {
             el.innerText += text[i++];
-            el._twTimer = setTimeout(step, 14);
+            el._twTimer = setTimeout(step, 8);
         } else {
             el._twTimer = null;
         }
@@ -2172,9 +2264,9 @@ function updateDisplay() {
     const rStb  = typeof requiredStability    !== "undefined" ? requiredStability    : null;
     const rExpl = typeof requiredExplosiveness !== "undefined" ? requiredExplosiveness : null;
 
-    const coreInfo   = core   ? getKnownStatText("core",   core.category, core.type) : '<span style="opacity:0.4">none</span>';
-    const casingInfo = casing ? getKnownStatText("casing", null, casing)              : '<span style="opacity:0.4">none</span>';
-    const powderInfo = powder ? getKnownStatText("powder", null, powder)              : '<span style="opacity:0.4">none</span>';
+    const coreInfo   = core   ? getPartFlavor("cores", core.category, core.type) : '<span style="opacity:0.4">none</span>';
+    const casingInfo = casing ? getPartFlavor("casings", null, casing)            : '<span style="opacity:0.4">none</span>';
+    const powderInfo = powder ? getPartFlavor("powders", null, powder)            : '<span style="opacity:0.4">none</span>';
 
     document.getElementById("stats").innerHTML =
         `${statTag(formatStat(power),         rPow,  "min", "Power")}<br>` +
@@ -2522,6 +2614,15 @@ function closeDatabaseModal() {
     document.getElementById("databaseModal").classList.remove("show");
 }
 
+function openBudgetModal() {
+    updateBudgetPanel();
+    document.getElementById("budgetModal").classList.add("show");
+}
+
+function closeBudgetModal() {
+    document.getElementById("budgetModal").classList.remove("show");
+}
+
 // Tech Tree Modal Functions
 function openTechTreeModal() {
     updateTechTreeDisplay();
@@ -2842,9 +2943,13 @@ function getCategoryType(category) {
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const databaseModal = document.getElementById("databaseModal");
+    const budgetModal = document.getElementById("budgetModal");
     const techTreeModal = document.getElementById("techTreeModal");
     if (event.target === databaseModal) {
         closeDatabaseModal();
+    }
+    if (event.target === budgetModal) {
+        closeBudgetModal();
     }
     if (event.target === techTreeModal) {
         closeTechTreeModal();
