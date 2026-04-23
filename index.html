@@ -97,9 +97,8 @@ body {
     font-size: 11px;
     color: var(--txt-tan-hi);
     font-style: italic;
-    white-space: nowrap;
+    white-space: pre-wrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     margin: 0;
     padding: 0;
     background: none;
@@ -507,6 +506,35 @@ body {
     opacity: 0.75;
 }
 
+.barrel-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.barrel-chip {
+    flex: 0 0 auto;
+    width: auto !important;
+    border: 1px solid var(--bdr-blue);
+    background: var(--bg-card);
+    color: var(--txt-main);
+    padding: 8px 10px;
+    font-size: 9px;
+    line-height: 1.25;
+    cursor: pointer;
+    text-align: left;
+    min-width: 145px;
+    margin-bottom: 0 !important;
+}
+
+.barrel-chip.active {
+    border-color: var(--glow-blue);
+    box-shadow: 0 0 0 1px rgba(98,178,235,0.35);
+    color: var(--txt-elec);
+}
+
 /*
  * TAB FILLED INDICATOR
  * After a part is chosen for a slot, the tab gets the .filled class.
@@ -680,6 +708,41 @@ body {
     line-height: 1.7;
     scrollbar-width: thin;
     scrollbar-color: var(--bdr-blue) var(--bg-panel);
+}
+
+#databaseModal .modal-body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    white-space: normal;
+    line-height: 1.45;
+}
+
+.db-armor-block {
+    border: 1px solid var(--bdr-blue);
+    background: rgba(8, 20, 35, 0.7);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+.db-armor-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-head);
+    margin: 0 0 8px 0;
+}
+
+.db-section-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-muted);
+    margin: 8px 0 4px 0;
+}
+
+.db-row {
+    font-size: 10px;
+    padding: 2px 0;
+    color: var(--txt-main);
 }
 
 /* ── Tech tree modal overrides: full-screen ── */
@@ -893,6 +956,45 @@ body {
     width: 100%;
 }
 
+.title-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 20%, #10243b 0%, #040b16 55%, #02060f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.title-card {
+    width: min(520px, 92vw);
+    border: 1px solid var(--bdr-mid);
+    background: rgba(6, 18, 32, 0.95);
+    box-shadow: 0 0 30px rgba(60, 130, 200, 0.2);
+    padding: 24px;
+}
+
+.title-name {
+    color: var(--txt-head);
+    font-size: 24px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+}
+
+.title-sub {
+    color: var(--txt-muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.title-actions .fed-btn {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
 /* (old tab-bar stub removed — new .tab-bar is defined above in the redesign) */
 
     </style>
@@ -900,11 +1002,23 @@ body {
 
 <body>
 
+<div id="titleScreen" class="title-screen">
+  <div class="title-card">
+    <h1 class="title-name">She-ll Designer</h1>
+    <div class="title-sub">Federation Ordnance Terminal</div>
+    <div class="title-actions">
+      <button id="continueBtn" class="fed-btn fed-btn-primary" onclick="startFromTitle('continue')">▶ Continue</button>
+      <button id="loadBtn" class="fed-btn fed-btn-amber" onclick="startFromTitle('load')">↺ Load Save</button>
+      <button class="fed-btn" onclick="startFromTitle('new')">＋ New Game</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════════════════════
      FEDERATION ORDNANCE TERMINAL
      Outer flex COLUMN: top dispatch bar + main panel row beneath it.
 ═══════════════════════════════════════════════════════════════════════════ -->
-<div style="display:flex; flex-direction:column; height:100vh; overflow:hidden;">
+<div id="gameRoot" style="display:none; flex-direction:column; height:100vh; overflow:hidden;">
 
   <!-- ── TOP DISPATCH BAR ────────────────────────────────────────────────── -->
   <div class="top-bar">
@@ -919,7 +1033,7 @@ body {
     <!-- RP and money counters — populated by updateEconomyDisplay() -->
     <div class="top-bar-counters">
       <span>RP&nbsp;<span class="counter-val" id="rpDisplay">0</span></span>
-      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">1000</span></span>
+      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">10000</span></span>
     </div>
 
     <!--
@@ -951,6 +1065,12 @@ body {
       <div class="panel-section">
         <span class="fed-label">Shell Statistics</span>
         <p id="stats" class="readout"></p>
+      </div>
+
+      <div class="panel-section">
+        <span class="fed-label">Budget Allocation</span>
+        <p id="budgetSummary" class="readout" style="margin-bottom:6px;"></p>
+        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
       </div>
 
       <div class="panel-section">
@@ -1057,6 +1177,14 @@ const orderDescriptions = [
     //"Central Command: Elite unit deployment requires Premium ammunition. Design our best shell regardless of Cost.",
     "Frontline Report: Reconnaissance confirms Lightly Armored targets. Optimize for Light armor and High destructive Power."
 ];
+
+const STAGE_1_ARMOR_RECOVERY_WEIGHTS = [
+    { armor: "Light Polar Domain Armor", weight: 0.65 },
+    { armor: "Standard Polar Domain Armor", weight: 0.20 },
+    { armor: "Heavy Polar Domain Armor", weight: 0.05 },
+    { armor: "Polar Domain Civilian Buildings", weight: 0.05 },
+    { armor: "Polar Domain Military Buildings", weight: 0.05 }
+];
 // Min & Max ranges for each stat
 const powerMin = 5, powerMax = 9;
 const costMin = 4, costMax = 8;
@@ -1070,14 +1198,20 @@ let maxCost;
 let requiredStability;
 let requiredExplosiveness;
 // Remembering Failed Orders
-let failedOrders = []; //Store failed Orders
-let orderSinceLastFailure = 0; // Track Orders since last failed one
+let failedOrders = []; // Queue of failed orders that must eventually be retried
+let ordersSinceRetryPrompt = 0; // Track normal orders shown since last retry surfaced
+let nextFailedOrderId = 1; // Stable ID so retries can be removed only on success
+let currentFailedOrderId = null; // Failed-order ID currently being retried (or null for normal orders)
 let currentOrderDescription = ""; // Store the current order text
+let allBuildStatsCache = null; // Cached build combinations for feasibility checks
+let currentOrderIsImpossible = false; // Impossible orders are never added to retry queue
+const COST_TO_CURRENCY = 100;
 
 // Current parts
 let core = null;
 let casing = null;
 let powder = null;
+let barrelSize = "Standard";
 
 // Stats
 let power = 0;
@@ -1122,17 +1256,18 @@ let knownStats = {
 
 /*
  * ── ECONOMY GROUNDWORK ──────────────────────────────────────────────────────
- * researchPoints (RP) — earned by running armor tests. Spent to unlock new
+ * researchPoints (RP) — earned from allocated order budget. Spent to unlock new
  *   tech tree items.
  * money (₵) — the budget. Earned by fulfilling orders. Spent on materials and
  *   tech unlocks.
  *
- * These are not yet wired to the unlock flow — this is the foundation.
- * To add spending: call spendResources(rpCost, moneyCost) before unlocking.
- * To award resources: call awardRP(amount) or awardMoney(amount).
+ * Tech unlocks are started from the R&D tree and complete over time.
  * ────────────────────────────────────────────────────────────────────────── */
 let researchPoints = 0;
 let money = 10000;
+let rdBudgetPercent = 0.5;
+let hasGeneratedFirstOrder = false;
+let researchProjects = {};
 
 /*
  * RP and money costs per tech tree item.
@@ -1186,6 +1321,41 @@ function awardRP(amount) {
 function awardMoney(amount) {
     money += amount;
     updateEconomyDisplay();
+}
+
+function costToCurrency(costPoints) {
+    return Math.round(costPoints * COST_TO_CURRENCY);
+}
+
+function currencyText(amount) {
+    return `₵${Math.round(amount)}`;
+}
+
+function applyBudgetAllocationForOrder() {
+    const allocation = Math.floor(money * rdBudgetPercent);
+    if (allocation <= 0) return;
+    money -= allocation;
+    const gainedRP = Math.max(1, Math.floor(allocation / 100));
+    researchPoints += gainedRP;
+    updateEconomyDisplay();
+}
+
+function setRDBudgetPercent(percent) {
+    rdBudgetPercent = Math.max(0, Math.min(1, Number(percent) / 100));
+    updateBudgetPanel();
+    saveGame();
+}
+
+function updateBudgetPanel() {
+    const percentValue = Math.round(rdBudgetPercent * 100);
+    const summary = document.getElementById("budgetSummary");
+    const slider = document.getElementById("budgetSlider");
+    if (summary) {
+        summary.innerHTML = `R&D share: <b>${percentValue}%</b><br>Next order allocates ~<b>${currencyText(Math.floor(money * rdBudgetPercent))}</b> (₵100 = 1 RP)`;
+    }
+    if (slider && Number(slider.value) !== percentValue) {
+        slider.value = percentValue;
+    }
 }
 
 /* Check whether the player can afford an unlock */
@@ -1339,7 +1509,7 @@ function unlockTechBasedOnTest() {
 function getKnownStatText(partType, partCategory, partName, forTooltip = false) {
     if (partType === "core") {
         let text = "";
-        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
         armors.forEach((armor, i) => {
             const stat = knownStats[partType][partCategory][partName][armor];
             if (stat && typeof stat === "object") {
@@ -1352,7 +1522,7 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
         return text;
     } else {
         let text = "";
-        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
         armors.forEach((armor, i) => {
             const stat = knownStats[partType][partName][armor];
             if (stat && typeof stat === "object") {
@@ -1507,6 +1677,8 @@ function calculateArmorStats(core, casing, powder, armor) {
         "Standard Polar Domain Armor": 1.0,
         "Light Polar Domain Armor": 0.5,
         "Heavy Polar Domain Armor": 1.5,
+        "Polar Domain Civilian Buildings": 0.85,
+        "Polar Domain Military Buildings": 1.65
     };
 
     const actualCorePower = varyComponentStat("core", core.category, core.type, "power", armor);
@@ -1518,16 +1690,19 @@ function calculateArmorStats(core, casing, powder, armor) {
     const actualPowderCost = varyComponentStat("powder", powder, "cost", armor);
     const actualCasingStability = varyComponentStat("casing", casing, "stability", armor);
     const actualPowderStability = varyComponentStat("powder", powder, "stability", armor);
+    const barrelMod = barrelStats[barrelSize] || barrelStats.Standard;
 
     // Explosiveness boosts power by 15%
     const explosiveBoost = actualCoreExplosiveness * 0.15;
     
+    const armorMult = armorMultiplier[armor] ?? 1.0;
+
     return {
-        power: Math.round((actualCorePower + actualPowderPower * armorMultiplier[armor] + explosiveBoost) * 10) / 10,
+        power: Math.round((actualCorePower + actualPowderPower * armorMult + explosiveBoost + barrelMod.power) * 10) / 10,
         explosiveness: Math.round(actualCoreExplosiveness * 10) / 10,
-        cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost) * 10) / 10,
-        stability: Math.round((actualCasingStability * armorMultiplier[armor] + actualPowderStability * 0.3) * 10) / 10,
-        penetration: Math.round(actualCorePenetration * 10) / 10
+        cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost + barrelMod.cost) * 10) / 10,
+        stability: Math.round((actualCasingStability * armorMult + actualPowderStability * 0.3 + barrelMod.stability) * 10) / 10,
+        penetration: Math.round((actualCorePenetration + barrelMod.penetration) * 10) / 10
     };
 }
 // Function to test the shell against the current armor
@@ -1557,7 +1732,7 @@ function testShell() {
     updateDisplay();
     updateTooltip();
     updateArmorDatabase();
-    unlockTechBasedOnTest();  // Unlock tech items based on testing
+    awardRP(2);
 }
 
 /*
@@ -1579,8 +1754,16 @@ function getNewArmor() {
     if (btn.classList.contains("recovering")) return;
 
     // ── Pick the armor now (hidden from player until mission complete) ──────
-    const armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
-    const chosenArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
+    const roll = Math.random();
+    let cumulative = 0;
+    let chosenArmor = STAGE_1_ARMOR_RECOVERY_WEIGHTS[0].armor;
+    for (const entry of STAGE_1_ARMOR_RECOVERY_WEIGHTS) {
+        cumulative += entry.weight;
+        if (roll <= cumulative) {
+            chosenArmor = entry.armor;
+            break;
+        }
+    }
 
     // ── Lock the button ──────────────────────────────────────────────────────
     btn.classList.add("recovering");
@@ -1659,33 +1842,32 @@ function getNewArmor() {
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
-    orderSinceLastFailure++; // Increment counter for orders since last failure
     let useFailedOrder = false;
 let description;
     
-    if (failedOrders.length > 0 && orderSinceLastFailure >= 3) {
-        useFailedOrder = Math.random() < 0.5; // 50% chance to reuse a failed order
+    if (failedOrders.length > 0 && ordersSinceRetryPrompt >= 2) {
+        useFailedOrder = true;
     }
 
     if (useFailedOrder) {
-            // Pick a random failed order and reuse it
-            let index = Math.floor(Math.random() * failedOrders.length);
-            let order = failedOrders[index];
+            // Retry the oldest failed order; keep it queued until player succeeds
+            let order = failedOrders[0];
 
             // Re-use the stored requirements — no need to re-roll stats
-            description = "Central Command: The previous shells were ineffective." + order.description;
+            description = "Central Command: Previous design failed. Reattempt this order:\n" + order.description;
             requiredPower = order.requiredPower;
             maxCost = order.maxCost;
             requiredStability = order.requiredStability;
             requiredExplosiveness = order.requiredExplosiveness;
-            
-            failedOrders.splice(index, 1); // Remove from memory so it isn't reused again
-            orderSinceLastFailure = 0;     // Reset counter after using a failed order
+
+            currentFailedOrderId = order.id;
+            currentOrderIsImpossible = false;
+            ordersSinceRetryPrompt = 0;
             currentOrderDescription = description;
             typewriterDispatch(
                 "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
                 "Power ≥ " + requiredPower +
-                " | Cost ≤ " + maxCost +
+                " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
                 " | Stability ≥ " + requiredStability +
                 " | Explosiveness ≥ " + requiredExplosiveness
             );
@@ -1741,22 +1923,42 @@ let description;
     sMin = Math.max(0, sMin); sMax = Math.max(sMin, sMax);
     eMin = Math.max(0, eMin); eMax = Math.max(eMin, eMax);
 
-    // Some orders are intentionally impossible: either unrealistic power targets or cost caps.
-    if (Math.random() < 0.25) {
-        requiredPower = pMax + Math.floor(Math.random() * 4 + 1); // beyond what any shell can reliably deliver
+    // Some orders are intentionally impossible, but they are never added to retry queue.
+    currentOrderIsImpossible = Math.random() < 0.2;
+    if (currentOrderIsImpossible) {
+        const bounds = getBuildStatBounds();
+        const impossibleType = Math.random();
+        requiredPower = Math.max(pMin, Math.ceil(bounds.maxPower) + 1);
+        maxCost = Math.min(cMax, Math.max(0, Math.floor(bounds.minCost) - 1));
+        requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
+        requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
+
+        // Occasionally make only one constraint impossible to keep variety.
+        if (impossibleType < 0.5) {
+            maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+        } else if (impossibleType < 0.85) {
+            requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+        }
     } else {
-        requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+        // Keep rolling until the order is achievable by at least one valid loadout.
+        let attempts = 0;
+        do {
+            requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+            maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+            requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
+            requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
+            attempts++;
+        } while (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness) && attempts < 40);
+
+        // Guaranteed fallback for gameplay loop stability.
+        if (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness)) {
+            const fallback = getAllBuildStats()[Math.floor(Math.random() * getAllBuildStats().length)];
+            requiredPower = Math.floor(fallback.power);
+            maxCost = Math.ceil(fallback.cost);
+            requiredStability = Math.floor(fallback.stability);
+            requiredExplosiveness = Math.floor(fallback.explosiveness);
+        }
     }
-
-    if (Math.random() < 0.25) {
-        maxCost = Math.max(0, cMin - Math.floor(Math.random() * 2 + 1)); // cost cap below realistic minimum
-    } else {
-        maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
-    }
-
-    requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
-
-    requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
 
     currentOrderDescription = description;
 
@@ -1764,12 +1966,63 @@ let description;
     typewriterDispatch(
         description + "\n\n" +
         "Power ≥ " + requiredPower +
-        " | Cost ≤ " + maxCost +
+        " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
         " | Stability ≥ " + requiredStability +
         " | Explosiveness ≥ " + requiredExplosiveness
     );
+    currentFailedOrderId = null;
+    ordersSinceRetryPrompt++;
     flashDispatchBar();
     }
+
+    if (hasGeneratedFirstOrder) {
+        applyBudgetAllocationForOrder();
+    } else {
+        hasGeneratedFirstOrder = true;
+    }
+}
+
+function getAllBuildStats() {
+    if (allBuildStatsCache) return allBuildStatsCache;
+
+    const builds = [];
+    Object.entries(coreStats).forEach(([category, types]) => {
+        Object.entries(types).forEach(([type, c]) => {
+            Object.entries(casingStats).forEach(([casingType, cs]) => {
+                Object.entries(powderStats).forEach(([powderType, ps]) => {
+                    const basePower = Math.max(0, c.power + (c.explosiveness * 0.15) + cs.power + ps.power);
+                    Object.entries(barrelStats).forEach(([barrelType, b]) => {
+                        const costVal = Math.max(0, c.cost + cs.cost + ps.cost + b.cost);
+                        const stabilityVal = Math.max(0, c.stability + cs.stability + ps.stability + b.stability);
+                        const explosivenessVal = Math.max(0, c.explosiveness + ps.explosiveness);
+                        const powerVal = Math.max(0, basePower + b.power);
+                        builds.push({ category, type, casingType, powderType, barrelType, power: powerVal, cost: costVal, stability: stabilityVal, explosiveness: explosivenessVal });
+                    });
+                });
+            });
+        });
+    });
+    allBuildStatsCache = builds;
+    return allBuildStatsCache;
+}
+
+function isOrderFeasible(reqPower, maxAllowedCost, reqStability, reqExplosiveness) {
+    return getAllBuildStats().some(stats =>
+        stats.power >= reqPower &&
+        stats.cost <= maxAllowedCost &&
+        stats.stability >= reqStability &&
+        stats.explosiveness >= reqExplosiveness
+    );
+}
+
+function getBuildStatBounds() {
+    const builds = getAllBuildStats();
+    return builds.reduce((acc, stats) => ({
+        maxPower: Math.max(acc.maxPower, stats.power),
+        minCost: Math.min(acc.minCost, stats.cost),
+        maxStability: Math.max(acc.maxStability, stats.stability),
+        maxExplosiveness: Math.max(acc.maxExplosiveness, stats.explosiveness)
+    }), { maxPower: 0, minCost: Infinity, maxStability: 0, maxExplosiveness: 0 });
 }
 
 // Tracks which tab is currently open so selectCore/Casing/Powder can re-render it
@@ -1814,9 +2067,6 @@ function updateTabBadges() {
         t.classList.toggle('filled', filled);
     });
 }
-
-// Call once at start to generate the first order
-generateOrder();
 
 /*
  * flashDispatchBar — triggers the incoming-transmission amber flash
@@ -1866,6 +2116,13 @@ const powderStats = {
     "Unrefined-Powder": {power:1, cost:0.5, stability:-5, explosiveness:3}
 };
 
+const barrelStats = {
+    "Short": { power: -0.5, cost: -0.5, penetration: -0.8, stability: -0.7 },
+    "Standard": { power: 0, cost: 0, penetration: 0, stability: 0 },
+    "Long": { power: 0.7, cost: 0.8, penetration: 1.0, stability: 0.4 },
+    "Heavy Long": { power: 1.2, cost: 1.4, penetration: 1.5, stability: 0.8 }
+};
+
 // Helper to clamp stats >= 0
 function clampStats() {
     power = Math.max(0, power);
@@ -1892,20 +2149,26 @@ function statTag(val, req, mode, label) {
     return `<span class="${cls}">${icon}</span> ${label}: <b>${val}</b> (req ${mode === "min" ? "≥" : "≤"}${req})`;
 }
 
+function formatStat(value) {
+    return Number.isInteger(value) ? value : Number(value.toFixed(2));
+}
+
 // Update display — uses innerHTML so the ✓/✗ colored spans render correctly
 function updateDisplay() {
     const coreDisplay = core   ? `${core.category} — ${core.type}` : '<span style="opacity:0.4">— unassigned —</span>';
     const casingDisplay = casing ? casing : '<span style="opacity:0.4">— unassigned —</span>';
     const powderDisplay = powder ? powder : '<span style="opacity:0.4">— unassigned —</span>';
+    const barrelDisplay = barrelSize ? `${barrelSize}` : '<span style="opacity:0.4">— unassigned —</span>';
 
     document.getElementById("build").innerHTML =
         `Core: ${coreDisplay}<br>` +
         `Casing: ${casingDisplay}<br>` +
-        `Powder: ${powderDisplay}`;
+        `Powder: ${powderDisplay}<br>` +
+        `Barrel: ${barrelDisplay}`;
 
     // Stat requirement thresholds from the current order
     const rPow  = typeof requiredPower        !== "undefined" ? requiredPower        : null;
-    const rCst  = typeof maxCost              !== "undefined" ? maxCost              : null;
+    const rCst  = typeof maxCost              !== "undefined" ? costToCurrency(maxCost) : null;
     const rStb  = typeof requiredStability    !== "undefined" ? requiredStability    : null;
     const rExpl = typeof requiredExplosiveness !== "undefined" ? requiredExplosiveness : null;
 
@@ -1914,10 +2177,11 @@ function updateDisplay() {
     const powderInfo = powder ? getKnownStatText("powder", null, powder)              : '<span style="opacity:0.4">none</span>';
 
     document.getElementById("stats").innerHTML =
-        `${statTag(power,        rPow,  "min", "Power")}<br>` +
-        `${statTag(cost,         rCst,  "max", "Cost")}<br>` +
-        `${statTag(stability,    rStb,  "min", "Stability")}<br>` +
-        `${statTag(explosiveness,rExpl, "min", "Explosiveness")}<br>` +
+        `${statTag(formatStat(power),         rPow,  "min", "Power")}<br>` +
+        `${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}<br>` +
+        `${statTag(formatStat(stability),     rStb,  "min", "Stability")}<br>` +
+        `${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}<br>` +
+        `Penetration: <b>${formatStat(penetration)}</b><br>` +
         `<br>` +
         `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
@@ -1927,60 +2191,41 @@ function updateDisplay() {
 }
 // Update the armor database display with known stats
 function updateArmorDatabase() {
-    let text = "";
+    let html = "";
     let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+
+    const coreRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Expl ${stat.explosiveness}, Pen ${stat.penetration}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
+    const simpleRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
+
     armors.forEach(armor => {
-        text += `=== ${armor} ===\n`;
-        
-        // Solid Cores
-        text += "Solid Cores:\n";
+        html += `<div class="db-armor-block"><h3 class="db-armor-title">${armor}</h3>`;
+
+        html += `<div class="db-section-label">Solid Cores</div>`;
         ["APCR", "TAP", "APHE", "AP", "Light-AP"].forEach(type => {
-            let stat = knownStats.core["Solid"][type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+            html += coreRow(type, knownStats.core["Solid"][type][armor]);
         });
-        
-        // Chemical Cores
-        text += "Chemical Cores:\n";
+
+        html += `<div class="db-section-label">Chemical Cores</div>`;
         ["RDX-Based", "TNT-Based", "PETN-Composite"].forEach(type => {
-            let stat = knownStats.core["Chemical"][type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+            html += coreRow(type, knownStats.core["Chemical"][type][armor]);
         });
-        
-        // Casings
-        text += "Casings:\n";
+
+        html += `<div class="db-section-label">Casings</div>`;
         ["Reinforced", "High-Carbon", "Standard", "Low-Carbon"].forEach(type => {
-            let stat = knownStats.casing[type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+            html += simpleRow(type, knownStats.casing[type][armor]);
         });
-        
-        // Powders
-        text += "Powders:\n";
+
+        html += `<div class="db-section-label">Powders</div>`;
         ["Fine-Powder", "Semi-Fine-Powder", "Coarse-Powder", "Unrefined-Powder"].forEach(type => {
-            let stat = knownStats.powder[type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+            html += simpleRow(type, knownStats.powder[type][armor]);
         });
-        
-        text += "\n";
+
+        html += `</div>`;
     });
+
     const modalContent = document.getElementById("modalDatabaseContent");
     if (modalContent) {
-        modalContent.innerText = text;
+        modalContent.innerHTML = html;
     }
 }
 
@@ -1990,7 +2235,8 @@ function selectCore(category, type) {
     if(core) {
         const oldCategory = core.category;
         const oldType = core.type;
-        power -= coreStats[oldCategory][oldType].power;
+        const oldExplosiveBoost = coreStats[oldCategory][oldType].explosiveness * 0.15;
+        power -= coreStats[oldCategory][oldType].power + oldExplosiveBoost;
         cost -= coreStats[oldCategory][oldType].cost;
         stability -= coreStats[oldCategory][oldType].stability;
         explosiveness -= coreStats[oldCategory][oldType].explosiveness;
@@ -2052,6 +2298,26 @@ function selectPowder(type) {
     showTabContent(activeTab);
 }
 
+function selectBarrelSize(type) {
+    if (barrelSize && barrelStats[barrelSize]) {
+        power -= barrelStats[barrelSize].power;
+        cost -= barrelStats[barrelSize].cost;
+        stability -= barrelStats[barrelSize].stability;
+        penetration -= barrelStats[barrelSize].penetration;
+    }
+
+    barrelSize = type;
+
+    power += barrelStats[type].power;
+    cost += barrelStats[type].cost;
+    stability += barrelStats[type].stability;
+    penetration += barrelStats[type].penetration;
+
+    clampStats();
+    updateDisplay();
+    showTabContent(activeTab);
+}
+
 // Submit design
 function submitDesign() {
     if (isWaiting) return; // Prevent multiple submissions while waiting for the next order
@@ -2073,21 +2339,32 @@ function submitDesign() {
         failures.push("Not enough explosiveness.");
     }
     if (failures.length > 0) {
-        // Store failed order details for potential reuse
-        failedOrders.push({
-            description: currentOrderDescription,
-            requiredPower,
-            maxCost,
-            requiredStability,
-            requiredExplosiveness
-        });
-        orderSinceLastFailure = 0; // Reset counter on failure
+        // Store new failures; retry failures stay queued until a successful completion
+        if (currentFailedOrderId === null && !currentOrderIsImpossible) {
+            failedOrders.push({
+                id: nextFailedOrderId++,
+                description: currentOrderDescription,
+                requiredPower,
+                maxCost,
+                requiredStability,
+                requiredExplosiveness
+            });
+        }
+    } else if (currentFailedOrderId !== null) {
+        // Successful retry: remove completed failed order from queue
+        failedOrders = failedOrders.filter(order => order.id !== currentFailedOrderId);
+        currentFailedOrderId = null;
     }
+
+    // Budget settlement: keep savings if under budget, pay penalties if over budget.
+    const budgetDelta = costToCurrency(maxCost - cost);
+    awardMoney(budgetDelta);
+
     // Display result — per-criterion ✓/✗ using innerHTML for colored spans
     const resultEl = document.getElementById("result");
     const checks = [
         { label: "Power",         pass: power        >= requiredPower,         detail: `${power} / ≥${requiredPower}` },
-        { label: "Cost",          pass: cost         <= maxCost,               detail: `${cost} / ≤${maxCost}` },
+        { label: "Cost",          pass: cost         <= maxCost,               detail: `${currencyText(costToCurrency(cost))} / ≤${currencyText(costToCurrency(maxCost))}` },
         { label: "Stability",     pass: stability    >= requiredStability,     detail: `${stability} / ≥${requiredStability}` },
         { label: "Explosiveness", pass: explosiveness>= requiredExplosiveness, detail: `${explosiveness} / ≥${requiredExplosiveness}` },
     ];
@@ -2104,8 +2381,10 @@ function submitDesign() {
                 `<span class="${c.pass ? 'stat-ok' : 'stat-fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}: ${c.detail}`
             ).join("<br>");
     }
+    resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">Budget ${budgetDelta >= 0 ? "surplus" : "overrun"}: ${budgetDelta >= 0 ? "+" : ""}${currencyText(budgetDelta)}</span>`;
     setTimeout( () => {
         generateOrder();
+        saveGame();
         isWaiting = false; // Reset waiting state to allow new orders
     }, 1000); // Creates a new order after a 1-second delay after submission
 }
@@ -2128,11 +2407,7 @@ tabs.forEach(tab => {
     });
 });
 
-// Initialize the first tab content on page load
-showTabContent('core');
-
-// Seed the RP / money counters in the top bar on first load
-updateEconomyDisplay();
+setInterval(updateResearchProjects, 1000);
 
 /*
  * partBtn — renders a single component selection button.
@@ -2157,10 +2432,10 @@ function partBtn(partType, category, itemName, label, id, onclick) {
     let hint = "";
     if (partType === "cores" && category && coreStats[category] && coreStats[category][itemName]) {
         const s = coreStats[category][itemName];
-        hint = `Pwr ${s.power}  Cst ${s.cost}  Expl ${s.explosiveness}`;
+        hint = `Pwr ${s.power}  Cst ${currencyText(costToCurrency(s.cost))}  Expl ${s.explosiveness}`;
     } else if (partType === "casings" && casingStats[itemName]) {
         const s = casingStats[itemName];
-        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${s.cost}`;
+        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${currencyText(costToCurrency(s.cost))}`;
     } else if (partType === "powders" && powderStats[itemName]) {
         const s = powderStats[itemName];
         hint = `Pwr +${s.power}  Stb ${s.stability > 0 ? '+' : ''}${s.stability}`;
@@ -2205,7 +2480,18 @@ function showTabContent(tab) {
     }
 
     if (tab === 'casing') {
+    const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
+        const activeClass = barrelSize === name ? "active" : "";
+        return `<button class="barrel-chip ${activeClass}" onclick="selectBarrelSize('${name}')">
+            <div><b>${name} Barrel</b></div>
+            <div>Pwr ${s.power >= 0 ? "+" : ""}${s.power} · Cst ${currencyText(costToCurrency(s.cost))}</div>
+            <div>Pen ${s.penetration >= 0 ? "+" : ""}${s.penetration} · Stb ${s.stability >= 0 ? "+" : ""}${s.stability}</div>
+        </button>`;
+    }).join("");
+
     tabContent.innerHTML = `
+        <div class="fed-label">Barrel Size</div>
+        <div class="barrel-scroll">${barrelButtons}</div>
         ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
         ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
         ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
@@ -2353,6 +2639,144 @@ function updateTechTreeDisplay() {
     container.innerHTML = html;
 }
 
+function getTechKey(category, itemName) {
+    return `${category}::${itemName}`;
+}
+
+function getTechCostEntry(category, itemName) {
+    if (category === "Solid" || category === "Chemical") return techTreeCosts.cores[category][itemName];
+    if (category === "casing") return techTreeCosts.casings[itemName];
+    if (category === "powder") return techTreeCosts.powders[itemName];
+    return null;
+}
+
+function startResearch(category, itemName) {
+    const partType = getCategoryType(category);
+    const partCategory = (category === "Solid" || category === "Chemical") ? category : null;
+    if (!areRequirementsMet(partType, partCategory, itemName)) return;
+
+    const key = getTechKey(category, itemName);
+    if (researchProjects[key]) return;
+
+    const cost = getTechCostEntry(category, itemName);
+    if (!cost || !canAfford(cost.rp, cost.money)) return;
+
+    spendResources(cost.rp, cost.money);
+    const durationMs = 12000 + (cost.rp * 180) + (cost.money * 5);
+    researchProjects[key] = {
+        category,
+        itemName,
+        finishAt: Date.now() + durationMs
+    };
+    updateTechTreeDisplay();
+    saveGame();
+}
+
+function updateResearchProjects() {
+    const now = Date.now();
+    let changed = false;
+
+    Object.entries(researchProjects).forEach(([key, project]) => {
+        if (now < project.finishAt) return;
+
+        if (project.category === "Solid" || project.category === "Chemical") {
+            unlockedTechTree.cores[project.category][project.itemName] = true;
+        } else if (project.category === "casing") {
+            unlockedTechTree.casings[project.itemName] = true;
+        } else if (project.category === "powder") {
+            unlockedTechTree.powders[project.itemName] = true;
+        }
+        delete researchProjects[key];
+        changed = true;
+    });
+
+    if (changed) {
+        updateTechTreeDisplay();
+        showTabContent(activeTab);
+        saveGame();
+    }
+}
+
+function saveGame() {
+    const payload = {
+        money,
+        researchPoints,
+        rdBudgetPercent,
+        unlockedTechTree,
+        knownStats,
+        failedOrders,
+        nextFailedOrderId,
+        currentArmor,
+        armorDurability
+    };
+    localStorage.setItem("shell_game_save_v1", JSON.stringify(payload));
+}
+
+function loadGame() {
+    const raw = localStorage.getItem("shell_game_save_v1");
+    if (!raw) return false;
+    try {
+        const data = JSON.parse(raw);
+        if (typeof data.money === "number") money = data.money;
+        if (typeof data.researchPoints === "number") researchPoints = data.researchPoints;
+        if (typeof data.rdBudgetPercent === "number") rdBudgetPercent = data.rdBudgetPercent;
+        if (data.unlockedTechTree) unlockedTechTree = data.unlockedTechTree;
+        if (data.knownStats) knownStats = data.knownStats;
+        if (Array.isArray(data.failedOrders)) failedOrders = data.failedOrders;
+        if (typeof data.nextFailedOrderId === "number") nextFailedOrderId = data.nextFailedOrderId;
+        if (typeof data.currentArmor === "string") currentArmor = data.currentArmor;
+        if (typeof data.armorDurability === "number") armorDurability = data.armorDurability;
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function hasSaveFile() {
+    return !!localStorage.getItem("shell_game_save_v1");
+}
+
+function startFromTitle(mode) {
+    let loaded = false;
+
+    if (mode === "new") {
+        localStorage.removeItem("shell_game_save_v1");
+    } else {
+        loaded = loadGame();
+        if (!loaded) {
+            alert("No save file found.");
+            return;
+        }
+    }
+
+    const title = document.getElementById("titleScreen");
+    const game = document.getElementById("gameRoot");
+    if (title) title.style.display = "none";
+    if (game) game.style.display = "flex";
+
+    showTabContent('core');
+    updateEconomyDisplay();
+    updateBudgetPanel();
+
+    if (!loaded) {
+        generateOrder();
+    } else {
+        updateDisplay();
+        updateTooltip();
+        updateArmorDatabase();
+    }
+}
+
+function initTitleScreen() {
+    const hasSave = hasSaveFile();
+    const continueBtn = document.getElementById("continueBtn");
+    const loadBtn = document.getElementById("loadBtn");
+    if (continueBtn) continueBtn.style.display = hasSave ? "block" : "none";
+    if (loadBtn) loadBtn.disabled = !hasSave;
+}
+
+initTitleScreen();
+
 /*
  * createTechItemHTML — builds one tech node card.
  *
@@ -2363,12 +2787,20 @@ function updateTechTreeDisplay() {
 function createTechItemHTML(category, itemName, unlocked, requirements, isStarter = false) {
     let status = "🔒 Locked";
     let statusClass = "locked";
+    const key = getTechKey(category, itemName);
+    const project = researchProjects[key];
+    let clickableAttr = "";
 
     if (unlocked) {
         status = isStarter ? "⭐ Starter" : "✓ Unlocked";
         statusClass = "unlocked";
+    } else if (project) {
+        const secs = Math.max(1, Math.ceil((project.finishAt - Date.now()) / 1000));
+        status = `⏳ Researching (${secs}s)`;
+        statusClass = "locked";
     } else if (requirements.length === 0 || areRequirementsMet(getCategoryType(category), category === "Solid" || category === "Chemical" ? category : null, itemName)) {
         status = "🔓 Ready";
+        clickableAttr = ` onclick="startResearch('${category}','${itemName}')" `;
     }
 
     // Look up the cost for this item from the economy table
@@ -2392,7 +2824,7 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
     } catch(e) { /* cost lookup is best-effort */ }
 
     return `
-        <div class="tech-item ${statusClass}">
+        <div class="tech-item ${statusClass}" ${clickableAttr}>
             <div class="tech-item-name">${itemName}</div>
             <div class="tech-item-status">${status}</div>
             ${costLine}
