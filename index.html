@@ -777,18 +777,6 @@ body {
     color: var(--txt-main);
 }
 
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    border-bottom: 1px solid rgba(70, 110, 150, 0.2);
-    padding: 2px 0;
-}
-
-.stat-row:last-of-type {
-    border-bottom: none;
-}
-
 /* ── Tech tree modal overrides: full-screen ── */
 #techTreeModal.show {
     padding: 0;
@@ -1113,6 +1101,12 @@ body {
       <div class="panel-section">
         <span class="fed-label">Shell Statistics</span>
         <p id="stats" class="readout"></p>
+      </div>
+
+      <div class="panel-section">
+        <span class="fed-label">Budget Allocation</span>
+        <p id="budgetSummary" class="readout" style="margin-bottom:6px;"></p>
+        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
       </div>
 
       <div class="panel-section">
@@ -1797,46 +1791,6 @@ function testShell() {
     awardRP(2);
 }
 
-function updateScoutTeamUI() {
-    const btn = document.getElementById("recoverBtn");
-    const log = document.getElementById("scoutLog");
-    if (!btn) return;
-
-    if (btn.classList.contains("recovering")) return;
-
-    if (scoutTeamStatus === "training") {
-        const remaining = Math.max(0, Math.ceil((scoutTrainingEndsAt - Date.now()) / 1000));
-        if (remaining <= 0) {
-            scoutTeamStatus = "ready";
-            scoutTrainingEndsAt = 0;
-            btn.textContent = "↺ Recover Armor";
-            if (log) {
-                log.style.display = "";
-                log.innerHTML = `<span class="stat-ok">✓ New scout team is trained and ready.</span>`;
-            }
-            saveGame();
-        } else {
-            btn.textContent = `⏳ Scout Training — ${remaining}s`;
-            if (log) {
-                log.style.display = "";
-                log.innerHTML = `Training replacement scouts... <span style="opacity:0.6;">${remaining}s remaining</span>`;
-            }
-        }
-        return;
-    }
-
-    if (scoutTeamStatus === "needs_replacement") {
-        btn.textContent = `⚠ Recruit New Scouts (${currencyText(SCOUT_RECRUIT_COST)})`;
-        if (log) {
-            log.style.display = "";
-            log.innerHTML = `Scout team KIA. Recruit replacements to continue field recovery.`;
-        }
-        return;
-    }
-
-    btn.textContent = "↺ Recover Armor";
-}
-
 /*
  * getNewArmor — sends the scout team into the field.
  *
@@ -2261,35 +2215,6 @@ const barrelStats = {
     "Heavy Long": { power: 1.2, cost: 1.4, penetration: 1.5, stability: 0.8 }
 };
 
-const partFlavorText = {
-    cores: {
-        Solid: {
-            "APCR": "Dense tungsten sabot focused on armor cracking at range.",
-            "TAP": "Balanced tungsten slug for reliable armor piercing.",
-            "APHE": "Armor-piercing shell with delayed internal blast.",
-            "AP": "Standard hardened steel anti-armor core.",
-            "Light-AP": "Lightweight penetrator for low-cost engagements."
-        },
-        Chemical: {
-            "RDX-Based": "High-energy chemical core for heavy blast effects.",
-            "TNT-Based": "Stable explosive core for general-purpose targets.",
-            "PETN-Composite": "Advanced composite explosive for maximum payload."
-        }
-    },
-    casings: {
-        "Reinforced": "Thick reinforced shell body built for high-stress launches.",
-        "High-Carbon": "Durable casing with good structural stability.",
-        "Standard": "Standard issue casing with balanced performance.",
-        "Low-Carbon": "Light casing that is cheap but prone to instability."
-    },
-    powders: {
-        "Fine-Powder": "Refined propellant for high muzzle velocity.",
-        "Semi-Fine-Powder": "Balanced propellant for stable pressure curves.",
-        "Coarse-Powder": "Rugged powder with reliable field performance.",
-        "Unrefined-Powder": "Crude propellant; cheap but volatile."
-    }
-};
-
 // Helper to clamp stats >= 0
 function clampStats() {
     power = Math.max(0, power);
@@ -2320,13 +2245,6 @@ function formatStat(value) {
     return Number.isInteger(value) ? value : Number(value.toFixed(2));
 }
 
-function getPartFlavor(partType, category, itemName) {
-    if (partType === "cores") return partFlavorText.cores?.[category]?.[itemName] || "";
-    if (partType === "casings") return partFlavorText.casings?.[itemName] || "";
-    if (partType === "powders") return partFlavorText.powders?.[itemName] || "";
-    return "";
-}
-
 // Update display — uses innerHTML so the ✓/✗ colored spans render correctly
 function updateDisplay() {
     const coreDisplay = core   ? `${core.category} — ${core.type}` : '<span style="opacity:0.4">— unassigned —</span>';
@@ -2351,11 +2269,11 @@ function updateDisplay() {
     const powderInfo = powder ? getPartFlavor("powders", null, powder)            : '<span style="opacity:0.4">none</span>';
 
     document.getElementById("stats").innerHTML =
-        `<div class="stat-row">${statTag(formatStat(power),         rPow,  "min", "Power")}</div>` +
-        `<div class="stat-row">${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}</div>` +
-        `<div class="stat-row">${statTag(formatStat(stability),     rStb,  "min", "Stability")}</div>` +
-        `<div class="stat-row">${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}</div>` +
-        `<div class="stat-row">Penetration: <b>${formatStat(penetration)}</b></div>` +
+        `${statTag(formatStat(power),         rPow,  "min", "Power")}<br>` +
+        `${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}<br>` +
+        `${statTag(formatStat(stability),     rStb,  "min", "Stability")}<br>` +
+        `${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}<br>` +
+        `Penetration: <b>${formatStat(penetration)}</b><br>` +
         `<br>` +
         `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
@@ -2582,7 +2500,6 @@ tabs.forEach(tab => {
 });
 
 setInterval(updateResearchProjects, 1000);
-setInterval(updateScoutTeamUI, 1000);
 
 /*
  * partBtn — renders a single component selection button.
@@ -2603,7 +2520,18 @@ setInterval(updateScoutTeamUI, 1000);
 function partBtn(partType, category, itemName, label, id, onclick) {
     const unlocked = isTechUnlocked(partType, category, itemName);
 
-    let hint = getPartFlavor(partType, category, itemName);
+    // Build a short stat hint string from the relevant stats table
+    let hint = "";
+    if (partType === "cores" && category && coreStats[category] && coreStats[category][itemName]) {
+        const s = coreStats[category][itemName];
+        hint = `Pwr ${s.power}  Cst ${currencyText(costToCurrency(s.cost))}  Expl ${s.explosiveness}`;
+    } else if (partType === "casings" && casingStats[itemName]) {
+        const s = casingStats[itemName];
+        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${currencyText(costToCurrency(s.cost))}`;
+    } else if (partType === "powders" && powderStats[itemName]) {
+        const s = powderStats[itemName];
+        hint = `Pwr +${s.power}  Stb ${s.stability > 0 ? '+' : ''}${s.stability}`;
+    }
     const hintEl = hint ? `<span class="part-hint">${hint}</span>` : "";
 
     if (!unlocked) {
@@ -2880,9 +2808,7 @@ function saveGame() {
         failedOrders,
         nextFailedOrderId,
         currentArmor,
-        armorDurability,
-        scoutTeamStatus,
-        scoutTrainingEndsAt
+        armorDurability
     };
     localStorage.setItem("shell_game_save_v1", JSON.stringify(payload));
 }
@@ -2901,8 +2827,6 @@ function loadGame() {
         if (typeof data.nextFailedOrderId === "number") nextFailedOrderId = data.nextFailedOrderId;
         if (typeof data.currentArmor === "string") currentArmor = data.currentArmor;
         if (typeof data.armorDurability === "number") armorDurability = data.armorDurability;
-        if (typeof data.scoutTeamStatus === "string") scoutTeamStatus = data.scoutTeamStatus;
-        if (typeof data.scoutTrainingEndsAt === "number") scoutTrainingEndsAt = data.scoutTrainingEndsAt;
         return true;
     } catch (e) {
         return false;
@@ -2934,7 +2858,6 @@ function startFromTitle(mode) {
     showTabContent('core');
     updateEconomyDisplay();
     updateBudgetPanel();
-    updateScoutTeamUI();
 
     if (!loaded) {
         generateOrder();
