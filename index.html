@@ -936,6 +936,17 @@ body {
     box-shadow: 0 0 8px rgba(74, 158, 216, 0.15);
 }
 
+.tech-item.ready {
+    border-color: var(--bdr-mid);
+    box-shadow: inset 0 0 0 1px rgba(98,178,235,0.22);
+    cursor: pointer;
+}
+
+.tech-item.ready:hover {
+    border-color: var(--glow-blue);
+    box-shadow: 0 0 12px rgba(98,178,235,0.25);
+}
+
 .tech-item-name {
     font-weight: bold;
     margin-bottom: 4px;
@@ -2736,6 +2747,17 @@ function updateTechTreeDisplay() {
 
     html += '</div></div>'; // close body + section
 
+    // ── Future Programs (placeholders) ──────────────────────────────────────
+    html += '<div class="tech-tree-section collapsed" id="sec-future">';
+    html += '<h3 onclick="toggleTechSection(\'sec-future\')">Future Programs (Placeholder)</h3>';
+    html += '<div class="tech-tree-section-body">';
+    html += '<div class="tree-root">';
+    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Guided Fuse Suite</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
+    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Composite Jacket</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
+    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Smart Propellant Mix</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
+    html += '</div>';
+    html += '</div></div>';
+
     html += '</div>'; // close .tech-tree-container
     container.innerHTML = html;
 }
@@ -2929,6 +2951,7 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
             <div class="tech-item-name">${itemName}</div>
             <div class="tech-item-status">${status}</div>
             ${costLine}
+            ${helperLine}
         </div>
     `;
 }
