@@ -2264,6 +2264,7 @@ let description;
         maxCost = Math.ceil(fallback.cost);
         requiredStability = Math.floor(fallback.stability);
         requiredExplosiveness = Math.floor(fallback.explosiveness);
+    }
     // Some orders are intentionally impossible, but they are never added to retry queue.
     currentOrderIsImpossible = Math.random() < 0.2;
     if (currentOrderIsImpossible) {
@@ -2632,8 +2633,6 @@ function updateArmorDatabase() {
         html += `<div class="db-section-label">Powders</div>`;
         ["Fine-Powder MK II", "Fine-Powder", "Semi-Fine-Powder MK II", "Semi-Fine-Powder", "Coarse-Powder MK II", "Coarse-Powder", "Unrefined-Powder MK II", "Unrefined-Powder"].forEach(type => {
             html += simpleRow(type, knownStats?.powder?.[type]?.[armor]);
-        ["APCR", "TAP", "APHE", "AP", "Light-AP"].forEach(type => {
-            html += coreRow(type, knownStats.core["Solid"][type][armor]);
         });
 
         html += `<div class="db-section-label">Chemical Cores</div>`;
@@ -3425,7 +3424,7 @@ window.onclick = function(event) {
     if (event.target === techTreeModal) {
         closeTechTreeModal();
     }
-}
+};
 </script>
 
 </div><!-- close outer column flex wrapper -->
