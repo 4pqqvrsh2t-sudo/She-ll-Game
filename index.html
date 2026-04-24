@@ -1132,7 +1132,7 @@ let knownStats = {
  * To award resources: call awardRP(amount) or awardMoney(amount).
  * ────────────────────────────────────────────────────────────────────────── */
 let researchPoints = 0;
-let money = 10000;
+let money = 100000;
 
 /*
  * RP and money costs per tech tree item.
@@ -2072,6 +2072,9 @@ function submitDesign() {
     if (explosiveness < requiredExplosiveness) {
         failures.push("Not enough explosiveness.");
     }
+
+    const reward = maxCost + requiredPower + requiredStability + requiredExplosiveness;
+
     if (failures.length > 0) {
         // Store failed order details for potential reuse
         failedOrders.push({
@@ -2082,6 +2085,9 @@ function submitDesign() {
             requiredExplosiveness
         });
         orderSinceLastFailure = 0; // Reset counter on failure
+        awardMoney(Math.floor(reward * 0.43));
+    } else {
+        awardMoney(reward);
     }
     // Display result — per-criterion ✓/✗ using innerHTML for colored spans
     const resultEl = document.getElementById("result");
@@ -2094,7 +2100,7 @@ function submitDesign() {
     if (failures.length === 0) {
         resultEl.classList.add("readout-success");
         resultEl.classList.remove("readout-fail");
-        resultEl.innerHTML = `<span class="stat-ok">✓ Order Fulfilled</span><br><span style="opacity:0.6;font-size:9px;">All requirements met. Dispatching to Command.</span>`;
+        resultEl.innerHTML = `<span class="stat-ok">✓ Order Fulfilled</span><br><span style="opacity:0.6;font-size:9px;">All requirements met. Dispatching to Command.</span><br>Awarded ₵${reward}`;
     } else {
         resultEl.classList.add("readout-fail");
         resultEl.classList.remove("readout-success");
@@ -2102,7 +2108,7 @@ function submitDesign() {
             `<span class="stat-fail">✗ Requirements Not Met</span><br>` +
             checks.map(c =>
                 `<span class="${c.pass ? 'stat-ok' : 'stat-fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}: ${c.detail}`
-            ).join("<br>");
+            ).join("<br>") + `<br>Awarded ₵${Math.floor(reward * 0.43)}`;
     }
     setTimeout( () => {
         generateOrder();
