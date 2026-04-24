@@ -1099,6 +1099,7 @@ body {
     <div class="top-bar-counters">
       <span>RP&nbsp;<span class="counter-val" id="rpDisplay">0</span></span>
       <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">2500000</span></span>
+      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">10000</span></span>
     </div>
 
   </div>
@@ -1125,6 +1126,12 @@ body {
       <div class="panel-section">
         <span class="fed-label">Shell Statistics</span>
         <p id="stats" class="readout"></p>
+      </div>
+
+      <div class="panel-section">
+        <span class="fed-label">Budget Allocation</span>
+        <p id="budgetSummary" class="readout" style="margin-bottom:6px;"></p>
+        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
       </div>
 
       <div class="panel-section">
@@ -1374,6 +1381,10 @@ let money = 2500000;
 let rdBudgetPercent = 0.5;
 let researchProjects = {};
 let advancedText = true;
+let money = 10000;
+let rdBudgetPercent = 0.5;
+let hasGeneratedFirstOrder = false;
+let researchProjects = {};
 
 /*
  * RP and money costs per tech tree item.
@@ -1479,11 +1490,13 @@ function setAdvancedText(enabled) {
         );
     }
     saveGame();
+    return `₵${Math.round(amount)}`;
 }
 
 function applyBudgetAllocationForOrder() {
     const allocation = Math.floor(money * rdBudgetPercent);
     if (allocation <= 0) return { allocation: 0, gainedRP: 0 };
+    if (allocation <= 0) return;
     money -= allocation;
     const gainedRP = Math.max(1, Math.floor(allocation / 100));
     researchPoints += gainedRP;
@@ -1698,6 +1711,7 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
     if (partType === "core") {
         let text = "";
         let armors = [currentArmor];
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
         armors.forEach((armor, i) => {
             const stat = knownStats?.[partType]?.[partCategory]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
@@ -1711,6 +1725,7 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
     } else {
         let text = "";
         let armors = [currentArmor];
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
         armors.forEach((armor, i) => {
             const stat = knownStats?.[partType]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
@@ -2254,6 +2269,41 @@ let description;
         maxCost = Math.ceil(fallback.cost);
         requiredStability = Math.floor(fallback.stability);
         requiredExplosiveness = Math.floor(fallback.explosiveness);
+    // Some orders are intentionally impossible, but they are never added to retry queue.
+    currentOrderIsImpossible = Math.random() < 0.2;
+    if (currentOrderIsImpossible) {
+        const bounds = getBuildStatBounds();
+        const impossibleType = Math.random();
+        requiredPower = Math.max(pMin, Math.ceil(bounds.maxPower) + 1);
+        maxCost = Math.min(cMax, Math.max(0, Math.floor(bounds.minCost) - 1));
+        requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
+        requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
+
+        // Occasionally make only one constraint impossible to keep variety.
+        if (impossibleType < 0.5) {
+            maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+        } else if (impossibleType < 0.85) {
+            requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+        }
+    } else {
+        // Keep rolling until the order is achievable by at least one valid loadout.
+        let attempts = 0;
+        do {
+            requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
+            maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+            requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
+            requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
+            attempts++;
+        } while (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness) && attempts < 40);
+
+        // Guaranteed fallback for gameplay loop stability.
+        if (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness)) {
+            const fallback = getAllBuildStats()[Math.floor(Math.random() * getAllBuildStats().length)];
+            requiredPower = Math.floor(fallback.power);
+            maxCost = Math.ceil(fallback.cost);
+            requiredStability = Math.floor(fallback.stability);
+            requiredExplosiveness = Math.floor(fallback.explosiveness);
+        }
     }
 
     currentOrderDescription = description;
@@ -2271,6 +2321,11 @@ let description;
     flashDispatchBar();
     }
 
+    if (hasGeneratedFirstOrder) {
+        applyBudgetAllocationForOrder();
+    } else {
+        hasGeneratedFirstOrder = true;
+    }
 }
 
 function getAllBuildStats() {
@@ -2541,6 +2596,11 @@ function updateDisplay() {
         `<div class="stat-row">${statTag(formatStat(stability),     rStb,  "min", "Stability")}</div>` +
         `<div class="stat-row">${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}</div>` +
         `<div class="stat-row">Penetration: <b>${formatStat(penetration)}</b></div>` +
+        `${statTag(formatStat(power),         rPow,  "min", "Power")}<br>` +
+        `${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}<br>` +
+        `${statTag(formatStat(stability),     rStb,  "min", "Stability")}<br>` +
+        `${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}<br>` +
+        `Penetration: <b>${formatStat(penetration)}</b><br>` +
         `<br>` +
         `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
@@ -2577,6 +2637,23 @@ function updateArmorDatabase() {
         html += `<div class="db-section-label">Powders</div>`;
         ["Fine-Powder MK II", "Fine-Powder", "Semi-Fine-Powder MK II", "Semi-Fine-Powder", "Coarse-Powder MK II", "Coarse-Powder", "Unrefined-Powder MK II", "Unrefined-Powder"].forEach(type => {
             html += simpleRow(type, knownStats?.powder?.[type]?.[armor]);
+        ["APCR", "TAP", "APHE", "AP", "Light-AP"].forEach(type => {
+            html += coreRow(type, knownStats.core["Solid"][type][armor]);
+        });
+
+        html += `<div class="db-section-label">Chemical Cores</div>`;
+        ["RDX-Based", "TNT-Based", "PETN-Composite"].forEach(type => {
+            html += coreRow(type, knownStats.core["Chemical"][type][armor]);
+        });
+
+        html += `<div class="db-section-label">Casings</div>`;
+        ["Reinforced", "High-Carbon", "Standard", "Low-Carbon"].forEach(type => {
+            html += simpleRow(type, knownStats.casing[type][armor]);
+        });
+
+        html += `<div class="db-section-label">Powders</div>`;
+        ["Fine-Powder", "Semi-Fine-Powder", "Coarse-Powder", "Unrefined-Powder"].forEach(type => {
+            html += simpleRow(type, knownStats.powder[type][armor]);
         });
 
         html += `</div>`;
@@ -2793,6 +2870,18 @@ function partBtn(partType, category, itemName, label, id, onclick) {
     const unlocked = isTechUnlocked(partType, category, itemName);
 
     let hint = getPartFlavor(partType, category, itemName);
+    // Build a short stat hint string from the relevant stats table
+    let hint = "";
+    if (partType === "cores" && category && coreStats[category] && coreStats[category][itemName]) {
+        const s = coreStats[category][itemName];
+        hint = `Pwr ${s.power}  Cst ${currencyText(costToCurrency(s.cost))}  Expl ${s.explosiveness}`;
+    } else if (partType === "casings" && casingStats[itemName]) {
+        const s = casingStats[itemName];
+        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${currencyText(costToCurrency(s.cost))}`;
+    } else if (partType === "powders" && powderStats[itemName]) {
+        const s = powderStats[itemName];
+        hint = `Pwr +${s.power}  Stb ${s.stability > 0 ? '+' : ''}${s.stability}`;
+    }
     const hintEl = hint ? `<span class="part-hint">${hint}</span>` : "";
 
     if (!unlocked) {
@@ -3147,6 +3236,8 @@ function saveGame() {
         scoutTeamStatus,
         scoutTrainingEndsAt,
         advancedText
+        currentArmor,
+        armorDurability
     };
     localStorage.setItem("shell_game_save_v1", JSON.stringify(payload));
 }
@@ -3181,6 +3272,12 @@ function loadGame() {
         if (typeof data.scoutTeamStatus === "string") scoutTeamStatus = data.scoutTeamStatus;
         if (typeof data.scoutTrainingEndsAt === "number") scoutTrainingEndsAt = data.scoutTrainingEndsAt;
         if (typeof data.advancedText === "boolean") advancedText = data.advancedText;
+        if (data.unlockedTechTree) unlockedTechTree = data.unlockedTechTree;
+        if (data.knownStats) knownStats = data.knownStats;
+        if (Array.isArray(data.failedOrders)) failedOrders = data.failedOrders;
+        if (typeof data.nextFailedOrderId === "number") nextFailedOrderId = data.nextFailedOrderId;
+        if (typeof data.currentArmor === "string") currentArmor = data.currentArmor;
+        if (typeof data.armorDurability === "number") armorDurability = data.armorDurability;
         return true;
     } catch (e) {
         return false;
