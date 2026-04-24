@@ -1098,7 +1098,6 @@ body {
     <!-- RP and money counters — populated by updateEconomyDisplay() -->
     <div class="top-bar-counters">
       <span>RP&nbsp;<span class="counter-val" id="rpDisplay">0</span></span>
-      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">2500000</span></span>
       <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">10000</span></span>
     </div>
 
@@ -1129,13 +1128,7 @@ body {
       </div>
 
       <div class="panel-section">
-        <span class="fed-label">Budget Allocation</span>
-        <p id="budgetSummary" class="readout" style="margin-bottom:6px;"></p>
-        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
-      </div>
 
-      <div class="panel-section">
-        <button class="fed-btn fed-btn-primary" onclick="openDatabaseModal()">▶ Armor Database</button>
       </div>
 
       <div class="panel-section">
@@ -1176,6 +1169,7 @@ body {
       <div id="partTabs">
         <div class="tab-bar">
           <button class="tab activate" data-tab="core">Core</button>
+          <button class="tab" data-tab="budget">Budget</button>
           <button class="tab" data-tab="casing">Casing</button>
           <button class="tab" data-tab="powder">Powder</button>
         </div>
@@ -1201,19 +1195,6 @@ body {
     </div>
 </div>
 
-<div id="budgetModal" class="modal">
-    <div class="modal-content" style="max-width:520px; height:auto; max-height:70vh;">
-        <div class="modal-header">
-            <h2>Budget Allocation</h2>
-            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
-            <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
-            <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
-        </div>
-    </div>
-</div>
 
 <div id="settingsModal" class="modal">
     <div class="modal-content" style="max-width:460px; height:auto; max-height:60vh;">
@@ -2904,6 +2885,15 @@ function showTabContent(tab) {
     `;
     }
 
+    if (tab === 'budget') {
+    tabContent.innerHTML = `
+        <div class="fed-label">Budget Allocation</div>
+        <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
+        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
+        <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
+    `;
+    }
+
     if (tab === 'casing') {
     const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
         const activeClass = barrelSize === name ? "active" : "";
@@ -2944,6 +2934,16 @@ function showTabContent(tab) {
     updateDisplay();
     updateTooltip();
     updateArmorDatabase();
+    updateBudgetPanel();
+}
+
+function activatePartTab(tab) {
+    const partTabs = document.querySelectorAll('#partTabs .tab');
+    partTabs.forEach(t => {
+        t.classList.toggle('activate', t.dataset.tab === tab);
+    });
+    activeTab = tab;
+    showTabContent(tab);
 }
 
 // Modal Functions
@@ -2956,12 +2956,7 @@ function closeDatabaseModal() {
 }
 
 function openBudgetModal() {
-    updateBudgetPanel();
-    document.getElementById("budgetModal").classList.add("show");
-}
-
-function closeBudgetModal() {
-    document.getElementById("budgetModal").classList.remove("show");
+    activatePartTab('budget');
 }
 
 function openSettingsModal() {
@@ -3409,14 +3404,10 @@ function getCategoryType(category) {
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const databaseModal = document.getElementById("databaseModal");
-    const budgetModal = document.getElementById("budgetModal");
     const settingsModal = document.getElementById("settingsModal");
     const techTreeModal = document.getElementById("techTreeModal");
     if (event.target === databaseModal) {
         closeDatabaseModal();
-    }
-    if (event.target === budgetModal) {
-        closeBudgetModal();
     }
     if (event.target === settingsModal) {
         closeSettingsModal();
