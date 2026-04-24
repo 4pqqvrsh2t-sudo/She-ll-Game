@@ -91,15 +91,43 @@ body {
     opacity: 0.7;
 }
 
+.dispatch-icons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.dispatch-icon-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--bdr-tan);
+    background: rgba(20, 10, 5, 0.9);
+    color: var(--txt-tan-hi);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.dispatch-icon-btn:hover {
+    border-color: var(--glow-amber);
+    color: #fff3d2;
+}
+
+.top-tabs {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 /* Active order text in the dispatch bar */
 #request {
     flex: 1;
     font-size: 11px;
     color: var(--txt-tan-hi);
     font-style: italic;
-    white-space: nowrap;
+    white-space: pre-wrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     margin: 0;
     padding: 0;
     background: none;
@@ -107,6 +135,7 @@ body {
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     letter-spacing: 0.3px;
     line-height: 1.35;
+    margin-left: 10px;
 }
 
 /* RP + money counters, right side of bar */
@@ -119,7 +148,7 @@ body {
     color: var(--txt-muted);
     white-space: nowrap;
     flex-shrink: 0;
-    margin-right: 110px;   /* breathing room so R&D tab doesn't overlap */
+    margin-right: 0;
 }
 
 .counter-val {
@@ -134,15 +163,12 @@ body {
  * Rounded only on the bottom two corners → folder-tab silhouette.
  */
 .rnd-tab {
-    position: absolute;
-    bottom: -34px;
-    right: 30px;
+    position: static;
     background: var(--bg-brown);
     color: var(--txt-tan);
     border: 2px solid var(--bdr-tan);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    padding: 7px 24px;
+    border-radius: 6px;
+    padding: 7px 12px;
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     font-weight: bold;
     font-size: 10px;
@@ -152,6 +178,11 @@ body {
     z-index: 21;
     white-space: nowrap;
     transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    margin-left: 0;
+}
+
+.budget-tab {
+    position: static;
 }
 
 .rnd-tab:hover {
@@ -507,6 +538,35 @@ body {
     opacity: 0.75;
 }
 
+.barrel-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.barrel-chip {
+    flex: 0 0 auto;
+    width: auto !important;
+    border: 1px solid var(--bdr-blue);
+    background: var(--bg-card);
+    color: var(--txt-main);
+    padding: 8px 10px;
+    font-size: 9px;
+    line-height: 1.25;
+    cursor: pointer;
+    text-align: left;
+    min-width: 145px;
+    margin-bottom: 0 !important;
+}
+
+.barrel-chip.active {
+    border-color: var(--glow-blue);
+    box-shadow: 0 0 0 1px rgba(98,178,235,0.35);
+    color: var(--txt-elec);
+}
+
 /*
  * TAB FILLED INDICATOR
  * After a part is chosen for a slot, the tab gets the .filled class.
@@ -682,6 +742,53 @@ body {
     scrollbar-color: var(--bdr-blue) var(--bg-panel);
 }
 
+#databaseModal .modal-body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    white-space: normal;
+    line-height: 1.45;
+}
+
+.db-armor-block {
+    border: 1px solid var(--bdr-blue);
+    background: rgba(8, 20, 35, 0.7);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+.db-armor-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-head);
+    margin: 0 0 8px 0;
+}
+
+.db-section-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-muted);
+    margin: 8px 0 4px 0;
+}
+
+.db-row {
+    font-size: 10px;
+    padding: 2px 0;
+    color: var(--txt-main);
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 1px solid rgba(70, 110, 150, 0.2);
+    padding: 2px 0;
+}
+
+.stat-row:last-of-type {
+    border-bottom: none;
+}
+
 /* ── Tech tree modal overrides: full-screen ── */
 #techTreeModal.show {
     padding: 0;
@@ -841,6 +948,17 @@ body {
     box-shadow: 0 0 8px rgba(74, 158, 216, 0.15);
 }
 
+.tech-item.ready {
+    border-color: var(--bdr-mid);
+    box-shadow: inset 0 0 0 1px rgba(98,178,235,0.22);
+    cursor: pointer;
+}
+
+.tech-item.ready:hover {
+    border-color: var(--glow-blue);
+    box-shadow: 0 0 12px rgba(98,178,235,0.25);
+}
+
 .tech-item-name {
     font-weight: bold;
     margin-bottom: 4px;
@@ -893,6 +1011,45 @@ body {
     width: 100%;
 }
 
+.title-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 20%, #10243b 0%, #040b16 55%, #02060f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.title-card {
+    width: min(520px, 92vw);
+    border: 1px solid var(--bdr-mid);
+    background: rgba(6, 18, 32, 0.95);
+    box-shadow: 0 0 30px rgba(60, 130, 200, 0.2);
+    padding: 24px;
+}
+
+.title-name {
+    color: var(--txt-head);
+    font-size: 24px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+}
+
+.title-sub {
+    color: var(--txt-muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.title-actions .fed-btn {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
 /* (old tab-bar stub removed — new .tab-bar is defined above in the redesign) */
 
     </style>
@@ -900,14 +1057,36 @@ body {
 
 <body>
 
+<div id="titleScreen" class="title-screen">
+  <div class="title-card">
+    <h1 class="title-name">She-ll Designer</h1>
+    <div class="title-sub">Federation Ordnance Terminal</div>
+    <div class="title-actions">
+      <button id="continueBtn" class="fed-btn fed-btn-primary" onclick="startFromTitle('continue')">▶ Continue</button>
+      <button id="loadBtn" class="fed-btn fed-btn-amber" onclick="startFromTitle('load')">↺ Load Save</button>
+      <button class="fed-btn" onclick="startFromTitle('new')">＋ New Game</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════════════════════
      FEDERATION ORDNANCE TERMINAL
      Outer flex COLUMN: top dispatch bar + main panel row beneath it.
 ═══════════════════════════════════════════════════════════════════════════ -->
-<div style="display:flex; flex-direction:column; height:100vh; overflow:hidden;">
+<div id="gameRoot" style="display:none; flex-direction:column; height:100vh; overflow:hidden;">
 
   <!-- ── TOP DISPATCH BAR ────────────────────────────────────────────────── -->
   <div class="top-bar">
+    <div class="dispatch-icons">
+      <button class="dispatch-icon-btn" title="Operations">☰</button>
+      <button class="dispatch-icon-btn" title="Notifications">🔔</button>
+      <button class="dispatch-icon-btn" title="Logistics">⬢</button>
+      <button class="dispatch-icon-btn" title="Settings" onclick="openSettingsModal()">⚙</button>
+    </div>
+    <div class="top-tabs">
+      <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
+      <button class="rnd-tab budget-tab" onclick="openBudgetModal()">Budget</button>
+    </div>
     <span class="top-bar-label">Dispatch</span>
 
     <!--
@@ -919,14 +1098,9 @@ body {
     <!-- RP and money counters — populated by updateEconomyDisplay() -->
     <div class="top-bar-counters">
       <span>RP&nbsp;<span class="counter-val" id="rpDisplay">0</span></span>
-      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">1000</span></span>
+      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">2500000</span></span>
     </div>
 
-    <!--
-      R&D hanging tab — anchored to the bottom of the dispatch bar
-      via position:absolute + bottom:-34px in the CSS.
-    -->
-    <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
   </div>
 
   <!-- ── MAIN PANEL ROW ─────────────────────────────────────────────────── -->
@@ -1020,6 +1194,35 @@ body {
     </div>
 </div>
 
+<div id="budgetModal" class="modal">
+    <div class="modal-content" style="max-width:520px; height:auto; max-height:70vh;">
+        <div class="modal-header">
+            <h2>Budget Allocation</h2>
+            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
+            <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
+            <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
+        </div>
+    </div>
+</div>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-content" style="max-width:460px; height:auto; max-height:60vh;">
+        <div class="modal-header">
+            <h2>Settings</h2>
+            <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <label style="display:flex; align-items:center; gap:10px; font-size:11px;">
+                <input id="advancedTextToggle" type="checkbox" checked onchange="setAdvancedText(this.checked)">
+                <span><b>Advanced Text</b> — show full numbers and detailed descriptions.</span>
+            </label>
+        </div>
+    </div>
+</div>
+
 <!-- Tech Tree Modal -->
 <div id="techTreeModal" class="modal">
     <div class="modal-content">
@@ -1057,6 +1260,14 @@ const orderDescriptions = [
     //"Central Command: Elite unit deployment requires Premium ammunition. Design our best shell regardless of Cost.",
     "Frontline Report: Reconnaissance confirms Lightly Armored targets. Optimize for Light armor and High destructive Power."
 ];
+
+const STAGE_1_ARMOR_RECOVERY_WEIGHTS = [
+    { armor: "Light Polar Domain Armor", weight: 0.65 },
+    { armor: "Standard Polar Domain Armor", weight: 0.20 },
+    { armor: "Heavy Polar Domain Armor", weight: 0.05 },
+    { armor: "Polar Domain Civilian Buildings", weight: 0.05 },
+    { armor: "Polar Domain Military Buildings", weight: 0.05 }
+];
 // Min & Max ranges for each stat
 const powerMin = 5, powerMax = 9;
 const costMin = 4, costMax = 8;
@@ -1070,14 +1281,20 @@ let maxCost;
 let requiredStability;
 let requiredExplosiveness;
 // Remembering Failed Orders
-let failedOrders = []; //Store failed Orders
-let orderSinceLastFailure = 0; // Track Orders since last failed one
+let failedOrders = []; // Queue of failed orders that must eventually be retried
+let ordersSinceRetryPrompt = 0; // Track normal orders shown since last retry surfaced
+let nextFailedOrderId = 1; // Stable ID so retries can be removed only on success
+let currentFailedOrderId = null; // Failed-order ID currently being retried (or null for normal orders)
 let currentOrderDescription = ""; // Store the current order text
+let allBuildStatsCache = null; // Cached build combinations for feasibility checks
+let currentOrderIsImpossible = false; // Impossible orders are never added to retry queue
+const COST_TO_CURRENCY = 100;
 
 // Current parts
 let core = null;
 let casing = null;
 let powder = null;
+let barrelSize = "Standard";
 
 // Stats
 let power = 0;
@@ -1089,50 +1306,74 @@ let penetration = 0;
 //Testing System
 let currentArmor ="Standard Polar Domain Armor";
 let armorDurability = 4;
+let scoutTeamStatus = "ready"; // ready | training | needs_replacement
+let scoutTrainingEndsAt = 0;
+const SCOUT_KIA_CHANCE = 0.12;
+const SCOUT_CASUALTY_COST = 800;
+const SCOUT_RECRUIT_COST = 1500;
+const SCOUT_DEPLOY_COST = 1200;
+const SCOUT_TRAINING_MS = 45000;
 
 //Knowledge system (what the player has learned about the enemy armor)
 let knownStats = {
     core: {
         "Solid": {
+            "APCR MK II": {},
             "APCR": {},
+            "TAP MK II": {},
             "TAP": {},
+            "APHE MK II": {},
             "APHE": {},
+            "AP MK II": {},
             "AP": {},
+            "Light-AP MK II": {},
             "Light-AP": {}
         },
         "Chemical": {
+            "RDX-Based MK II": {},
             "RDX-Based": {},
+            "TNT-Based MK II": {},
             "TNT-Based": {},
+            "PETN-Composite MK II": {},
             "PETN-Composite": {}
         }
     },
     casing: {
+        "Reinforced MK II": {},
         Reinforced: {},
+        "High-Carbon MK II": {},
         "High-Carbon": {},
+        "Standard MK II": {},
         Standard: {},
+        "Low-Carbon MK II": {},
         "Low-Carbon": {}
     },
     powder: {
+        "Fine-Powder MK II": {},
         "Fine-Powder": {},
+        "Semi-Fine-Powder MK II": {},
         "Semi-Fine-Powder": {},
+        "Coarse-Powder MK II": {},
         "Coarse-Powder": {},
+        "Unrefined-Powder MK II": {},
         "Unrefined-Powder": {}
     }
 };
 
 /*
  * ── ECONOMY GROUNDWORK ──────────────────────────────────────────────────────
- * researchPoints (RP) — earned by running armor tests. Spent to unlock new
+ * researchPoints (RP) — earned from allocated order budget. Spent to unlock new
  *   tech tree items.
  * money (₵) — the budget. Earned by fulfilling orders. Spent on materials and
  *   tech unlocks.
  *
- * These are not yet wired to the unlock flow — this is the foundation.
- * To add spending: call spendResources(rpCost, moneyCost) before unlocking.
- * To award resources: call awardRP(amount) or awardMoney(amount).
+ * Tech unlocks are started from the R&D tree and complete over time.
  * ────────────────────────────────────────────────────────────────────────── */
 let researchPoints = 0;
-let money = 10000;
+let money = 2500000;
+let rdBudgetPercent = 0.5;
+let researchProjects = {};
+let advancedText = true;
 
 /*
  * RP and money costs per tech tree item.
@@ -1143,26 +1384,42 @@ const techTreeCosts = {
     cores: {
         "Solid": {
             "Light-AP":       { rp: 0,   money: 0    }, // starter
+            "Light-AP MK II": { rp: 8,   money: 120  },
             "AP":             { rp: 0,  money: 0  }, // starter
+            "AP MK II":       { rp: 12,  money: 180  },
             "APHE":           { rp: 20,  money: 400  },
+            "APHE MK II":     { rp: 28,  money: 560  },
             "TAP":            { rp: 25,  money: 450  },
-            "APCR":           { rp: 30,  money: 600  }
+            "TAP MK II":      { rp: 34,  money: 680  },
+            "APCR":           { rp: 30,  money: 600  },
+            "APCR MK II":     { rp: 42,  money: 820  }
         },
         "Chemical": {
             "TNT-Based":      { rp: 15,  money: 300  },
+            "TNT-Based MK II":{ rp: 22,  money: 430  },
             "RDX-Based":      { rp: 20,  money: 400  },
-            "PETN-Composite": { rp: 40,  money: 800  }
+            "RDX-Based MK II":{ rp: 28,  money: 560  },
+            "PETN-Composite": { rp: 40,  money: 800  },
+            "PETN-Composite MK II": { rp: 55, money: 1050 }
         }
     },
     casings: {
+        "Reinforced MK II":{ rp: 48, money: 900 },
         "Standard":  { rp: 0,  money: 0   }, // starter
+        "Standard MK II": { rp: 10, money: 160 },
+        "Low-Carbon MK II":{ rp: 8, money: 120 },
         "Low-Carbon":{ rp: 0,  money: 0   }, // starter
         "High-Carbon":{ rp: 15, money: 250 },
+        "High-Carbon MK II":{ rp: 24, money: 420 },
         "Reinforced":{ rp: 30, money: 500 }
     },
     powders: {
+        "Fine-Powder MK II": { rp: 40, money: 760 },
         "Coarse-Powder":   { rp: 0,  money: 0   }, // starter
+        "Coarse-Powder MK II": { rp: 10, money: 170 },
+        "Unrefined-Powder MK II": { rp: 8, money: 130 },
         "Unrefined-Powder":{ rp: 0,  money: 0   }, // starter
+        "Semi-Fine-Powder MK II":{ rp: 20, money: 360 },
         "Semi-Fine-Powder":{ rp: 12, money: 200 },
         "Fine-Powder":     { rp: 25, money: 450 }
     }
@@ -1173,7 +1430,7 @@ function updateEconomyDisplay() {
     const rpEl = document.getElementById("rpDisplay");
     const moneyEl = document.getElementById("moneyDisplay");
     if (rpEl) rpEl.textContent = researchPoints;
-    if (moneyEl) moneyEl.textContent = money;
+    if (moneyEl) moneyEl.textContent = currencyText(money);
 }
 
 /* Award RP to the player (call after a test) */
@@ -1186,6 +1443,70 @@ function awardRP(amount) {
 function awardMoney(amount) {
     money += amount;
     updateEconomyDisplay();
+}
+
+function costToCurrency(costPoints) {
+    return Math.round(costPoints * COST_TO_CURRENCY);
+}
+
+function currencyText(amount) {
+    const rounded = Math.round(amount);
+    if (advancedText) return `₵${rounded.toLocaleString()}`;
+    return `₵${Math.round(rounded / 1000)}`;
+}
+
+function simplifyDescription(text) {
+    if (advancedText) return text;
+    const cut = text.split(".")[0];
+    const short = cut.length > 72 ? cut.slice(0, 72) + "…" : cut;
+    return short;
+}
+
+function setAdvancedText(enabled) {
+    advancedText = !!enabled;
+    const toggle = document.getElementById("advancedTextToggle");
+    if (toggle) toggle.checked = advancedText;
+    updateDisplay();
+    updateBudgetPanel();
+    showTabContent(activeTab);
+    if (currentOrderDescription && requiredPower !== undefined) {
+        typewriterDispatch(
+            simplifyDescription(currentOrderDescription) + "\n\n" +
+            "Power ≥ " + requiredPower +
+            " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+            " | Stability ≥ " + requiredStability +
+            " | Explosiveness ≥ " + requiredExplosiveness
+        );
+    }
+    saveGame();
+}
+
+function applyBudgetAllocationForOrder() {
+    const allocation = Math.floor(money * rdBudgetPercent);
+    if (allocation <= 0) return { allocation: 0, gainedRP: 0 };
+    money -= allocation;
+    const gainedRP = Math.max(1, Math.floor(allocation / 100));
+    researchPoints += gainedRP;
+    updateEconomyDisplay();
+    return { allocation, gainedRP };
+}
+
+function setRDBudgetPercent(percent) {
+    rdBudgetPercent = Math.max(0, Math.min(1, Number(percent) / 100));
+    updateBudgetPanel();
+    saveGame();
+}
+
+function updateBudgetPanel() {
+    const percentValue = Math.round(rdBudgetPercent * 100);
+    const summary = document.getElementById("budgetSummary");
+    const slider = document.getElementById("budgetSlider");
+    if (summary) {
+        summary.innerHTML = `R&D share: <b>${percentValue}%</b><br>Next order allocates ~<b>${currencyText(Math.floor(money * rdBudgetPercent))}</b> (₵100 = 1 RP)`;
+    }
+    if (slider && Number(slider.value) !== percentValue) {
+        slider.value = percentValue;
+    }
 }
 
 /* Check whether the player can afford an unlock */
@@ -1208,25 +1529,41 @@ function spendResources(rpCost, moneyCost) {
 let unlockedTechTree = {
     cores: {
         "Solid": {
+            "APCR MK II": false,
             "APCR": false,       // requires Light-AP
+            "TAP MK II": false,
             "TAP": false,        // requires AP
+            "APHE MK II": false,
             "APHE": false,       // requires AP
+            "AP MK II": false,
             "AP": true,         // Starter — no requirements
+            "Light-AP MK II": false,
             "Light-AP": true     // Starter — no requirements
         },
         "Chemical": {
+            "RDX-Based MK II": false,
             "RDX-Based": false,      // requires Light-AP + Standard
+            "TNT-Based MK II": false,
             "TNT-Based": false,      // requires Light-AP
-            "PETN-Composite": false  // requires RDX-Based
+            "PETN-Composite": false,  // requires RDX-Based
+            "PETN-Composite MK II": false
         }
     },
     casings: {
+        "Reinforced MK II": false,
+        "High-Carbon MK II": false,
+        "Standard MK II": false,
+        "Low-Carbon MK II": false,
         "Reinforced": false,   // requires Standard + High-Carbon
         "High-Carbon": false,  // requires Standard
         "Standard": true,      // Starter — no requirements
         "Low-Carbon": true     // Starter — no requirements
     },
     powders: {
+        "Fine-Powder MK II": false,
+        "Semi-Fine-Powder MK II": false,
+        "Coarse-Powder MK II": false,
+        "Unrefined-Powder MK II": false,
         "Fine-Powder": false,       // requires Coarse-Powder + Semi-Fine-Powder
         "Semi-Fine-Powder": false,  // requires Coarse-Powder
         "Coarse-Powder": true,      // Starter — no requirements
@@ -1238,25 +1575,41 @@ let unlockedTechTree = {
 const techTreeRequirements = {
     cores: {
         "Solid": {
+            "APCR MK II": ["APCR"],
             "APCR": ["Light-AP"],
+            "TAP MK II": ["TAP"],
             "TAP": ["AP"],
+            "APHE MK II": ["APHE"],
             "APHE": ["AP"],
+            "AP MK II": ["AP"],
             "AP": ["Light-AP"],
+            "Light-AP MK II": ["Light-AP"],
             "Light-AP": []  // No requirements, starter
         },
         "Chemical": {
+            "RDX-Based MK II": ["RDX-Based"],
             "RDX-Based": ["Light-AP", "Standard"],
+            "TNT-Based MK II": ["TNT-Based"],
             "TNT-Based": ["Light-AP"],
-            "PETN-Composite": ["RDX-Based"]
+            "PETN-Composite": ["RDX-Based"],
+            "PETN-Composite MK II": ["PETN-Composite"]
         }
     },
     casings: {
+        "Reinforced MK II": ["Reinforced"],
+        "High-Carbon MK II": ["High-Carbon"],
+        "Standard MK II": ["Standard"],
+        "Low-Carbon MK II": ["Low-Carbon"],
         "Reinforced": ["Standard", "High-Carbon"],
         "High-Carbon": ["Standard"],
         "Standard": [],  // No requirements, starter
         "Low-Carbon": []  // No requirements, starter
     },
     powders: {
+        "Fine-Powder MK II": ["Fine-Powder"],
+        "Semi-Fine-Powder MK II": ["Semi-Fine-Powder"],
+        "Coarse-Powder MK II": ["Coarse-Powder"],
+        "Unrefined-Powder MK II": ["Unrefined-Powder"],
         "Fine-Powder": ["Coarse-Powder", "Semi-Fine-Powder"],
         "Semi-Fine-Powder": ["Coarse-Powder"],
         "Coarse-Powder": [],  // No requirements, starter
@@ -1337,11 +1690,16 @@ function unlockTechBasedOnTest() {
 
 // New version that shows all armors with ??? for unknown ones
 function getKnownStatText(partType, partCategory, partName, forTooltip = false) {
+    const allowedArmors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+    if (!allowedArmors.includes(currentArmor)) {
+        return "No telemetry profile loaded for building targets.";
+    }
+
     if (partType === "core") {
         let text = "";
-        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+        let armors = [currentArmor];
         armors.forEach((armor, i) => {
-            const stat = knownStats[partType][partCategory][partName][armor];
+            const stat = knownStats?.[partType]?.[partCategory]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
                 text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}`;
             } else {
@@ -1352,9 +1710,9 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
         return text;
     } else {
         let text = "";
-        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+        let armors = [currentArmor];
         armors.forEach((armor, i) => {
-            const stat = knownStats[partType][partName][armor];
+            const stat = knownStats?.[partType]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
                 text += `${armor}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}`;
             } else {
@@ -1369,25 +1727,41 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
 // Update tooltips for all buttons based on current knowledge
 function updateTooltip() {
     const coreMapping = [
+        { id: "apcrMk2Btn", category: "Solid", type: "APCR MK II" },
         { id: "heavyCoreBtn", category: "Solid", type: "APCR" },
+        { id: "tapMk2Btn", category: "Solid", type: "TAP MK II" },
         { id: "tungstenAPBtn", category: "Solid", type: "TAP" },
+        { id: "apheMk2Btn", category: "Solid", type: "APHE MK II" },
         { id: "apheBtn", category: "Solid", type: "APHE" },
+        { id: "apMk2Btn", category: "Solid", type: "AP MK II" },
         { id: "mediumCoreBtn", category: "Solid", type: "AP" },
+        { id: "lightApMk2Btn", category: "Solid", type: "Light-AP MK II" },
         { id: "lightCoreBtn", category: "Solid", type: "Light-AP" },
+        { id: "rdxMk2Btn", category: "Chemical", type: "RDX-Based MK II" },
         { id: "rdxBtn", category: "Chemical", type: "RDX-Based" },
+        { id: "tntMk2Btn", category: "Chemical", type: "TNT-Based MK II" },
         { id: "tntBtn", category: "Chemical", type: "TNT-Based" },
+        { id: "petnMk2Btn", category: "Chemical", type: "PETN-Composite MK II" },
         { id: "petnBtn", category: "Chemical", type: "PETN-Composite" }
     ];
     const casingMapping = [
+        { id: "reinforcedCasingMk2Btn", part: "casing", type: "Reinforced MK II" },
         { id: "reinforcedCasingBtn", part: "casing", type: "Reinforced" },
+        { id: "highCarbonCasingMk2Btn", part: "casing", type: "High-Carbon MK II" },
         { id: "highCarbonCasingBtn", part: "casing", type: "High-Carbon" },
+        { id: "standardCasingMk2Btn", part: "casing", type: "Standard MK II" },
         { id: "standardCasingBtn", part: "casing", type: "Standard" },
+        { id: "lowCarbonCasingMk2Btn", part: "casing", type: "Low-Carbon MK II" },
         { id: "lowCarbonCasingBtn", part: "casing", type: "Low-Carbon" }
     ];
     const powderMapping = [
+        { id: "finePowderMk2Btn", part: "powder", type: "Fine-Powder MK II" },
         { id: "finePowderBtn", part: "powder", type: "Fine-Powder" },
+        { id: "semiFinePowderMk2Btn", part: "powder", type: "Semi-Fine-Powder MK II" },
         { id: "semiFinePowderBtn", part: "powder", type: "Semi-Fine-Powder" },
+        { id: "coarsePowderMk2Btn", part: "powder", type: "Coarse-Powder MK II" },
         { id: "coarsePowderBtn", part: "powder", type: "Coarse-Powder" },
+        { id: "unrefinedPowderMk2Btn", part: "powder", type: "Unrefined-Powder MK II" },
         { id: "unrefinedPowderBtn", part: "powder", type: "Unrefined-Powder" }
     ];
 
@@ -1485,14 +1859,14 @@ function varyComponentStat(part, categoryOrType, typeOrStat, statKeyOrArmor, arm
         const type = typeOrStat;
         const statKey = statKeyOrArmor;
         base = coreStats[category][type][statKey];
-        variation = variationSettings[part][category][type][statKey] || 0;
+        variation = variationSettings[part]?.[category]?.[type]?.[statKey] || 0;
     } else {
         // For casing/powder: categoryOrType is type, typeOrStat is statKey, statKeyOrArmor is armor
         const type = categoryOrType;
         const statKey = typeOrStat;
         armor = statKeyOrArmor;
         base = baseTables[part][type][statKey];
-        variation = variationSettings[part][type][statKey] || 0;
+        variation = variationSettings[part]?.[type]?.[statKey] || 0;
     }
     
     armorFactor = armorVariationMultiplier[part][armor] || 1.0;
@@ -1507,6 +1881,8 @@ function calculateArmorStats(core, casing, powder, armor) {
         "Standard Polar Domain Armor": 1.0,
         "Light Polar Domain Armor": 0.5,
         "Heavy Polar Domain Armor": 1.5,
+        "Polar Domain Civilian Buildings": 0.85,
+        "Polar Domain Military Buildings": 1.65
     };
 
     const actualCorePower = varyComponentStat("core", core.category, core.type, "power", armor);
@@ -1518,16 +1894,19 @@ function calculateArmorStats(core, casing, powder, armor) {
     const actualPowderCost = varyComponentStat("powder", powder, "cost", armor);
     const actualCasingStability = varyComponentStat("casing", casing, "stability", armor);
     const actualPowderStability = varyComponentStat("powder", powder, "stability", armor);
+    const barrelMod = barrelStats[barrelSize] || barrelStats.Standard;
 
     // Explosiveness boosts power by 15%
     const explosiveBoost = actualCoreExplosiveness * 0.15;
     
+    const armorMult = armorMultiplier[armor] ?? 1.0;
+
     return {
-        power: Math.round((actualCorePower + actualPowderPower * armorMultiplier[armor] + explosiveBoost) * 10) / 10,
+        power: Math.round((actualCorePower + actualPowderPower * armorMult + explosiveBoost + barrelMod.power) * 10) / 10,
         explosiveness: Math.round(actualCoreExplosiveness * 10) / 10,
-        cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost) * 10) / 10,
-        stability: Math.round((actualCasingStability * armorMultiplier[armor] + actualPowderStability * 0.3) * 10) / 10,
-        penetration: Math.round(actualCorePenetration * 10) / 10
+        cost: Math.round((actualCoreCost + actualCasingCost + actualPowderCost + barrelMod.cost) * 10) / 10,
+        stability: Math.round((actualCasingStability * armorMult + actualPowderStability * 0.3 + barrelMod.stability) * 10) / 10,
+        penetration: Math.round((actualCorePenetration + barrelMod.penetration) * 10) / 10
     };
 }
 // Function to test the shell against the current armor
@@ -1545,10 +1924,33 @@ function testShell() {
     let actualStats = calculateArmorStats(core, casing, powder, currentArmor);
 
 
-    //Store Knowledge for this part and armor
-   knownStats.core[core.category][core.type][currentArmor] = { power:actualStats.power, explosiveness:actualStats.explosiveness, cost:actualStats.cost, stability:actualStats.stability, penetration:actualStats.penetration };
-   knownStats.casing[casing][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
-   knownStats.powder[powder][currentArmor] = { power:actualStats.power, cost:actualStats.cost, stability:actualStats.stability };
+    // Store best-known (max observed) knowledge for this part+armor profile
+   knownStats.core[core.category] = knownStats.core[core.category] || {};
+   knownStats.core[core.category][core.type] = knownStats.core[core.category][core.type] || {};
+   const oldCore = knownStats.core[core.category][core.type][currentArmor] || {};
+   knownStats.core[core.category][core.type][currentArmor] = {
+       power: Math.max(oldCore.power ?? 0, actualStats.power),
+       explosiveness: Math.max(oldCore.explosiveness ?? 0, actualStats.explosiveness),
+       cost: Math.max(oldCore.cost ?? 0, actualStats.cost),
+       stability: Math.max(oldCore.stability ?? 0, actualStats.stability),
+       penetration: Math.max(oldCore.penetration ?? 0, actualStats.penetration)
+   };
+
+   knownStats.casing[casing] = knownStats.casing[casing] || {};
+   const oldCasing = knownStats.casing[casing][currentArmor] || {};
+   knownStats.casing[casing][currentArmor] = {
+       power: Math.max(oldCasing.power ?? 0, actualStats.power),
+       cost: Math.max(oldCasing.cost ?? 0, actualStats.cost),
+       stability: Math.max(oldCasing.stability ?? 0, actualStats.stability)
+   };
+
+   knownStats.powder[powder] = knownStats.powder[powder] || {};
+   const oldPowder = knownStats.powder[powder][currentArmor] || {};
+   knownStats.powder[powder][currentArmor] = {
+       power: Math.max(oldPowder.power ?? 0, actualStats.power),
+       cost: Math.max(oldPowder.cost ?? 0, actualStats.cost),
+       stability: Math.max(oldPowder.stability ?? 0, actualStats.stability)
+   };
   
   //Show results of the test
   let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Penetration: ${actualStats.penetration} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
@@ -1557,7 +1959,47 @@ function testShell() {
     updateDisplay();
     updateTooltip();
     updateArmorDatabase();
-    unlockTechBasedOnTest();  // Unlock tech items based on testing
+    awardRP(2);
+}
+
+function updateScoutTeamUI() {
+    const btn = document.getElementById("recoverBtn");
+    const log = document.getElementById("scoutLog");
+    if (!btn) return;
+
+    if (btn.classList.contains("recovering")) return;
+
+    if (scoutTeamStatus === "training") {
+        const remaining = Math.max(0, Math.ceil((scoutTrainingEndsAt - Date.now()) / 1000));
+        if (remaining <= 0) {
+            scoutTeamStatus = "ready";
+            scoutTrainingEndsAt = 0;
+            btn.textContent = "↺ Recover Armor";
+            if (log) {
+                log.style.display = "";
+                log.innerHTML = `<span class="stat-ok">✓ New scout team is trained and ready.</span>`;
+            }
+            saveGame();
+        } else {
+            btn.textContent = `⏳ Scout Training — ${remaining}s`;
+            if (log) {
+                log.style.display = "";
+                log.innerHTML = `Training replacement scouts... <span style="opacity:0.6;">${remaining}s remaining</span>`;
+            }
+        }
+        return;
+    }
+
+    if (scoutTeamStatus === "needs_replacement") {
+        btn.textContent = `⚠ Recruit New Scouts (${currencyText(SCOUT_RECRUIT_COST)})`;
+        if (log) {
+            log.style.display = "";
+            log.innerHTML = `Scout team KIA. Recruit replacements to continue field recovery.`;
+        }
+        return;
+    }
+
+    btn.textContent = "↺ Recover Armor";
 }
 
 /*
@@ -1578,15 +2020,53 @@ function getNewArmor() {
     // Guard — don't stack missions if one is already running
     if (btn.classList.contains("recovering")) return;
 
+    updateScoutTeamUI();
+
+    if (scoutTeamStatus === "needs_replacement") {
+        if (money < SCOUT_RECRUIT_COST) {
+            if (log) {
+                log.style.display = "";
+                log.innerHTML = `<span class="stat-fail">✗ Not enough money to recruit new scouts.</span>`;
+            }
+            return;
+        }
+        awardMoney(-SCOUT_RECRUIT_COST);
+        scoutTeamStatus = "training";
+        scoutTrainingEndsAt = Date.now() + SCOUT_TRAINING_MS;
+        updateScoutTeamUI();
+        saveGame();
+        return;
+    }
+
+    if (scoutTeamStatus === "training") return;
+
+    if (money < SCOUT_DEPLOY_COST) {
+        if (log) {
+            log.style.display = "";
+            log.innerHTML = `<span class="stat-fail">✗ Need ${currencyText(SCOUT_DEPLOY_COST)} to deploy scouts.</span>`;
+        }
+        return;
+    }
+    awardMoney(-SCOUT_DEPLOY_COST);
+    saveGame();
+
     // ── Pick the armor now (hidden from player until mission complete) ──────
-    const armorTypes = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
-    const chosenArmor = armorTypes[Math.floor(Math.random() * armorTypes.length)];
+    const roll = Math.random();
+    let cumulative = 0;
+    let chosenArmor = STAGE_1_ARMOR_RECOVERY_WEIGHTS[0].armor;
+    for (const entry of STAGE_1_ARMOR_RECOVERY_WEIGHTS) {
+        cumulative += entry.weight;
+        if (roll <= cumulative) {
+            chosenArmor = entry.armor;
+            break;
+        }
+    }
 
     // ── Lock the button ──────────────────────────────────────────────────────
     btn.classList.add("recovering");
     btn.textContent = "↺ Scouts Deployed…";
     log.style.display = "";
-    log.textContent = "Deploying scout team to the engagement zone…";
+    log.textContent = `Deploying scout team to the engagement zone… (${currencyText(SCOUT_DEPLOY_COST)} spent)`;
 
     // ── Timed narrative events ───────────────────────────────────────────────
     const DURATION = 60; // seconds
@@ -1632,6 +2112,21 @@ function getNewArmor() {
     setTimeout(() => {
         clearInterval(ticker);
 
+        const teamLost = Math.random() < SCOUT_KIA_CHANCE;
+        if (teamLost) {
+            scoutTeamStatus = "needs_replacement";
+            awardMoney(-SCOUT_CASUALTY_COST);
+            log.innerHTML =
+                `<span class="stat-fail">✗ Scout team lost in action.</span><br>` +
+                `<span style="opacity:0.6;font-size:9px;">Casualty and recovery loss: ${currencyText(SCOUT_CASUALTY_COST)}.</span>`;
+            document.getElementById("testResult").innerHTML =
+                `<span class="stat-fail">✗</span> No armor sample recovered.`;
+            btn.classList.remove("recovering");
+            updateScoutTeamUI();
+            saveGame();
+            return;
+        }
+
         // Apply the armor result
         currentArmor    = chosenArmor;
         armorDurability = 4;
@@ -1652,6 +2147,7 @@ function getNewArmor() {
         updateDisplay();
         updateTooltip();
         updateArmorDatabase();
+        saveGame();
     }, DURATION * 1000);
 }
 
@@ -1659,33 +2155,32 @@ function getNewArmor() {
 function generateOrder() {
     if (isWaiting) return; // Prevent generating a new order while waiting for the next one
 
-    orderSinceLastFailure++; // Increment counter for orders since last failure
     let useFailedOrder = false;
 let description;
     
-    if (failedOrders.length > 0 && orderSinceLastFailure >= 3) {
-        useFailedOrder = Math.random() < 0.5; // 50% chance to reuse a failed order
+    if (failedOrders.length > 0 && ordersSinceRetryPrompt >= 2) {
+        useFailedOrder = true;
     }
 
     if (useFailedOrder) {
-            // Pick a random failed order and reuse it
-            let index = Math.floor(Math.random() * failedOrders.length);
-            let order = failedOrders[index];
+            // Retry the oldest failed order; keep it queued until player succeeds
+            let order = failedOrders[0];
 
             // Re-use the stored requirements — no need to re-roll stats
-            description = "Central Command: The previous shells were ineffective." + order.description;
+            description = "Central Command: Previous design failed. Reattempt this order:\n" + order.description;
             requiredPower = order.requiredPower;
             maxCost = order.maxCost;
             requiredStability = order.requiredStability;
             requiredExplosiveness = order.requiredExplosiveness;
-            
-            failedOrders.splice(index, 1); // Remove from memory so it isn't reused again
-            orderSinceLastFailure = 0;     // Reset counter after using a failed order
+
+            currentFailedOrderId = order.id;
+            currentOrderIsImpossible = false;
+            ordersSinceRetryPrompt = 0;
             currentOrderDescription = description;
             typewriterDispatch(
-                "Reattempting Failed Order:\n" + currentOrderDescription + "\n\n" +
+                "Reattempting Failed Order:\n" + simplifyDescription(currentOrderDescription) + "\n\n" +
                 "Power ≥ " + requiredPower +
-                " | Cost ≤ " + maxCost +
+                " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
                 " | Stability ≥ " + requiredStability +
                 " | Explosiveness ≥ " + requiredExplosiveness
             );
@@ -1696,7 +2191,7 @@ let description;
     let pMin = 6, pMax = 10;
     let cMin = 5, cMax = 12;
     let sMin = 2, sMax = 4;
-    let eMin = 0, eMax = 0.2;
+    let eMin = 0, eMax = 2;
     
     // Randomly choose a description (reuse the outer `description` variable — no re-declaration)
     description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
@@ -1741,35 +2236,84 @@ let description;
     sMin = Math.max(0, sMin); sMax = Math.max(sMin, sMax);
     eMin = Math.max(0, eMin); eMax = Math.max(eMin, eMax);
 
-    // Some orders are intentionally impossible: either unrealistic power targets or cost caps.
-    if (Math.random() < 0.25) {
-        requiredPower = pMax + Math.floor(Math.random() * 4 + 1); // beyond what any shell can reliably deliver
-    } else {
+    // Keep rolling until the order is achievable by at least one valid loadout.
+    currentOrderIsImpossible = false;
+    let attempts = 0;
+    do {
         requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
-    }
-
-    if (Math.random() < 0.25) {
-        maxCost = Math.max(0, cMin - Math.floor(Math.random() * 2 + 1)); // cost cap below realistic minimum
-    } else {
         maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
+        requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
+        requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
+        attempts++;
+    } while (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness) && attempts < 40);
+
+    // Guaranteed fallback for gameplay loop stability.
+    if (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness)) {
+        const fallback = getAllBuildStats()[Math.floor(Math.random() * getAllBuildStats().length)];
+        requiredPower = Math.floor(fallback.power);
+        maxCost = Math.ceil(fallback.cost);
+        requiredStability = Math.floor(fallback.stability);
+        requiredExplosiveness = Math.floor(fallback.explosiveness);
     }
-
-    requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
-
-    requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
 
     currentOrderDescription = description;
 
     //Pick a random description for the order
     typewriterDispatch(
-        description + "\n\n" +
+        simplifyDescription(description) + "\n\n" +
         "Power ≥ " + requiredPower +
-        " | Cost ≤ " + maxCost +
+        " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
         " | Stability ≥ " + requiredStability +
         " | Explosiveness ≥ " + requiredExplosiveness
     );
+    currentFailedOrderId = null;
+    ordersSinceRetryPrompt++;
     flashDispatchBar();
     }
+
+}
+
+function getAllBuildStats() {
+    if (allBuildStatsCache) return allBuildStatsCache;
+
+    const builds = [];
+    Object.entries(coreStats).forEach(([category, types]) => {
+        Object.entries(types).forEach(([type, c]) => {
+            Object.entries(casingStats).forEach(([casingType, cs]) => {
+                Object.entries(powderStats).forEach(([powderType, ps]) => {
+                    const basePower = Math.max(0, c.power + (c.explosiveness * 0.15) + cs.power + ps.power);
+                    Object.entries(barrelStats).forEach(([barrelType, b]) => {
+                        const costVal = Math.max(0, c.cost + cs.cost + ps.cost + b.cost);
+                        const stabilityVal = Math.max(0, c.stability + cs.stability + ps.stability + b.stability);
+                        const explosivenessVal = Math.max(0, c.explosiveness + ps.explosiveness);
+                        const powerVal = Math.max(0, basePower + b.power);
+                        builds.push({ category, type, casingType, powderType, barrelType, power: powerVal, cost: costVal, stability: stabilityVal, explosiveness: explosivenessVal });
+                    });
+                });
+            });
+        });
+    });
+    allBuildStatsCache = builds;
+    return allBuildStatsCache;
+}
+
+function isOrderFeasible(reqPower, maxAllowedCost, reqStability, reqExplosiveness) {
+    return getAllBuildStats().some(stats =>
+        stats.power >= reqPower &&
+        stats.cost <= maxAllowedCost &&
+        stats.stability >= reqStability &&
+        stats.explosiveness >= reqExplosiveness
+    );
+}
+
+function getBuildStatBounds() {
+    const builds = getAllBuildStats();
+    return builds.reduce((acc, stats) => ({
+        maxPower: Math.max(acc.maxPower, stats.power),
+        minCost: Math.min(acc.minCost, stats.cost),
+        maxStability: Math.max(acc.maxStability, stats.stability),
+        maxExplosiveness: Math.max(acc.maxExplosiveness, stats.explosiveness)
+    }), { maxPower: 0, minCost: Infinity, maxStability: 0, maxExplosiveness: 0 });
 }
 
 // Tracks which tab is currently open so selectCore/Casing/Powder can re-render it
@@ -1791,7 +2335,7 @@ function typewriterDispatch(text) {
     function step() {
         if (i < text.length) {
             el.innerText += text[i++];
-            el._twTimer = setTimeout(step, 14);
+            el._twTimer = setTimeout(step, 8);
         } else {
             el._twTimer = null;
         }
@@ -1815,9 +2359,6 @@ function updateTabBadges() {
     });
 }
 
-// Call once at start to generate the first order
-generateOrder();
-
 /*
  * flashDispatchBar — triggers the incoming-transmission amber flash
  * on the dispatch bar whenever a new order is written to #request.
@@ -1839,31 +2380,99 @@ function flashDispatchBar() {
 // Stats for each part
 const coreStats = {
     "Solid": {
+        "APCR MK II": {power:5.6, cost:3.6, stability:0.1, explosiveness:0.25, penetration:5.2},
         "APCR": {power:5, cost:3, stability:0, explosiveness:0.2, penetration:4.5},
+        "TAP MK II": {power:5.1, cost:3.1, stability:0.1, explosiveness:0.25, penetration:4.6},
         "TAP": {power:4.5, cost:2.5, stability:0, explosiveness:0.2, penetration:4},
+        "APHE MK II": {power:4.2, cost:3.1, stability:0.1, explosiveness:3.1, penetration:3.0},
         "APHE": {power:3.5, cost:2.5, stability:0, explosiveness:2.5, penetration:2.5},
+        "AP MK II": {power:3.6, cost:2.4, stability:0.1, explosiveness:0.3, penetration:3.0},
         "AP": {power:3, cost:2, stability:0, explosiveness:0.2, penetration:2.5},
+        "Light-AP MK II": {power:2.4, cost:1.3, stability:0, explosiveness:0.6, penetration:1.9},
         "Light-AP": {power:2, cost:1, stability:0, explosiveness:0.5, penetration:1.5}
     },
     "Chemical": {
+        "RDX-Based MK II": {power:3.0, cost:3.1, stability:0.1, explosiveness:8.1, penetration:1.9},
         "RDX-Based": {power:2.5, cost:2.5, stability:0, explosiveness:7, penetration:1.5},
+        "TNT-Based MK II": {power:2.4, cost:2.0, stability:0.1, explosiveness:6.0, penetration:1.3},
         "TNT-Based": {power:2, cost:1.5, stability:0, explosiveness:5, penetration:1.0},
+        "PETN-Composite MK II": {power:3.6, cost:4.2, stability:0.2, explosiveness:9.2, penetration:2.0},
         "PETN-Composite": {power:3, cost:3.5, stability:0, explosiveness:8, penetration:1.5}
     }
 };
 
 const casingStats = {
+    "Reinforced MK II": {power:0.2, cost:6.2, stability:6.3},
     "Reinforced": {power:0, cost:5, stability:5},
+    "High-Carbon MK II": {power:0.1, cost:3.9, stability:3.9},
     "High-Carbon": {power:0, cost:3, stability:3},
+    "Standard MK II": {power:0.1, cost:2.5, stability:2.6},
     "Standard": {power:0, cost:2, stability:2},
+    "Low-Carbon MK II": {power:0.05, cost:1.3, stability:-0.4},
     "Low-Carbon": {power:0, cost:1, stability:-1}
 };
 
 const powderStats = {
+    "Fine-Powder MK II": {power:3.7, cost:2.8, stability:-0.6, explosiveness:0.7},
     "Fine-Powder": {power:3, cost:2, stability:-1, explosiveness:0.5},
+    "Semi-Fine-Powder MK II": {power:3.0, cost:2.0, stability:2.5, explosiveness:1.3},
     "Semi-Fine-Powder": {power:2.5, cost:1.5, stability:2, explosiveness:1},
+    "Coarse-Powder MK II": {power:2.4, cost:1.3, stability:1.3, explosiveness:2.3},
     "Coarse-Powder": {power:2, cost:1, stability:1, explosiveness:2},
+    "Unrefined-Powder MK II": {power:1.4, cost:0.7, stability:-4.0, explosiveness:3.5},
     "Unrefined-Powder": {power:1, cost:0.5, stability:-5, explosiveness:3}
+};
+
+const barrelStats = {
+    "Short": { power: -0.5, cost: -0.5, penetration: -0.8, stability: -0.7 },
+    "Standard": { power: 0, cost: 0, penetration: 0, stability: 0 },
+    "Long": { power: 0.7, cost: 0.8, penetration: 1.0, stability: 0.4 },
+    "Heavy Long": { power: 1.2, cost: 1.4, penetration: 1.5, stability: 0.8 }
+};
+
+const partFlavorText = {
+    cores: {
+        Solid: {
+            "APCR MK II": "Refined sabot core with denser penetrator geometry.",
+            "APCR": "Dense tungsten sabot focused on armor cracking at range.",
+            "TAP MK II": "Improved tungsten alloy dart for better penetration retention.",
+            "TAP": "Balanced tungsten slug for reliable armor piercing.",
+            "APHE MK II": "Up-armored APHE with stronger delayed charge.",
+            "APHE": "Armor-piercing shell with delayed internal blast.",
+            "AP MK II": "Second-generation hardened AP core with improved metallurgy.",
+            "AP": "Standard hardened steel anti-armor core.",
+            "Light-AP MK II": "Light AP with stronger core cap and better flight profile.",
+            "Light-AP": "Lightweight penetrator for low-cost engagements."
+        },
+        Chemical: {
+            "RDX-Based MK II": "Higher-yield RDX blend for intensified blast.",
+            "RDX-Based": "High-energy chemical core for heavy blast effects.",
+            "TNT-Based MK II": "Upgraded TNT matrix with improved burn stability.",
+            "TNT-Based": "Stable explosive core for general-purpose targets.",
+            "PETN-Composite MK II": "Military-grade PETN composite with reinforced casing interface.",
+            "PETN-Composite": "Advanced composite explosive for maximum payload."
+        }
+    },
+    casings: {
+        "Reinforced MK II": "Second-generation reinforced casing with pressure ribs.",
+        "Reinforced": "Thick reinforced shell body built for high-stress launches.",
+        "High-Carbon MK II": "Heat-treated high-carbon casing for added stability.",
+        "High-Carbon": "Durable casing with good structural stability.",
+        "Standard MK II": "Updated standard casing with improved tolerance control.",
+        "Standard": "Standard issue casing with balanced performance.",
+        "Low-Carbon MK II": "Budget casing revision with reduced instability penalties.",
+        "Low-Carbon": "Light casing that is cheap but prone to instability."
+    },
+    powders: {
+        "Fine-Powder MK II": "Cleaner burn, higher pressure, faster projectile acceleration.",
+        "Fine-Powder": "Refined propellant for high muzzle velocity.",
+        "Semi-Fine-Powder MK II": "Rebalanced propellant grain for smoother pressure ramp.",
+        "Semi-Fine-Powder": "Balanced propellant for stable pressure curves.",
+        "Coarse-Powder MK II": "Coarse blend with better burn consistency in field conditions.",
+        "Coarse-Powder": "Rugged powder with reliable field performance.",
+        "Unrefined-Powder MK II": "Improved low-cost propellant with partial impurity filtering.",
+        "Unrefined-Powder": "Crude propellant; cheap but volatile."
+    }
 };
 
 // Helper to clamp stats >= 0
@@ -1892,32 +2501,46 @@ function statTag(val, req, mode, label) {
     return `<span class="${cls}">${icon}</span> ${label}: <b>${val}</b> (req ${mode === "min" ? "≥" : "≤"}${req})`;
 }
 
+function formatStat(value) {
+    return Number.isInteger(value) ? value : Number(value.toFixed(2));
+}
+
+function getPartFlavor(partType, category, itemName) {
+    if (partType === "cores") return simplifyDescription(partFlavorText.cores?.[category]?.[itemName] || "");
+    if (partType === "casings") return simplifyDescription(partFlavorText.casings?.[itemName] || "");
+    if (partType === "powders") return simplifyDescription(partFlavorText.powders?.[itemName] || "");
+    return "";
+}
+
 // Update display — uses innerHTML so the ✓/✗ colored spans render correctly
 function updateDisplay() {
     const coreDisplay = core   ? `${core.category} — ${core.type}` : '<span style="opacity:0.4">— unassigned —</span>';
     const casingDisplay = casing ? casing : '<span style="opacity:0.4">— unassigned —</span>';
     const powderDisplay = powder ? powder : '<span style="opacity:0.4">— unassigned —</span>';
+    const barrelDisplay = barrelSize ? `${barrelSize}` : '<span style="opacity:0.4">— unassigned —</span>';
 
     document.getElementById("build").innerHTML =
         `Core: ${coreDisplay}<br>` +
         `Casing: ${casingDisplay}<br>` +
-        `Powder: ${powderDisplay}`;
+        `Powder: ${powderDisplay}<br>` +
+        `Barrel: ${barrelDisplay}`;
 
     // Stat requirement thresholds from the current order
     const rPow  = typeof requiredPower        !== "undefined" ? requiredPower        : null;
-    const rCst  = typeof maxCost              !== "undefined" ? maxCost              : null;
+    const rCst  = typeof maxCost              !== "undefined" ? costToCurrency(maxCost) : null;
     const rStb  = typeof requiredStability    !== "undefined" ? requiredStability    : null;
     const rExpl = typeof requiredExplosiveness !== "undefined" ? requiredExplosiveness : null;
 
-    const coreInfo   = core   ? getKnownStatText("core",   core.category, core.type) : '<span style="opacity:0.4">none</span>';
-    const casingInfo = casing ? getKnownStatText("casing", null, casing)              : '<span style="opacity:0.4">none</span>';
-    const powderInfo = powder ? getKnownStatText("powder", null, powder)              : '<span style="opacity:0.4">none</span>';
+    const coreInfo   = core   ? getPartFlavor("cores", core.category, core.type) : '<span style="opacity:0.4">none</span>';
+    const casingInfo = casing ? getPartFlavor("casings", null, casing)            : '<span style="opacity:0.4">none</span>';
+    const powderInfo = powder ? getPartFlavor("powders", null, powder)            : '<span style="opacity:0.4">none</span>';
 
     document.getElementById("stats").innerHTML =
-        `${statTag(power,        rPow,  "min", "Power")}<br>` +
-        `${statTag(cost,         rCst,  "max", "Cost")}<br>` +
-        `${statTag(stability,    rStb,  "min", "Stability")}<br>` +
-        `${statTag(explosiveness,rExpl, "min", "Explosiveness")}<br>` +
+        `<div class="stat-row">${statTag(formatStat(power),         rPow,  "min", "Power")}</div>` +
+        `<div class="stat-row">${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}</div>` +
+        `<div class="stat-row">${statTag(formatStat(stability),     rStb,  "min", "Stability")}</div>` +
+        `<div class="stat-row">${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}</div>` +
+        `<div class="stat-row">Penetration: <b>${formatStat(penetration)}</b></div>` +
         `<br>` +
         `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
@@ -1927,60 +2550,41 @@ function updateDisplay() {
 }
 // Update the armor database display with known stats
 function updateArmorDatabase() {
-    let text = "";
+    let html = "";
     let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
+
+    const coreRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Expl ${stat.explosiveness}, Pen ${stat.penetration}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
+    const simpleRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
+
     armors.forEach(armor => {
-        text += `=== ${armor} ===\n`;
-        
-        // Solid Cores
-        text += "Solid Cores:\n";
-        ["APCR", "TAP", "APHE", "AP", "Light-AP"].forEach(type => {
-            let stat = knownStats.core["Solid"][type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+        html += `<div class="db-armor-block"><h3 class="db-armor-title">${armor}</h3>`;
+
+        html += `<div class="db-section-label">Solid Cores</div>`;
+        ["APCR MK II", "APCR", "TAP MK II", "TAP", "APHE MK II", "APHE", "AP MK II", "AP", "Light-AP MK II", "Light-AP"].forEach(type => {
+            html += coreRow(type, knownStats?.core?.["Solid"]?.[type]?.[armor]);
         });
-        
-        // Chemical Cores
-        text += "Chemical Cores:\n";
-        ["RDX-Based", "TNT-Based", "PETN-Composite"].forEach(type => {
-            let stat = knownStats.core["Chemical"][type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+
+        html += `<div class="db-section-label">Chemical Cores</div>`;
+        ["RDX-Based MK II", "RDX-Based", "TNT-Based MK II", "TNT-Based", "PETN-Composite", "PETN-Composite MK II"].forEach(type => {
+            html += coreRow(type, knownStats?.core?.["Chemical"]?.[type]?.[armor]);
         });
-        
-        // Casings
-        text += "Casings:\n";
-        ["Reinforced", "High-Carbon", "Standard", "Low-Carbon"].forEach(type => {
-            let stat = knownStats.casing[type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+
+        html += `<div class="db-section-label">Casings</div>`;
+        ["Reinforced MK II", "Reinforced", "High-Carbon MK II", "High-Carbon", "Standard MK II", "Standard", "Low-Carbon MK II", "Low-Carbon"].forEach(type => {
+            html += simpleRow(type, knownStats?.casing?.[type]?.[armor]);
         });
-        
-        // Powders
-        text += "Powders:\n";
-        ["Fine-Powder", "Semi-Fine-Powder", "Coarse-Powder", "Unrefined-Powder"].forEach(type => {
-            let stat = knownStats.powder[type][armor];
-            if (stat) {
-                text += `${type}: Power ${stat.power}, Cost ${stat.cost}, Stability ${stat.stability}\n`;
-            } else {
-                text += `${type}: ???\n`;
-            }
+
+        html += `<div class="db-section-label">Powders</div>`;
+        ["Fine-Powder MK II", "Fine-Powder", "Semi-Fine-Powder MK II", "Semi-Fine-Powder", "Coarse-Powder MK II", "Coarse-Powder", "Unrefined-Powder MK II", "Unrefined-Powder"].forEach(type => {
+            html += simpleRow(type, knownStats?.powder?.[type]?.[armor]);
         });
-        
-        text += "\n";
+
+        html += `</div>`;
     });
+
     const modalContent = document.getElementById("modalDatabaseContent");
     if (modalContent) {
-        modalContent.innerText = text;
+        modalContent.innerHTML = html;
     }
 }
 
@@ -1990,7 +2594,8 @@ function selectCore(category, type) {
     if(core) {
         const oldCategory = core.category;
         const oldType = core.type;
-        power -= coreStats[oldCategory][oldType].power;
+        const oldExplosiveBoost = coreStats[oldCategory][oldType].explosiveness * 0.15;
+        power -= coreStats[oldCategory][oldType].power + oldExplosiveBoost;
         cost -= coreStats[oldCategory][oldType].cost;
         stability -= coreStats[oldCategory][oldType].stability;
         explosiveness -= coreStats[oldCategory][oldType].explosiveness;
@@ -2052,6 +2657,26 @@ function selectPowder(type) {
     showTabContent(activeTab);
 }
 
+function selectBarrelSize(type) {
+    if (barrelSize && barrelStats[barrelSize]) {
+        power -= barrelStats[barrelSize].power;
+        cost -= barrelStats[barrelSize].cost;
+        stability -= barrelStats[barrelSize].stability;
+        penetration -= barrelStats[barrelSize].penetration;
+    }
+
+    barrelSize = type;
+
+    power += barrelStats[type].power;
+    cost += barrelStats[type].cost;
+    stability += barrelStats[type].stability;
+    penetration += barrelStats[type].penetration;
+
+    clampStats();
+    updateDisplay();
+    showTabContent(activeTab);
+}
+
 // Submit design
 function submitDesign() {
     if (isWaiting) return; // Prevent multiple submissions while waiting for the next order
@@ -2073,21 +2698,33 @@ function submitDesign() {
         failures.push("Not enough explosiveness.");
     }
     if (failures.length > 0) {
-        // Store failed order details for potential reuse
-        failedOrders.push({
-            description: currentOrderDescription,
-            requiredPower,
-            maxCost,
-            requiredStability,
-            requiredExplosiveness
-        });
-        orderSinceLastFailure = 0; // Reset counter on failure
+        // Store new failures; retry failures stay queued until a successful completion
+        if (currentFailedOrderId === null && !currentOrderIsImpossible) {
+            failedOrders.push({
+                id: nextFailedOrderId++,
+                description: currentOrderDescription,
+                requiredPower,
+                maxCost,
+                requiredStability,
+                requiredExplosiveness
+            });
+        }
+    } else if (currentFailedOrderId !== null) {
+        // Successful retry: remove completed failed order from queue
+        failedOrders = failedOrders.filter(order => order.id !== currentFailedOrderId);
+        currentFailedOrderId = null;
     }
+
+    // Budget settlement: keep savings if under budget, pay penalties if over budget.
+    const budgetDelta = costToCurrency(maxCost - cost);
+    awardMoney(budgetDelta);
+    const allocationResult = applyBudgetAllocationForOrder();
+
     // Display result — per-criterion ✓/✗ using innerHTML for colored spans
     const resultEl = document.getElementById("result");
     const checks = [
         { label: "Power",         pass: power        >= requiredPower,         detail: `${power} / ≥${requiredPower}` },
-        { label: "Cost",          pass: cost         <= maxCost,               detail: `${cost} / ≤${maxCost}` },
+        { label: "Cost",          pass: cost         <= maxCost,               detail: `${currencyText(costToCurrency(cost))} / ≤${currencyText(costToCurrency(maxCost))}` },
         { label: "Stability",     pass: stability    >= requiredStability,     detail: `${stability} / ≥${requiredStability}` },
         { label: "Explosiveness", pass: explosiveness>= requiredExplosiveness, detail: `${explosiveness} / ≥${requiredExplosiveness}` },
     ];
@@ -2104,8 +2741,13 @@ function submitDesign() {
                 `<span class="${c.pass ? 'stat-ok' : 'stat-fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}: ${c.detail}`
             ).join("<br>");
     }
+    resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">Budget ${budgetDelta >= 0 ? "surplus" : "overrun"}: ${budgetDelta >= 0 ? "+" : ""}${currencyText(budgetDelta)}</span>`;
+    if (allocationResult.allocation > 0) {
+        resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">R&D allocation: -${currencyText(allocationResult.allocation)} → +${allocationResult.gainedRP} RP</span>`;
+    }
     setTimeout( () => {
         generateOrder();
+        saveGame();
         isWaiting = false; // Reset waiting state to allow new orders
     }, 1000); // Creates a new order after a 1-second delay after submission
 }
@@ -2128,11 +2770,8 @@ tabs.forEach(tab => {
     });
 });
 
-// Initialize the first tab content on page load
-showTabContent('core');
-
-// Seed the RP / money counters in the top bar on first load
-updateEconomyDisplay();
+setInterval(updateResearchProjects, 1000);
+setInterval(updateScoutTeamUI, 1000);
 
 /*
  * partBtn — renders a single component selection button.
@@ -2153,18 +2792,7 @@ updateEconomyDisplay();
 function partBtn(partType, category, itemName, label, id, onclick) {
     const unlocked = isTechUnlocked(partType, category, itemName);
 
-    // Build a short stat hint string from the relevant stats table
-    let hint = "";
-    if (partType === "cores" && category && coreStats[category] && coreStats[category][itemName]) {
-        const s = coreStats[category][itemName];
-        hint = `Pwr ${s.power}  Cst ${s.cost}  Expl ${s.explosiveness}`;
-    } else if (partType === "casings" && casingStats[itemName]) {
-        const s = casingStats[itemName];
-        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${s.cost}`;
-    } else if (partType === "powders" && powderStats[itemName]) {
-        const s = powderStats[itemName];
-        hint = `Pwr +${s.power}  Stb ${s.stability > 0 ? '+' : ''}${s.stability}`;
-    }
+    let hint = getPartFlavor(partType, category, itemName);
     const hintEl = hint ? `<span class="part-hint">${hint}</span>` : "";
 
     if (!unlocked) {
@@ -2189,35 +2817,62 @@ function showTabContent(tab) {
     tabContent.innerHTML = `
     <div style="margin-bottom: 15px;">
         <h4>Solid Cores</h4>
+        ${partBtn("cores","Solid","APCR MK II","APCR Mk II Core","apcrMk2Btn","selectCore('Solid','APCR MK II')")}
         ${partBtn("cores","Solid","APCR","Tungsten Carbide Core","heavyCoreBtn","selectCore('Solid','APCR')")}
+        ${partBtn("cores","Solid","TAP MK II","TAP Mk II Core","tapMk2Btn","selectCore('Solid','TAP MK II')")}
         ${partBtn("cores","Solid","TAP","Tungsten Core","tungstenAPBtn","selectCore('Solid','TAP')")}
+        ${partBtn("cores","Solid","APHE MK II","APHE Mk II Core","apheMk2Btn","selectCore('Solid','APHE MK II')")}
         ${partBtn("cores","Solid","APHE","Hardened Steel-HE","apheBtn","selectCore('Solid','APHE')")}
+        ${partBtn("cores","Solid","AP MK II","AP Mk II Core","apMk2Btn","selectCore('Solid','AP MK II')")}
         ${partBtn("cores","Solid","AP","Hardened Steel Core","mediumCoreBtn","selectCore('Solid','AP')")}
+        ${partBtn("cores","Solid","Light-AP MK II","Light AP Mk II Core","lightApMk2Btn","selectCore('Solid','Light-AP MK II')")}
         ${partBtn("cores","Solid","Light-AP","Low-Carbon Steel Core","lightCoreBtn","selectCore('Solid','Light-AP')")}
     </div>
     <div>
         <h4>Chemical Cores</h4>
+        ${partBtn("cores","Chemical","RDX-Based MK II","RDX-Based Mk II Core","rdxMk2Btn","selectCore('Chemical','RDX-Based MK II')")}
         ${partBtn("cores","Chemical","RDX-Based","RDX-Based Core","rdxBtn","selectCore('Chemical','RDX-Based')")}
+        ${partBtn("cores","Chemical","TNT-Based MK II","TNT-Based Mk II Core","tntMk2Btn","selectCore('Chemical','TNT-Based MK II')")}
         ${partBtn("cores","Chemical","TNT-Based","TNT-Based Core","tntBtn","selectCore('Chemical','TNT-Based')")}
+        ${partBtn("cores","Chemical","PETN-Composite MK II","PETN-Composite Mk II Core","petnMk2Btn","selectCore('Chemical','PETN-Composite MK II')")}
         ${partBtn("cores","Chemical","PETN-Composite","PETN-Composite Core","petnBtn","selectCore('Chemical','PETN-Composite')")}
     </div>
     `;
     }
 
     if (tab === 'casing') {
+    const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
+        const activeClass = barrelSize === name ? "active" : "";
+        return `<button class="barrel-chip ${activeClass}" onclick="selectBarrelSize('${name}')">
+            <div><b>${name} Barrel</b></div>
+            <div>Pwr ${s.power >= 0 ? "+" : ""}${s.power} · Cst ${currencyText(costToCurrency(s.cost))}</div>
+            <div>Pen ${s.penetration >= 0 ? "+" : ""}${s.penetration} · Stb ${s.stability >= 0 ? "+" : ""}${s.stability}</div>
+        </button>`;
+    }).join("");
+
     tabContent.innerHTML = `
+        <div class="fed-label">Barrel Size</div>
+        <div class="barrel-scroll">${barrelButtons}</div>
+        ${partBtn("casings",null,"Reinforced MK II","Reinforced Casing Mk II","reinforcedCasingMk2Btn","selectCasing('Reinforced MK II')")}
         ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
+        ${partBtn("casings",null,"High-Carbon MK II","High-Carbon Casing Mk II","highCarbonCasingMk2Btn","selectCasing('High-Carbon MK II')")}
         ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
+        ${partBtn("casings",null,"Standard MK II","Standard Casing Mk II","standardCasingMk2Btn","selectCasing('Standard MK II')")}
         ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
+        ${partBtn("casings",null,"Low-Carbon MK II","Low-Carbon Casing Mk II","lowCarbonCasingMk2Btn","selectCasing('Low-Carbon MK II')")}
         ${partBtn("casings",null,"Low-Carbon","Low-Carbon Casing","lowCarbonCasingBtn","selectCasing('Low-Carbon')")}
     `;
     }
 
     if (tab === 'powder') {
     tabContent.innerHTML = `
+        ${partBtn("powders",null,"Fine-Powder MK II","Fine Powder Mk II","finePowderMk2Btn","selectPowder('Fine-Powder MK II')")}
         ${partBtn("powders",null,"Fine-Powder","Fine Powder","finePowderBtn","selectPowder('Fine-Powder')")}
+        ${partBtn("powders",null,"Semi-Fine-Powder MK II","Semi-Fine Powder Mk II","semiFinePowderMk2Btn","selectPowder('Semi-Fine-Powder MK II')")}
         ${partBtn("powders",null,"Semi-Fine-Powder","Semi-Fine Powder","semiFinePowderBtn","selectPowder('Semi-Fine-Powder')")}
+        ${partBtn("powders",null,"Coarse-Powder MK II","Coarse Powder Mk II","coarsePowderMk2Btn","selectPowder('Coarse-Powder MK II')")}
         ${partBtn("powders",null,"Coarse-Powder","Coarse Powder","coarsePowderBtn","selectPowder('Coarse-Powder')")}
+        ${partBtn("powders",null,"Unrefined-Powder MK II","Unrefined Powder Mk II","unrefinedPowderMk2Btn","selectPowder('Unrefined-Powder MK II')")}
         ${partBtn("powders",null,"Unrefined-Powder","Unrefined Powder","unrefinedPowderBtn","selectPowder('Unrefined-Powder')")}
     `;
     }
@@ -2234,6 +2889,25 @@ function openDatabaseModal() {
 
 function closeDatabaseModal() {
     document.getElementById("databaseModal").classList.remove("show");
+}
+
+function openBudgetModal() {
+    updateBudgetPanel();
+    document.getElementById("budgetModal").classList.add("show");
+}
+
+function closeBudgetModal() {
+    document.getElementById("budgetModal").classList.remove("show");
+}
+
+function openSettingsModal() {
+    const toggle = document.getElementById("advancedTextToggle");
+    if (toggle) toggle.checked = advancedText;
+    document.getElementById("settingsModal").classList.add("show");
+}
+
+function closeSettingsModal() {
+    document.getElementById("settingsModal").classList.remove("show");
 }
 
 // Tech Tree Modal Functions
@@ -2291,6 +2965,14 @@ function updateTechTreeDisplay() {
     html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR", unlockedTechTree.cores["Solid"]["APCR"], ["Light-AP"], false) + '</div>';
     html += '</div>';
 
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "Light-AP MK II", unlockedTechTree.cores["Solid"]["Light-AP MK II"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "AP MK II", unlockedTechTree.cores["Solid"]["AP MK II"], ["AP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APHE MK II", unlockedTechTree.cores["Solid"]["APHE MK II"], ["APHE"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "TAP MK II", unlockedTechTree.cores["Solid"]["TAP MK II"], ["TAP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR MK II", unlockedTechTree.cores["Solid"]["APCR MK II"], ["APCR"], false) + '</div>';
+    html += '</div>';
+
     html += '</div></div>'; // close body + section
 
     // ── Chemical Cores ───────────────────────────────────────────────────────
@@ -2305,6 +2987,12 @@ function updateTechTreeDisplay() {
 
     html += '<div class="tree-level">';
     html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite", unlockedTechTree.cores["Chemical"]["PETN-Composite"], ["RDX-Based"], false) + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "TNT-Based MK II", unlockedTechTree.cores["Chemical"]["TNT-Based MK II"], ["TNT-Based"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "RDX-Based MK II", unlockedTechTree.cores["Chemical"]["RDX-Based MK II"], ["RDX-Based"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite MK II", unlockedTechTree.cores["Chemical"]["PETN-Composite MK II"], ["PETN-Composite"], false) + '</div>';
     html += '</div>';
 
     html += '</div></div>';
@@ -2327,6 +3015,13 @@ function updateTechTreeDisplay() {
     html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced", unlockedTechTree.casings["Reinforced"], ["Standard", "High-Carbon"], false) + '</div>';
     html += '</div>';
 
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Low-Carbon MK II", unlockedTechTree.casings["Low-Carbon MK II"], ["Low-Carbon"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Standard MK II", unlockedTechTree.casings["Standard MK II"], ["Standard"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "High-Carbon MK II", unlockedTechTree.casings["High-Carbon MK II"], ["High-Carbon"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced MK II", unlockedTechTree.casings["Reinforced MK II"], ["Reinforced"], false) + '</div>';
+    html += '</div>';
+
     html += '</div></div>';
 
     // ── Powders ──────────────────────────────────────────────────────────────
@@ -2347,11 +3042,231 @@ function updateTechTreeDisplay() {
     html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder", unlockedTechTree.powders["Fine-Powder"], ["Coarse-Powder", "Semi-Fine-Powder"], false) + '</div>';
     html += '</div>';
 
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Unrefined-Powder MK II", unlockedTechTree.powders["Unrefined-Powder MK II"], ["Unrefined-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Coarse-Powder MK II", unlockedTechTree.powders["Coarse-Powder MK II"], ["Coarse-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Semi-Fine-Powder MK II", unlockedTechTree.powders["Semi-Fine-Powder MK II"], ["Semi-Fine-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder MK II", unlockedTechTree.powders["Fine-Powder MK II"], ["Fine-Powder"], false) + '</div>';
+    html += '</div>';
+
     html += '</div></div>'; // close body + section
+
+    // ── Future Programs (placeholders) ──────────────────────────────────────
+    html += '<div class="tech-tree-section collapsed" id="sec-future">';
+    html += '<h3 onclick="toggleTechSection(\'sec-future\')">Future Programs (Placeholder)</h3>';
+    html += '<div class="tech-tree-section-body">';
+    html += '<div class="tree-root">';
+    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Guided Fuse Suite</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
+    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Composite Jacket</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
+    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Smart Propellant Mix</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
+    html += '</div>';
+    html += '</div></div>';
 
     html += '</div>'; // close .tech-tree-container
     container.innerHTML = html;
 }
+
+function getTechKey(category, itemName) {
+    return `${category}::${itemName}`;
+}
+
+function getTechCostEntry(category, itemName) {
+    if (category === "Solid" || category === "Chemical") return techTreeCosts.cores[category][itemName];
+    if (category === "casing") return techTreeCosts.casings[itemName];
+    if (category === "powder") return techTreeCosts.powders[itemName];
+    return null;
+}
+
+function startResearch(category, itemName) {
+    const partType = getCategoryType(category);
+    const partCategory = (category === "Solid" || category === "Chemical") ? category : null;
+    if (!areRequirementsMet(partType, partCategory, itemName)) return;
+
+    const key = getTechKey(category, itemName);
+    if (researchProjects[key]) return;
+
+    const cost = getTechCostEntry(category, itemName);
+    if (!cost || !canAfford(cost.rp, cost.money)) return;
+
+    spendResources(cost.rp, cost.money);
+    const durationMs = 12000 + (cost.rp * 180) + (cost.money * 5);
+    researchProjects[key] = {
+        category,
+        itemName,
+        finishAt: Date.now() + durationMs
+    };
+    updateTechTreeDisplay();
+    saveGame();
+}
+
+function updateResearchProjects() {
+    const now = Date.now();
+    let changed = false;
+
+    Object.entries(researchProjects).forEach(([key, project]) => {
+        if (now < project.finishAt) return;
+
+        if (project.category === "Solid" || project.category === "Chemical") {
+            unlockedTechTree.cores[project.category][project.itemName] = true;
+        } else if (project.category === "casing") {
+            unlockedTechTree.casings[project.itemName] = true;
+        } else if (project.category === "powder") {
+            unlockedTechTree.powders[project.itemName] = true;
+        }
+        delete researchProjects[key];
+        changed = true;
+    });
+
+    if (changed) {
+        updateTechTreeDisplay();
+        showTabContent(activeTab);
+        saveGame();
+    }
+}
+
+function saveGame() {
+    const payload = {
+        money,
+        researchPoints,
+        rdBudgetPercent,
+        unlockedTechTree,
+        knownStats,
+        failedOrders,
+        nextFailedOrderId,
+        researchProjects,
+        requiredPower,
+        maxCost,
+        requiredStability,
+        requiredExplosiveness,
+        currentOrderDescription,
+        currentFailedOrderId,
+        currentOrderIsImpossible,
+        ordersSinceRetryPrompt,
+        currentArmor,
+        armorDurability,
+        scoutTeamStatus,
+        scoutTrainingEndsAt,
+        advancedText
+    };
+    localStorage.setItem("shell_game_save_v1", JSON.stringify(payload));
+}
+
+function loadGame() {
+    const raw = localStorage.getItem("shell_game_save_v1");
+    if (!raw) return false;
+    try {
+        const data = JSON.parse(raw);
+        if (typeof data.money === "number") money = data.money;
+        if (typeof data.researchPoints === "number") researchPoints = data.researchPoints;
+        if (typeof data.rdBudgetPercent === "number") rdBudgetPercent = data.rdBudgetPercent;
+        if (data.unlockedTechTree && typeof data.unlockedTechTree === "object") {
+            unlockedTechTree = mergeSaveObject(unlockedTechTree, data.unlockedTechTree);
+        }
+        if (data.knownStats && typeof data.knownStats === "object") {
+            knownStats = mergeSaveObject(knownStats, data.knownStats);
+        }
+        if (Array.isArray(data.failedOrders)) failedOrders = data.failedOrders;
+        if (typeof data.nextFailedOrderId === "number") nextFailedOrderId = data.nextFailedOrderId;
+        if (data.researchProjects && typeof data.researchProjects === "object") researchProjects = data.researchProjects;
+        if (typeof data.requiredPower === "number") requiredPower = data.requiredPower;
+        if (typeof data.maxCost === "number") maxCost = data.maxCost;
+        if (typeof data.requiredStability === "number") requiredStability = data.requiredStability;
+        if (typeof data.requiredExplosiveness === "number") requiredExplosiveness = data.requiredExplosiveness;
+        if (typeof data.currentOrderDescription === "string") currentOrderDescription = data.currentOrderDescription;
+        if (typeof data.currentFailedOrderId === "number" || data.currentFailedOrderId === null) currentFailedOrderId = data.currentFailedOrderId;
+        if (typeof data.currentOrderIsImpossible === "boolean") currentOrderIsImpossible = data.currentOrderIsImpossible;
+        if (typeof data.ordersSinceRetryPrompt === "number") ordersSinceRetryPrompt = data.ordersSinceRetryPrompt;
+        if (typeof data.currentArmor === "string") currentArmor = data.currentArmor;
+        if (typeof data.armorDurability === "number") armorDurability = data.armorDurability;
+        if (typeof data.scoutTeamStatus === "string") scoutTeamStatus = data.scoutTeamStatus;
+        if (typeof data.scoutTrainingEndsAt === "number") scoutTrainingEndsAt = data.scoutTrainingEndsAt;
+        if (typeof data.advancedText === "boolean") advancedText = data.advancedText;
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function hasSaveFile() {
+    return !!localStorage.getItem("shell_game_save_v1");
+}
+
+function mergeSaveObject(defaultObj, savedObj) {
+    if (!savedObj || typeof savedObj !== "object") return defaultObj;
+    if (Array.isArray(defaultObj) || Array.isArray(savedObj)) return savedObj;
+
+    const result = { ...defaultObj };
+    Object.keys(savedObj).forEach((key) => {
+        const savedVal = savedObj[key];
+        const defaultVal = defaultObj[key];
+        if (
+            defaultVal &&
+            typeof defaultVal === "object" &&
+            !Array.isArray(defaultVal) &&
+            savedVal &&
+            typeof savedVal === "object" &&
+            !Array.isArray(savedVal)
+        ) {
+            result[key] = mergeSaveObject(defaultVal, savedVal);
+        } else {
+            result[key] = savedVal;
+        }
+    });
+    return result;
+}
+
+function startFromTitle(mode) {
+    let loaded = false;
+
+    if (mode === "new") {
+        localStorage.removeItem("shell_game_save_v1");
+    } else {
+        loaded = loadGame();
+        if (!loaded) {
+            alert("No save file found.");
+            return;
+        }
+    }
+
+    const title = document.getElementById("titleScreen");
+    const game = document.getElementById("gameRoot");
+    if (title) title.style.display = "none";
+    if (game) game.style.display = "flex";
+
+    showTabContent('core');
+    updateEconomyDisplay();
+    updateBudgetPanel();
+    updateScoutTeamUI();
+
+    if (!loaded) {
+        generateOrder();
+    } else {
+        if (requiredPower === undefined || maxCost === undefined || !currentOrderDescription) {
+            generateOrder();
+        } else {
+            typewriterDispatch(
+                simplifyDescription(currentOrderDescription) + "\n\n" +
+                "Power ≥ " + requiredPower +
+                " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+                " | Stability ≥ " + requiredStability +
+                " | Explosiveness ≥ " + requiredExplosiveness
+            );
+        }
+        updateDisplay();
+        updateTooltip();
+        updateArmorDatabase();
+    }
+}
+
+function initTitleScreen() {
+    const hasSave = hasSaveFile();
+    const continueBtn = document.getElementById("continueBtn");
+    const loadBtn = document.getElementById("loadBtn");
+    if (continueBtn) continueBtn.style.display = hasSave ? "block" : "none";
+    if (loadBtn) loadBtn.disabled = !hasSave;
+}
+
+initTitleScreen();
 
 /*
  * createTechItemHTML — builds one tech node card.
@@ -2363,12 +3278,23 @@ function updateTechTreeDisplay() {
 function createTechItemHTML(category, itemName, unlocked, requirements, isStarter = false) {
     let status = "🔒 Locked";
     let statusClass = "locked";
+    const key = getTechKey(category, itemName);
+    const project = researchProjects[key];
+    let clickableAttr = "";
+    let helperLine = "";
 
     if (unlocked) {
         status = isStarter ? "⭐ Starter" : "✓ Unlocked";
         statusClass = "unlocked";
+    } else if (project) {
+        const secs = Math.max(1, Math.ceil((project.finishAt - Date.now()) / 1000));
+        status = `⏳ Researching (${secs}s)`;
+        statusClass = "locked";
     } else if (requirements.length === 0 || areRequirementsMet(getCategoryType(category), category === "Solid" || category === "Chemical" ? category : null, itemName)) {
         status = "🔓 Ready";
+        statusClass = "ready";
+        helperLine = `<div class="tech-item-cost">Click to start research</div>`;
+        clickableAttr = ` onclick="startResearch('${category}','${itemName}')" `;
     }
 
     // Look up the cost for this item from the economy table
@@ -2392,10 +3318,11 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
     } catch(e) { /* cost lookup is best-effort */ }
 
     return `
-        <div class="tech-item ${statusClass}">
+        <div class="tech-item ${statusClass}" ${clickableAttr}>
             <div class="tech-item-name">${itemName}</div>
             <div class="tech-item-status">${status}</div>
             ${costLine}
+            ${helperLine}
         </div>
     `;
 }
@@ -2410,9 +3337,17 @@ function getCategoryType(category) {
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const databaseModal = document.getElementById("databaseModal");
+    const budgetModal = document.getElementById("budgetModal");
+    const settingsModal = document.getElementById("settingsModal");
     const techTreeModal = document.getElementById("techTreeModal");
     if (event.target === databaseModal) {
         closeDatabaseModal();
+    }
+    if (event.target === budgetModal) {
+        closeBudgetModal();
+    }
+    if (event.target === settingsModal) {
+        closeSettingsModal();
     }
     if (event.target === techTreeModal) {
         closeTechTreeModal();
