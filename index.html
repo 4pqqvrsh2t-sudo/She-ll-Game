@@ -837,6 +837,43 @@ body {
     margin: 0 auto;
 }
 
+.tech-tree-summary {
+    border: 1px solid var(--bdr-bright);
+    background: rgba(10, 20, 40, 0.95);
+    padding: 14px 16px;
+    border-radius: 8px;
+    color: var(--txt-main);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tech-tree-summary-title {
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-elec);
+}
+
+.tech-tree-summary-line {
+    font-family: monospace;
+    font-size: 10px;
+    color: var(--txt-muted);
+}
+
+.tech-tree-summary-line span {
+    color: var(--txt-head);
+}
+
+.tech-tree-summary-idle {
+    border: 1px solid var(--bdr-blue);
+    background: rgba(5, 10, 18, 0.85);
+    padding: 14px 16px;
+    border-radius: 8px;
+    color: var(--txt-muted);
+}
+
 .tech-tree-section {
     display: flex;
     flex-direction: column;
@@ -1518,6 +1555,14 @@ function awardMoney(amount) {
 
 function costToCurrency(costPoints) {
     return Math.round(costPoints * COST_TO_CURRENCY);
+}
+
+function researchDurationMs(costEntry) {
+    if (!costEntry) return 10000;
+    const base = 8000;
+    const rpFactor = costEntry.rp * 200;
+    const moneyFactor = costEntry.money * 5;
+    return Math.max(3000, base + rpFactor + moneyFactor);
 }
 
 function currencyText(amount) {
@@ -3042,7 +3087,13 @@ tabs.forEach(tab => {
     });
 });
 
-setInterval(updateResearchProjects, 1000);
+setInterval(() => {
+    updateResearchProjects();
+    const techTreeModal = document.getElementById("techTreeModal");
+    if (techTreeModal && techTreeModal.classList.contains("show")) {
+        updateTechTreeDisplay();
+    }
+}, 1000);
 setInterval(updateScoutTeamUI, 1000);
 
 /*
@@ -3243,6 +3294,24 @@ function toggleTechSection(id) {
 function updateTechTreeDisplay() {
     const container = document.getElementById("techTreeContent");
     let html = '<div class="tech-tree-container">';
+
+    const activeResearch = Object.entries(researchProjects).map(([key, project]) => {
+        const remainingSecs = Math.max(0, Math.ceil((project.finishAt - Date.now()) / 1000));
+        return {
+            label: `${project.itemName} (${project.category})`,
+            remainingSecs
+        };
+    });
+
+    if (activeResearch.length > 0) {
+        html += '<div class="tech-tree-summary"><div class="tech-tree-summary-title">Active Research</div>';
+        activeResearch.forEach(project => {
+            html += `<div class="tech-tree-summary-line">${project.label}: <span>${project.remainingSecs}s remaining</span></div>`;
+        });
+        html += '</div>';
+    } else {
+        html += '<div class="tech-tree-summary tech-tree-summary-idle">No active research. Click a ready item to begin.</div>';
+    }
 
     // ── Solid Cores ──────────────────────────────────────────────────────────
     html += '<div class="tech-tree-section collapsed" id="sec-solid">';
@@ -3595,24 +3664,8 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
     let clickableAttr = "";
     let helperLine = "";
 
-    if (unlocked) {
-        status = isStarter ? "⭐ Starter" : "✓ Unlocked";
-        statusClass = "unlocked";
-    } else if (project) {
-        const secs = Math.max(1, Math.ceil((project.finishAt - Date.now()) / 1000));
-        status = `⏳ Researching (${secs}s)`;
-        statusClass = "locked";
-    } else if (requirements.length === 0 || areRequirementsMet(getCategoryType(category), category === "Solid" || category === "Chemical" ? category : null, itemName)) {
-        status = "🔓 Ready";
-        statusClass = "ready";
-        helperLine = `<div class="tech-item-cost">Click to start research</div>`;
-        clickableAttr = ` onclick="startResearch('${category}','${itemName}')" `;
-    }
-
-    // Look up the cost for this item from the economy table
-    let costLine = "";
+    let costEntry;
     try {
-        let costEntry;
         if (category === "Solid" || category === "Chemical") {
             costEntry = techTreeCosts.cores[category][itemName];
         } else if (category === "casing") {
@@ -3620,14 +3673,37 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
         } else if (category === "powder") {
             costEntry = techTreeCosts.powders[itemName];
         }
-        if (costEntry) {
-            if (costEntry.rp === 0 && costEntry.money === 0) {
-                costLine = `<div class="tech-item-cost">Free</div>`;
-            } else {
-                costLine = `<div class="tech-item-cost">${costEntry.rp} RP · ₵${costEntry.money}</div>`;
-            }
+    } catch(e) {
+        costEntry = null;
+    }
+
+    const durationLabel = costEntry && (costEntry.rp > 0 || costEntry.money > 0)
+        ? `Research time: ${Math.max(1, Math.ceil(researchDurationMs(costEntry) / 1000))}s`
+        : "Research time: instant";
+
+    if (unlocked) {
+        status = isStarter ? "⭐ Starter" : "✓ Unlocked";
+        statusClass = "unlocked";
+    } else if (project) {
+        const secs = Math.max(1, Math.ceil((project.finishAt - Date.now()) / 1000));
+        status = `⏳ Researching (${secs}s)`;
+        statusClass = "locked";
+        helperLine = `<div class="tech-item-cost">${durationLabel}</div>`;
+    } else if (requirements.length === 0 || areRequirementsMet(getCategoryType(category), category === "Solid" || category === "Chemical" ? category : null, itemName)) {
+        status = "🔓 Ready";
+        statusClass = "ready";
+        helperLine = `<div class="tech-item-cost">Click to start research</div><div class="tech-item-cost">${durationLabel}</div>`;
+        clickableAttr = ` onclick="startResearch('${category}','${itemName}')" `;
+    }
+
+    let costLine = "";
+    if (costEntry) {
+        if (costEntry.rp === 0 && costEntry.money === 0) {
+            costLine = `<div class="tech-item-cost">Free</div>`;
+        } else {
+            costLine = `<div class="tech-item-cost">${costEntry.rp} RP · ₵${costEntry.money}</div>`;
         }
-    } catch(e) { /* cost lookup is best-effort */ }
+    }
 
     return `
         <div class="tech-item ${statusClass}" ${clickableAttr}>
