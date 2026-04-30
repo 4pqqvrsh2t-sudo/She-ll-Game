@@ -1035,6 +1035,7 @@ body {
     letter-spacing: 4px;
     text-transform: uppercase;
     margin: 0 0 6px 0;
+    cursor: pointer;
 }
 
 .title-sub {
@@ -1050,22 +1051,37 @@ body {
     margin-bottom: 8px;
 }
 
-/* (old tab-bar stub removed — new .tab-bar is defined above in the redesign) */
-
-    </style>
+.title-screen.developer-mode {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="12" fill="%23f5df4d"/><path d="M10 16 L22 16 M16 10 L16 22" stroke="%23000" stroke-width="2"/></svg>') 16 16, crosshair;
+}
+</style>
 </head>
 
 <body>
 
 <div id="titleScreen" class="title-screen">
   <div class="title-card">
-    <h1 class="title-name">She-ll Designer</h1>
+    <h1 class="title-name" id="titleName">She-ll Designer</h1>
     <div class="title-sub">Federation Ordnance Terminal</div>
     <div class="title-actions">
       <button id="continueBtn" class="fed-btn fed-btn-primary" onclick="startFromTitle('continue')">▶ Continue</button>
       <button id="loadBtn" class="fed-btn fed-btn-amber" onclick="startFromTitle('load')">↺ Load Save</button>
       <button class="fed-btn" onclick="startFromTitle('new')">＋ New Game</button>
     </div>
+    <div id="developerPanel" style="display:none; margin-top: 18px; padding: 14px; border: 1px solid var(--bdr-blue); border-radius: 10px; background: rgba(5, 10, 18, 0.88);">
+      <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:12px;">Developer Mode Active</div>
+      <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+        <span>Research Points</span>
+        <input id="devRPInput" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+      </label>
+      <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+        <span>Money</span>
+        <input id="devMoneyInput" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+      </label>
+      <button class="fed-btn fed-btn-primary" onclick="applyDeveloperValues()" style="width:auto;">Apply Values</button>
+      <div id="devMessage" style="margin-top:10px; font-size:10px; color:var(--txt-muted);"></div>
+    </div>
+    <div id="developerUnlockNote" style="display:none; margin-top:10px; font-size:10px; color: var(--txt-elec);">Developer mode unlocked. Open Settings to adjust RP and Money.</div>
   </div>
 </div>
 
@@ -1207,6 +1223,18 @@ body {
                 <input id="advancedTextToggle" type="checkbox" checked onchange="setAdvancedText(this.checked)">
                 <span><b>Advanced Text</b> — show full numbers and detailed descriptions.</span>
             </label>
+            <div id="developerSettings" style="display:none; margin-top:18px; border-top:1px solid var(--bdr-blue); padding-top:14px;">
+                <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:8px;">Developer Controls</div>
+                <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+                    <span>Research Points</span>
+                    <input id="devRPInputSettings" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+                </label>
+                <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+                    <span>Money</span>
+                    <input id="devMoneyInputSettings" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+                </label>
+                <button class="fed-btn fed-btn-primary" onclick="applyDeveloperValues(true)" style="width:auto;">Apply Developer Values</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1363,6 +1391,8 @@ let rdBudgetPercent = 0.5;
 let researchProjects = {};
 let advancedText = true;
 let hasGeneratedFirstOrder = false;
+let developerModeUnlocked = false;
+let titleNameClickCount = 0;
 
 /*
  * RP and money costs per tech tree item.
@@ -1692,7 +1722,7 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
         armors.forEach((armor, i) => {
             const stat = knownStats?.[partType]?.[partCategory]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
-                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}`;
+                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}`;
             } else {
                 text += `${armor}: ???`;
             }
@@ -1944,7 +1974,7 @@ function testShell() {
    };
   
   //Show results of the test
-  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Penetration: ${actualStats.penetration} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
+  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
     document.getElementById("testResult").innerText = resultText;
 
     updateDisplay();
@@ -2572,12 +2602,6 @@ function updateDisplay() {
         `<div class="stat-row">${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}</div>` +
         `<div class="stat-row">${statTag(formatStat(stability),     rStb,  "min", "Stability")}</div>` +
         `<div class="stat-row">${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}</div>` +
-        `<div class="stat-row">Penetration: <b>${formatStat(penetration)}</b></div>` +
-        `${statTag(formatStat(power),         rPow,  "min", "Power")}<br>` +
-        `${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}<br>` +
-        `${statTag(formatStat(stability),     rStb,  "min", "Stability")}<br>` +
-        `${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}<br>` +
-        `Penetration: <b>${formatStat(penetration)}</b><br>` +
         `<br>` +
         `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
@@ -2590,7 +2614,7 @@ function updateArmorDatabase() {
     let html = "";
     let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
 
-    const coreRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Expl ${stat.explosiveness}, Pen ${stat.penetration}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
+    const coreRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Expl ${stat.explosiveness}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
     const simpleRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
 
     armors.forEach(armor => {
@@ -2638,6 +2662,88 @@ function updateArmorDatabase() {
     if (modalContent) {
         modalContent.innerHTML = html;
     }
+}
+
+function refreshDeveloperUI() {
+    const titleScreen = document.getElementById("titleScreen");
+    const developerPanel = document.getElementById("developerPanel");
+    const developerUnlockNote = document.getElementById("developerUnlockNote");
+    const devSettings = document.getElementById("developerSettings");
+    if (titleScreen) titleScreen.classList.toggle("developer-mode", developerModeUnlocked);
+    if (developerPanel) developerPanel.style.display = developerModeUnlocked ? "block" : "none";
+    if (developerUnlockNote) developerUnlockNote.style.display = developerModeUnlocked ? "block" : "none";
+    if (devSettings) devSettings.style.display = developerModeUnlocked ? "block" : "none";
+
+    if (developerModeUnlocked) {
+        const rpInput = document.getElementById("devRPInput");
+        const moneyInput = document.getElementById("devMoneyInput");
+        const rpInputSettings = document.getElementById("devRPInputSettings");
+        const moneyInputSettings = document.getElementById("devMoneyInputSettings");
+        if (rpInput) rpInput.value = researchPoints;
+        if (moneyInput) moneyInput.value = money;
+        if (rpInputSettings) rpInputSettings.value = researchPoints;
+        if (moneyInputSettings) moneyInputSettings.value = money;
+    }
+}
+
+function handleTitleNameClick() {
+    titleNameClickCount += 1;
+    if (!developerModeUnlocked && titleNameClickCount >= 5) {
+        developerModeUnlocked = true;
+        localStorage.setItem("shell_game_dev_mode", "true");
+        refreshDeveloperUI();
+        const devMessage = document.getElementById("devMessage");
+        if (devMessage) devMessage.innerText = "Developer mode unlocked. You can now adjust RP and Money.";
+    }
+}
+
+function applyDeveloperValues(useSettings = false) {
+    const rpInput = useSettings ? document.getElementById("devRPInputSettings") : document.getElementById("devRPInput");
+    const moneyInput = useSettings ? document.getElementById("devMoneyInputSettings") : document.getElementById("devMoneyInput");
+    const devMessage = document.getElementById("devMessage");
+    let valid = true;
+    let message = "Developer values updated.";
+    if (!developerModeUnlocked) {
+        message = "Developer mode is not unlocked yet.";
+        valid = false;
+    }
+    if (rpInput) {
+        const value = Number(rpInput.value);
+        if (!Number.isFinite(value) || value < 0) {
+            message = "Enter a valid non-negative RP value.";
+            valid = false;
+        } else {
+            researchPoints = Math.floor(value);
+        }
+    }
+    if (moneyInput) {
+        const value = Number(moneyInput.value);
+        if (!Number.isFinite(value) || value < 0) {
+            message = "Enter a valid non-negative Money value.";
+            valid = false;
+        } else {
+            money = Math.floor(value);
+        }
+    }
+    if (valid) {
+        updateEconomyDisplay();
+        saveGame();
+        if (!useSettings && devMessage) devMessage.innerText = message;
+        const settingsRp = document.getElementById("devRPInputSettings");
+        const settingsMoney = document.getElementById("devMoneyInputSettings");
+        if (settingsRp) settingsRp.value = researchPoints;
+        if (settingsMoney) settingsMoney.value = money;
+        const titleRp = document.getElementById("devRPInput");
+        const titleMoney = document.getElementById("devMoneyInput");
+        if (titleRp) titleRp.value = researchPoints;
+        if (titleMoney) titleMoney.value = money;
+    }
+    if (devMessage) devMessage.innerText = message;
+}
+
+function loadDeveloperMode() {
+    developerModeUnlocked = localStorage.getItem("shell_game_dev_mode") === "true";
+    refreshDeveloperUI();
 }
 
 // Core selection
@@ -2736,25 +2842,35 @@ function submitDesign() {
     isWaiting = true; // Set waiting state to prevent new orders until the next one is generated
 
     let failures = [];
+    const failureDetails = [];
     // Check each requirement and collect failure reasons
     if (power < requiredPower) {
         failures.push("Not enough power.");
+        failureDetails.push({ stat: "Power", diff: requiredPower - power, threshold: Math.max(1, requiredPower * 0.15) });
     }
     if (cost > maxCost) {
         failures.push("Too expensive.");
+        failureDetails.push({ stat: "Cost", diff: cost - maxCost, threshold: Math.max(1, maxCost * 0.15) });
     }
     if (stability < requiredStability) {
         failures.push("Shell Stability is too low.");
+        failureDetails.push({ stat: "Stability", diff: requiredStability - stability, threshold: Math.max(1, requiredStability * 0.15) });
     }
     if (explosiveness < requiredExplosiveness) {
         failures.push("Not enough explosiveness.");
+        failureDetails.push({ stat: "Explosiveness", diff: requiredExplosiveness - explosiveness, threshold: Math.max(1, requiredExplosiveness * 0.15) });
     }
 
     const budgetDelta = costToCurrency(maxCost - cost);
     awardMoney(budgetDelta);
     const allocationResult = applyBudgetAllocationForOrder();
 
-    // Display result — per-criterion ✓/✗ using innerHTML for colored spans
+    function getFailMessage() {
+        if (failureDetails.length === 0) return "";
+        const closeEnough = failureDetails.some(f => f.diff <= Math.max(1, f.threshold / 2));
+        return closeEnough ? "Standard order confirmed!" : "Order complete.";
+    }
+
     const resultEl = document.getElementById("result");
     const checks = [
         { label: "Power",         pass: power        >= requiredPower,         detail: `${power} / ≥${requiredPower}` },
@@ -2766,6 +2882,10 @@ function submitDesign() {
         resultEl.classList.add("readout-success");
         resultEl.classList.remove("readout-fail");
         resultEl.innerHTML = `<span class="stat-ok">✓ Order Fulfilled</span><br><span style="opacity:0.6;font-size:9px;">All requirements met. Dispatching to Command.</span>`;
+        if (currentFailedOrderId !== null) {
+            failedOrders = failedOrders.filter(order => order.id !== currentFailedOrderId);
+            currentFailedOrderId = null;
+        }
     } else {
         resultEl.classList.add("readout-fail");
         resultEl.classList.remove("readout-success");
@@ -2773,7 +2893,18 @@ function submitDesign() {
             `<span class="stat-fail">✗ Requirements Not Met</span><br>` +
             checks.map(c =>
                 `<span class="${c.pass ? 'stat-ok' : 'stat-fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}: ${c.detail}`
-            ).join("<br>");
+            ).join("<br>") +
+            `<br><span style="opacity:0.75;font-size:9px;">${getFailMessage()}</span>`;
+        if (!currentOrderIsImpossible && currentFailedOrderId === null) {
+            failedOrders.push({
+                id: nextFailedOrderId++,
+                description: currentOrderDescription,
+                requiredPower,
+                maxCost,
+                requiredStability,
+                requiredExplosiveness
+            });
+        }
     }
     resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">Budget ${budgetDelta >= 0 ? "surplus" : "overrun"}: ${budgetDelta >= 0 ? "+" : ""}${currencyText(budgetDelta)}</span>`;
     if (allocationResult.allocation > 0) {
@@ -2895,27 +3026,27 @@ function showTabContent(tab) {
     }
 
     if (tab === 'casing') {
-    const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
-        const activeClass = barrelSize === name ? "active" : "";
-        return `<button class="barrel-chip ${activeClass}" onclick="selectBarrelSize('${name}')">
-            <div><b>${name} Barrel</b></div>
-            <div>Pwr ${s.power >= 0 ? "+" : ""}${s.power} · Cst ${currencyText(costToCurrency(s.cost))}</div>
-            <div>Pen ${s.penetration >= 0 ? "+" : ""}${s.penetration} · Stb ${s.stability >= 0 ? "+" : ""}${s.stability}</div>
-        </button>`;
-    }).join("");
+        const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
+            const activeClass = barrelSize === name ? "active" : "";
+            return `<button class="barrel-chip ${activeClass}" onclick="selectBarrelSize('${name}')">
+                <div><b>${name} Barrel</b></div>
+                <div>Pwr ${s.power >= 0 ? "+" : ""}${s.power} · Cst ${currencyText(costToCurrency(s.cost))}</div>
+                <div>Stb ${s.stability >= 0 ? "+" : ""}${s.stability}</div>
+            </button>`;
+        }).join("");
 
-    tabContent.innerHTML = `
-        <div class="fed-label">Barrel Size</div>
-        <div class="barrel-scroll">${barrelButtons}</div>
-        ${partBtn("casings",null,"Reinforced MK II","Reinforced Casing Mk II","reinforcedCasingMk2Btn","selectCasing('Reinforced MK II')")}
-        ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
-        ${partBtn("casings",null,"High-Carbon MK II","High-Carbon Casing Mk II","highCarbonCasingMk2Btn","selectCasing('High-Carbon MK II')")}
-        ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
-        ${partBtn("casings",null,"Standard MK II","Standard Casing Mk II","standardCasingMk2Btn","selectCasing('Standard MK II')")}
-        ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
-        ${partBtn("casings",null,"Low-Carbon MK II","Low-Carbon Casing Mk II","lowCarbonCasingMk2Btn","selectCasing('Low-Carbon MK II')")}
-        ${partBtn("casings",null,"Low-Carbon","Low-Carbon Casing","lowCarbonCasingBtn","selectCasing('Low-Carbon')")}
-    `;
+        tabContent.innerHTML = `
+            <div class="fed-label">Barrel Size</div>
+            <div class="barrel-scroll">${barrelButtons}</div>
+            ${partBtn("casings",null,"Reinforced MK II","Reinforced Casing Mk II","reinforcedCasingMk2Btn","selectCasing('Reinforced MK II')")}
+            ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
+            ${partBtn("casings",null,"High-Carbon MK II","High-Carbon Casing Mk II","highCarbonCasingMk2Btn","selectCasing('High-Carbon MK II')")}
+            ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
+            ${partBtn("casings",null,"Standard MK II","Standard Casing Mk II","standardCasingMk2Btn","selectCasing('Standard MK II')")}
+            ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
+            ${partBtn("casings",null,"Low-Carbon MK II","Low-Carbon Casing Mk II","lowCarbonCasingMk2Btn","selectCasing('Low-Carbon MK II')")}
+            ${partBtn("casings",null,"Low-Carbon","Low-Carbon Casing","lowCarbonCasingBtn","selectCasing('Low-Carbon')")}
+        `;
     }
 
     if (tab === 'powder') {
@@ -3206,6 +3337,7 @@ function saveGame() {
         scoutTeamStatus,
         scoutTrainingEndsAt,
         advancedText,
+        developerModeUnlocked,
         currentArmor,
         armorDurability
     };
@@ -3242,6 +3374,7 @@ function loadGame() {
         if (typeof data.scoutTeamStatus === "string") scoutTeamStatus = data.scoutTeamStatus;
         if (typeof data.scoutTrainingEndsAt === "number") scoutTrainingEndsAt = data.scoutTrainingEndsAt;
         if (typeof data.advancedText === "boolean") advancedText = data.advancedText;
+        if (typeof data.developerModeUnlocked === "boolean") developerModeUnlocked = data.developerModeUnlocked;
         if (data.unlockedTechTree) unlockedTechTree = data.unlockedTechTree;
         if (data.knownStats) knownStats = data.knownStats;
         if (Array.isArray(data.failedOrders)) failedOrders = data.failedOrders;
@@ -3301,6 +3434,7 @@ function startFromTitle(mode) {
     if (game) game.style.display = "flex";
 
     showTabContent('core');
+    refreshDeveloperUI();
     updateEconomyDisplay();
     updateBudgetPanel();
     updateScoutTeamUI();
@@ -3326,11 +3460,14 @@ function startFromTitle(mode) {
 }
 
 function initTitleScreen() {
+    loadDeveloperMode();
     const hasSave = hasSaveFile();
     const continueBtn = document.getElementById("continueBtn");
     const loadBtn = document.getElementById("loadBtn");
+    const titleName = document.getElementById("titleName");
     if (continueBtn) continueBtn.style.display = hasSave ? "block" : "none";
     if (loadBtn) loadBtn.disabled = !hasSave;
+    if (titleName) titleName.addEventListener("click", handleTitleNameClick);
 }
 
 initTitleScreen();
