@@ -1250,12 +1250,12 @@ body {
       <button class="dispatch-icon-btn" title="Operations">☰</button>
       <button class="dispatch-icon-btn" title="Notifications">🔔</button>
       <button class="dispatch-icon-btn" title="Logistics">⬢</button>
-      <button class="dispatch-icon-btn" title="Settings" onclick="openSettingsModal()">⚙</button>
+      <button class="dispatch-icon-btn" title="Settings" onclick="playSound('settings'); openSettingsModal()">⚙</button>
     </div>
     <div class="top-tabs">
-      <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
-      <button class="rnd-tab" onclick="openBudgetModal()">Budget</button>
-      <button class="rnd-tab" onclick="openQuestModal()">Quests</button>
+      <button class="rnd-tab" onclick="playSound('rnd'); openTechTreeModal()">R&amp;D</button>
+      <button class="rnd-tab" onclick="playSound('budget'); openBudgetModal()">Budget</button>
+      <button class="rnd-tab" onclick="playSound('general'); openQuestModal()">Quests</button>
     </div>
     <span class="top-bar-label">Dispatch</span>
 
@@ -1303,9 +1303,10 @@ body {
 
       <div class="panel-section">
         <span class="fed-label">Testing Range</span>
-        <button class="fed-btn fed-btn-amber" onclick="testShell()">▶ Fire Test Round</button>
+        <button class="fed-btn fed-btn-primary" onclick="playSound('testShell'); testShell()">▶ Fire Test Round</button>
+        <button class="fed-btn fed-btn-amber" onclick="playSound('database'); openDatabaseModal()" style="margin-top:4px;">Armor Database</button>
         <p id="testResult" class="readout" style="margin-top:6px;"></p>
-        <button class="fed-btn" id="recoverBtn" onclick="getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
+        <button class="fed-btn" id="recoverBtn" onclick="playSound('recover'); getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
         <!--
           #scoutLog — filled by getNewArmor() with timed scout team status messages.
           Hidden by default (display:none) so it doesn't take space when idle.
@@ -1314,7 +1315,7 @@ body {
       </div>
 
       <div class="panel-section">
-        <button class="fed-btn fed-btn-primary" onclick="submitDesign()">▶ Submit to Command</button>
+        <button class="fed-btn fed-btn-primary" onclick="playSound('submit'); submitDesign()">▶ Submit to Command</button>
         <p id="result" class="readout" style="margin-top:6px;"></p>
       </div>
 
@@ -1431,6 +1432,68 @@ body {
     </div>
 </div>
 
+<!-- Audio Elements -->
+<audio id="titleMusic" loop preload="auto">
+  <source src="sounds/title.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="gameMusic" loop preload="auto">
+  <source src="sounds/game.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="clickSound" preload="auto">
+  <source src="sounds/click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="coreClickSound" preload="auto">
+  <source src="sounds/core_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="chemicalClickSound" preload="auto">
+  <source src="sounds/chemical_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="casingClickSound" preload="auto">
+  <source src="sounds/casing_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="powderClickSound" preload="auto">
+  <source src="sounds/powder_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="barrelClickSound" preload="auto">
+  <source src="sounds/barrel_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="testShellSound" preload="auto">
+  <source src="sounds/test_shell.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="databaseSound" preload="auto">
+  <source src="sounds/database.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="rndSound" preload="auto">
+  <source src="sounds/rnd.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="settingsSound" preload="auto">
+  <source src="sounds/settings.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="budgetSound" preload="auto">
+  <source src="sounds/budget.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="recoverSound" preload="auto">
+  <source src="sounds/recover.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="submitSound" preload="auto">
+  <source src="sounds/submit.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 <script>
 
 const orderDescriptions = [
@@ -1468,6 +1531,90 @@ const powerMin = 5, powerMax = 9;
 const costMin = 4, costMax = 8;
 const stabilityMin = 1, stabilityMax = 3;
 const explosiveMin = 0, explosiveMax = 3;
+
+// Audio Elements
+let titleMusic;
+let gameMusic;
+let clickSound;
+let coreClickSound;
+let chemicalClickSound;
+let casingClickSound;
+let powderClickSound;
+let barrelClickSound;
+let testShellSound;
+let databaseSound;
+let rndSound;
+let settingsSound;
+let budgetSound;
+
+// Initialize audio
+function initAudio() {
+    titleMusic = document.getElementById('titleMusic');
+    gameMusic = document.getElementById('gameMusic');
+    clickSound = document.getElementById('clickSound');
+    coreClickSound = document.getElementById('coreClickSound');
+    chemicalClickSound = document.getElementById('chemicalClickSound');
+    casingClickSound = document.getElementById('casingClickSound');
+    powderClickSound = document.getElementById('powderClickSound');
+    barrelClickSound = document.getElementById('barrelClickSound');
+    testShellSound = document.getElementById('testShellSound');
+    databaseSound = document.getElementById('databaseSound');
+    rndSound = document.getElementById('rndSound');
+    settingsSound = document.getElementById('settingsSound');
+    budgetSound = document.getElementById('budgetSound');
+}
+
+// Play sound function
+function playSound(type) {
+    let audio;
+    switch(type) {
+        case 'general':
+            audio = clickSound;
+            break;
+        case 'core':
+            audio = coreClickSound;
+            break;
+        case 'chemical':
+            audio = chemicalClickSound;
+            break;
+        case 'casing':
+            audio = casingClickSound;
+            break;
+        case 'powder':
+            audio = powderClickSound;
+            break;
+        case 'barrel':
+            audio = barrelClickSound;
+            break;
+        case 'testShell':
+            audio = testShellSound;
+            break;
+        case 'database':
+            audio = databaseSound;
+            break;
+        case 'rnd':
+            audio = rndSound;
+            break;
+        case 'settings':
+            audio = settingsSound;
+            break;
+        case 'budget':
+            audio = budgetSound;
+            break;
+        case 'recover':
+            audio = recoverSound;
+            break;
+        case 'submit':
+            audio = submitSound;
+            break;
+    }
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => {
+            // Ignore errors if audio not loaded or user hasn't interacted
+        });
+    }
+}
 
 // Variables to hold current order
 let isWaiting = false;
@@ -3044,6 +3191,7 @@ function exitWarning() {
 
 // Core selection
 function selectCore(category, type) {
+    playSound(category === 'Chemical' ? 'chemical' : 'core');
     // Remove old stats
     if(core) {
         const oldCategory = core.category;
@@ -3075,6 +3223,7 @@ function selectCore(category, type) {
 
 // Casing selection
 function selectCasing(type) {
+    playSound('casing');
     if(casing) {
         power -= casingStats[casing].power;
         cost -= casingStats[casing].cost;
@@ -3094,6 +3243,7 @@ function selectCasing(type) {
 
 // Powder selection
 function selectPowder(type) {
+    playSound('powder');
     if(powder) {
         power -= powderStats[powder].power;
         cost -= powderStats[powder].cost;
@@ -3112,6 +3262,7 @@ function selectPowder(type) {
 };
 
 function selectBarrelSize(type) {
+    playSound('barrel');
     if (barrelSize && barrelStats[barrelSize]) {
         power -= barrelStats[barrelSize].power;
         cost -= barrelStats[barrelSize].cost;
@@ -3856,6 +4007,10 @@ function startFromTitle(mode) {
     if (title) title.style.display = "none";
     if (game) game.style.display = "flex";
 
+    // Transition music
+    if (titleMusic) titleMusic.pause();
+    if (gameMusic) gameMusic.play().catch(e => {});
+
     showTabContent('core');
     refreshDeveloperUI();
     updateEconomyDisplay();
@@ -3890,6 +4045,7 @@ function startFromTitle(mode) {
 
 function initTitleScreen() {
     loadDeveloperMode();
+    initAudio();
     const hasSave = hasSaveFile();
     const continueBtn = document.getElementById("continueBtn");
     const loadBtn = document.getElementById("loadBtn");
@@ -3898,6 +4054,8 @@ function initTitleScreen() {
     if (loadBtn) loadBtn.disabled = !hasSave;
     if (titleName) titleName.addEventListener("click", handleTitleNameClick);
     showWarningModal();
+    // Play title music
+    if (titleMusic) titleMusic.play().catch(e => {});
 }
 
 initTitleScreen();
