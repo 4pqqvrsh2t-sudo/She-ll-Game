@@ -868,6 +868,26 @@ body {
     text-decoration: line-through;
 }
 
+/* ── Budget modal ── */
+#budgetModal .modal-content {
+    max-width: 500px;
+    max-height: 70vh;
+}
+
+#budgetModal .modal-header h2 {
+    color: var(--txt-head);
+    letter-spacing: 5px;
+    font-size: 11px;
+}
+
+#budgetModal .modal-body {
+    background: var(--bg-deep);
+    color: var(--txt-main);
+    overflow: auto;
+    padding: 20px;
+    white-space: normal;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    TECH TREE
    ══════════════════════════════════════════════════════════════════════════ */
@@ -1234,7 +1254,7 @@ body {
     </div>
     <div class="top-tabs">
       <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
-      <button class="rnd-tab budget-tab" onclick="openBudgetModal()">Budget</button>
+      <button class="rnd-tab" onclick="openBudgetModal()">Budget</button>
       <button class="rnd-tab" onclick="openQuestModal()">Quests</button>
     </div>
     <span class="top-bar-label">Dispatch</span>
@@ -1319,7 +1339,6 @@ body {
       <div id="partTabs">
         <div class="tab-bar">
           <button class="tab activate" data-tab="core">Core</button>
-          <button class="tab" data-tab="budget">Budget</button>
           <button class="tab" data-tab="casing">Casing</button>
           <button class="tab" data-tab="powder">Powder</button>
         </div>
@@ -1334,7 +1353,7 @@ body {
 
 <!-- Database Modal -->
 <div id="databaseModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h2>Armor Database</h2>
             <button class="close-btn" onclick="closeDatabaseModal()">✕</button>
@@ -1347,7 +1366,7 @@ body {
 
 
 <div id="settingsModal" class="modal">
-    <div class="modal-content" style="max-width:460px; height:auto; max-height:60vh;">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:460px; height:auto; max-height:60vh;">
         <div class="modal-header">
             <h2>Settings</h2>
             <button class="close-btn" onclick="closeSettingsModal()">✕</button>
@@ -1375,7 +1394,7 @@ body {
 
 <!-- Tech Tree Modal -->
 <div id="techTreeModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h2>R&D Tech Tree</h2>
             <button class="close-btn" onclick="closeTechTreeModal()">✕</button>
@@ -1388,13 +1407,26 @@ body {
 
 <!-- Quest Modal -->
 <div id="questModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h2>Active Quests</h2>
             <button class="close-btn" onclick="closeQuestModal()">✕</button>
         </div>
         <div class="modal-body" id="questContent">
             <!-- Quest content will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Budget Modal -->
+<div id="budgetModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Budget Management</h2>
+            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
+        </div>
+        <div class="modal-body" id="budgetContent">
+            <!-- Budget content will be populated by JavaScript -->
         </div>
     </div>
 </div>
@@ -1696,7 +1728,14 @@ function setRDBudgetPercent(percent) {
 }
 
 function updateBudgetPanel() {
+    const container = document.getElementById("budgetContent");
     const percentValue = Math.round(rdBudgetPercent * 100);
+    container.innerHTML = `
+        <div class="fed-label">Budget Allocation</div>
+        <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
+        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
+        <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
+    `;
     const summary = document.getElementById("budgetSummary");
     const slider = document.getElementById("budgetSlider");
     if (summary) {
@@ -2893,10 +2932,9 @@ function handleTitleNameClick() {
     titleNameClickCount += 1;
     if (!developerModeUnlocked && titleNameClickCount >= 5) {
         developerModeUnlocked = true;
-        localStorage.setItem("shell_game_dev_mode", "true");
+        localStorage.setItem("shell_game_developer_mode", "true");
         refreshDeveloperUI();
-        const devMessage = document.getElementById("devMessage");
-        if (devMessage) devMessage.innerText = "Developer mode unlocked. You can now adjust RP and Money.";
+        alert("Developer mode unlocked! You can now adjust RP and Money in Settings.");
     }
 }
 
@@ -3280,15 +3318,6 @@ function showTabContent(tab) {
     `;
     }
 
-    if (tab === 'budget') {
-    tabContent.innerHTML = `
-        <div class="fed-label">Budget Allocation</div>
-        <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
-        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
-        <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
-    `;
-    }
-
     if (tab === 'casing') {
         const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
             const activeClass = barrelSize === name ? "active" : "";
@@ -3351,12 +3380,19 @@ function closeDatabaseModal() {
 }
 
 function openBudgetModal() {
-    activatePartTab('budget');
+    updateBudgetPanel();
+    document.getElementById("budgetModal").classList.add("show");
+}
+
+function closeBudgetModal() {
+    document.getElementById("budgetModal").classList.remove("show");
 }
 
 function openSettingsModal() {
     const toggle = document.getElementById("advancedTextToggle");
     if (toggle) toggle.checked = advancedText;
+    const developerPanel = document.getElementById("developerSettings");
+    if (developerPanel) developerPanel.style.display = developerModeUnlocked ? "block" : "none";
     document.getElementById("settingsModal").classList.add("show");
 }
 
@@ -3458,7 +3494,7 @@ function completeQuest(questId) {
     if (!quest) return;
 
     // Award rewards
-    rp += quest.rewards.rp || 0;
+    researchPoints += quest.rewards.rp || 0;
     money += quest.rewards.money || 0;
 
     // Mark as completed
@@ -3945,17 +3981,19 @@ window.onclick = function(event) {
     const settingsModal = document.getElementById("settingsModal");
     const techTreeModal = document.getElementById("techTreeModal");
     const questModal = document.getElementById("questModal");
+    const budgetModal = document.getElementById("budgetModal");
     if (event.target === databaseModal) {
         closeDatabaseModal();
     }
     if (event.target === settingsModal) {
         closeSettingsModal();
     }
-    if (event.target === techTreeModal) {
-        closeTechTreeModal();
-    }
+    // Note: techTreeModal is full-screen, no backdrop to click
     if (event.target === questModal) {
         closeQuestModal();
+    }
+    if (event.target === budgetModal) {
+        closeBudgetModal();
     }
 };
 </script>
