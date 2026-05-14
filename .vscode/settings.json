@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /workspaces/She-ll-Game && python3 - <<'PY'\nimport re, pathlib, subprocess\ntext = pathlib\\.Path\\('index\\.html'\\)\\.read_text\\(\\)\nmatch = re\\.search\\(r'<script>\\(\\[\\\\s\\\\S\\]\\*\\?\\)</script>', text\\)\nif not match:\n    raise SystemExit\\('no script tag'\\)\njs = match\\.group\\(1\\)\nwith open\\('tmp_script\\.js','w'\\) as f:\n    f\\.write\\(js\\)\nsubprocess\\.run\\(\\['node', '-e', 'const fs=require\\(\"fs\"\\); const code=fs\\.readFileSync\\(\"tmp_script\\.js\",\"utf8\"\\); new Function\\(code\\); console\\.log\\(\"OK\"\\);'\\], check=True\\)\nPY$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

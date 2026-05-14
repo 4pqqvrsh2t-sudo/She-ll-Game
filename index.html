@@ -748,6 +748,42 @@ body {
     line-height: 1.45;
 }
 
+#scoutConfirmModal .modal-content {
+    max-width: 520px;
+    max-height: 54vh;
+}
+
+#scoutConfirmModal .modal-body {
+    padding: 18px 22px;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--txt-main);
+    white-space: pre-wrap;
+}
+
+#scoutConfirmModal .modal-body + .modal-body {
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#scoutConfirmModal .fed-btn {
+    min-width: 120px;
+}
+
+#scoutConfirmModal .fed-btn-amber {
+    border-color: var(--bdr-tan);
+}
+
+#scoutConfirmModal .scout-confirm-message {
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(74, 158, 216, 0.15);
+    color: var(--txt-muted);
+}
+
 .db-armor-block {
     border: 1px solid var(--bdr-blue);
     background: rgba(8, 20, 35, 0.7);
@@ -1016,6 +1052,107 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.tech-item {
+    width: 240px;
+    border: 1px solid var(--bdr-blue);
+    background: var(--bg-card);
+    padding: 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.tech-item.locked {
+    opacity: 0.5;
+    border-color: var(--txt-dim);
+    background: rgba(10, 18, 35, 0.5);
+}
+
+.tech-item.unlocked {
+    border-color: var(--bdr-mid);
+    background: rgba(10, 20, 40, 0.9);
+}
+
+.tech-item.unlocked:hover {
+    border-color: var(--bdr-bright);
+    box-shadow: 0 0 12px rgba(74, 158, 216, 0.2);
+}
+
+.tech-item-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: var(--txt-head);
+    letter-spacing: 0.5px;
+    font-family: monospace;
+    text-align: center;
+}
+
+.tech-item.locked .tech-item-name { color: var(--txt-dim); }
+
+.tech-item-description {
+    font-size: 9px;
+    color: var(--txt-main);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    text-align: left;
+    opacity: 0.9;
+}
+
+.tech-item.locked .tech-item-description { color: var(--txt-muted); }
+
+.tech-item-status {
+    font-size: 9px;
+    color: var(--txt-muted);
+    font-family: monospace;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.tech-item.locked  .tech-item-status { color: var(--txt-dim); }
+.tech-item.unlocked .tech-item-status { color: var(--glow-blue); }
+
+.tech-item-unlocks {
+    font-size: 8px;
+    color: var(--txt-head);
+    background: rgba(5, 20, 15, 0.5);
+    padding: 6px;
+    border-radius: 2px;
+    border-left: 2px solid var(--glow-blue);
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.tech-item-unlocks strong {
+    color: var(--txt-elec);
+    display: block;
+    margin-bottom: 3px;
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tech-item-cost {
+    font-size: 8px;
+    color: var(--txt-muted);
+    text-align: center;
+}
+
+.tech-item.unlocked .tech-item-cost { color: var(--txt-tan); }
+
+.tree-connector {
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(to bottom, var(--bdr-mid), transparent);
+    margin: 0 auto;
+    position: relative;
+}
+
+.tech-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     min-width: 120px;
 }
@@ -1265,6 +1402,7 @@ body {
       All styling comes from the CSS #request rule (no inline styles needed).
     -->
     <p id="request"></p>
+    <span id="retryIndicator" class="top-bar-label" style="margin-left:10px; opacity:0.75; font-size:9px; display:none;"></span>
 
     <!-- RP and money counters — populated by updateEconomyDisplay() -->
     <div class="top-bar-counters">
@@ -1376,7 +1514,7 @@ body {
         <div class="modal-body">
             <label style="display:flex; align-items:center; gap:10px; font-size:11px;">
                 <input id="advancedTextToggle" type="checkbox" checked onchange="setAdvancedText(this.checked)">
-                <span><b>Advanced Text</b> — show full numbers and detailed descriptions.</span>
+                <span><b>Advanced Text</b> — Show full numbers and detailed descriptions.</span>
             </label>
             <div id="developerSettings" style="display:none; margin-top:18px; border-top:1px solid var(--bdr-blue); padding-top:14px;">
                 <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:8px;">Developer Controls</div>
@@ -1429,6 +1567,23 @@ body {
         </div>
         <div class="modal-body" id="budgetContent">
             <!-- Budget content will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Scout Deployment Confirmation Modal -->
+<div id="scoutConfirmModal" class="modal">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Confirm Scout Deployment</h2>
+            <button class="close-btn" onclick="closeScoutConfirm()">✕</button>
+        </div>
+        <div class="modal-body scout-confirm-message" id="scoutConfirmMessage" style="white-space: pre-wrap;">
+            <!-- Confirmation text goes here -->
+        </div>
+        <div class="modal-body" style="display:flex; gap:10px; flex-wrap:wrap; padding-top:0;">
+            <button class="fed-btn fed-btn-amber" onclick="confirmScoutDeploy()" style="width:auto;">Deploy Scouts</button>
+            <button class="fed-btn" onclick="closeScoutConfirm()" style="width:auto;">Cancel</button>
         </div>
     </div>
 </div>
@@ -1637,6 +1792,7 @@ const COST_TO_CURRENCY = 100;
 const SAVE_PREFIX = "shell_game_save_v1_";
 const SAVE_LATEST_KEY = "shell_game_save_latest";
 let autoSaveInterval = null;
+let techSectionState = {};
 
 // Quest System
 let currentQuest = null;
@@ -1683,6 +1839,39 @@ const SCOUT_CASUALTY_COST = 800;
 const SCOUT_RECRUIT_COST = 1500;
 const SCOUT_DEPLOY_COST = 1200;
 const SCOUT_TRAINING_MS = 45000;
+let scoutConfirmCallback = null;
+
+const SCOUT_DEPLOY_WARNS = [
+    "This mission is high-risk: the enemy zone is hot and extraction is not guaranteed.",
+    "Scout losses are possible. Recovery teams often need replacement training after heavy contact.",
+    "Remember: every mission costs funds, and a lost scout team will require a costly replacement.",
+];
+
+const SCOUT_DIALOGUE_START = [
+    "Command: Squad moving out. Keep your comms tight.",
+    "Dispatch: Recovery team en route. Maintain radio silence until contact.",
+    "Bridge: Scouts have reached the perimeter. Awaiting your order.",
+    "Intel: Team is inserting now. Expect intermittent transmissions.",
+];
+
+const SCOUT_DIALOGUE_MID = [
+    "Scout Delta: Recon is underway. Terrain clear for now.",
+    "Scout Echo: I see a fresh impact signature; moving to intercept.",
+    "Scout Foxtrot: Visual on target area. Sensors registering heavy plating.",
+    "Scout Bravo: Enemy patrols closing fast. We might need to fall back.",
+    "Scout Charlie: Civilians in the area, proceed carefully.",
+    "Scout Delta: Approaching the extraction zone. Keep comms secure.",
+];
+
+const SCOUT_DIALOGUE_EXTRACTION = [
+    "Scout Alpha: Extraction inbound, hold position.",
+    "Scout Bravo: Sample secured, exfil route is hot.",
+    "Scout Charlie: Returning to LZ with target in tow.",
+];
+
+function chooseRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
 
 //Knowledge system (what the player has learned about the enemy armor)
 let knownStats = {
@@ -1741,7 +1930,7 @@ let knownStats = {
  * ────────────────────────────────────────────────────────────────────────── */
 let researchPoints = 0;
 let money = 10000;
-let rdBudgetPercent = 0.5;
+let rdBudgetPercent = 0.25;
 let researchProjects = {};
 let advancedText = true;
 let hasGeneratedFirstOrder = false;
@@ -1751,7 +1940,6 @@ let titleNameClickCount = 0;
 /*
  * RP and money costs per tech tree item.
  * Format: { rp: <int>, money: <int> }
- * These are placeholder values — tune them as the game design evolves.
  */
 const techTreeCosts = {
     cores: {
@@ -1911,29 +2099,396 @@ function spendResources(rpCost, moneyCost) {
     return true;
 }
 
-// Tech Tree Unlock System
-// Only items with no requirements (starters) begin as true.
-// Everything else starts false and is unlocked by testing shells (see unlockTechBasedOnTest).
+// ═══════════════════════════════════════════════════════════════════════════
+// RESEARCH TREE SYSTEM — Tiered progression with descriptions and branching
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Core research projects with descriptions, prerequisites, and unlocked components
+const researchTreeData = {
+    // ─ SOLID CORES ────────────────────────────────────────────────────────
+    "steel_core_refinement": {
+        name: "Steel Core Refinement",
+        description: "With newer ways to refine steel cores, we've produced more consistent AP ammunition.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { cores: { "Solid": ["AP"] } },
+        nextResearch: ["advanced_steel_refinement"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "advanced_steel_refinement": {
+        name: "Advanced Steel Refinement",
+        description: "Improved metallurgical processes yield superior AP MK II cores with better penetration characteristics.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["steel_core_refinement"],
+        unlocksComponents: { cores: { "Solid": ["AP MK II"] } },
+        nextResearch: ["tungsten_refinement"],
+        cost: { rp: 12, money: 180 }
+    },
+    "tungsten_refinement": {
+        name: "Tungsten Refinement Process",
+        description: "Breakthrough in tungsten alloy processing enables production of TAP cores, far superior to standard steel ammunition.",
+        category: "Solid Cores",
+        type: "major",
+        prerequisites: ["advanced_steel_refinement"],
+        unlocksComponents: { cores: { "Solid": ["TAP"] } },
+        nextResearch: ["advanced_tungsten_refinement"],
+        cost: { rp: 25, money: 450 }
+    },
+    "advanced_tungsten_refinement": {
+        name: "Advanced Tungsten Alloys",
+        description: "Next-generation tungsten formulations produce TAP MK II, combining superior penetration with improved stability.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["tungsten_refinement"],
+        unlocksComponents: { cores: { "Solid": ["TAP MK II"] } },
+        nextResearch: ["sabot_ammunition_development"],
+        cost: { rp: 34, money: 680 }
+    },
+    "sabot_ammunition_development": {
+        name: "Sabot Ammunition Development",
+        description: "Revolutionary sabot-based ammunition technology produces APCR cores with exceptional penetration capabilities.",
+        category: "Solid Cores",
+        type: "major",
+        prerequisites: ["advanced_tungsten_refinement"],
+        unlocksComponents: { cores: { "Solid": ["APCR"] } },
+        nextResearch: ["advanced_sabot_system"],
+        cost: { rp: 30, money: 600 }
+    },
+    "advanced_sabot_system": {
+        name: "Advanced Sabot Systems",
+        description: "Refined sabot design and improved penetrator geometry result in APCR MK II, our most advanced kinetic ammunition.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["sabot_ammunition_development"],
+        unlocksComponents: { cores: { "Solid": ["APCR MK II"] } },
+        nextResearch: [],
+        cost: { rp: 42, money: 820 }
+    },
+    "light_ap_core_development": {
+        name: "Light AP Core Development",
+        description: "Lightweight armor-piercing ammunition designed for cost-effective operations and rapid deployment.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { cores: { "Solid": ["Light-AP"] } },
+        nextResearch: ["light_ap_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "light_ap_mk_ii": {
+        name: "Light AP MK II Optimization",
+        description: "Enhanced lightweight core design with better ballistic properties and improved reliability.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["light_ap_core_development"],
+        unlocksComponents: { cores: { "Solid": ["Light-AP MK II"] } },
+        nextResearch: [],
+        cost: { rp: 8, money: 120 }
+    },
+    "aphe_ammunition": {
+        name: "APHE Ammunition Program",
+        description: "Armor-piercing with high explosive payload. Combines penetration with internal blast effect for maximum destruction.",
+        category: "Solid Cores",
+        type: "major",
+        prerequisites: ["steel_core_refinement"],
+        unlocksComponents: { cores: { "Solid": ["APHE"] } },
+        nextResearch: ["aphe_mk_ii"],
+        cost: { rp: 20, money: 400 }
+    },
+    "aphe_mk_ii": {
+        name: "APHE MK II Enhancement",
+        description: "Up-armored APHE with stronger delayed charge mechanism and improved fuse reliability.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["aphe_ammunition"],
+        unlocksComponents: { cores: { "Solid": ["APHE MK II"] } },
+        nextResearch: [],
+        cost: { rp: 28, money: 560 }
+    },
+
+    // ─ CHEMICAL CORES ────────────────────────────────────────────────────
+    "tnt_chemical_synthesis": {
+        name: "TNT-Based Chemical Synthesis",
+        description: "Reliable TNT-based explosive cores for general-purpose targets and area suppression.",
+        category: "Chemical Cores",
+        type: "major",
+        prerequisites: ["light_ap_core_development"],
+        unlocksComponents: { cores: { "Chemical": ["TNT-Based"] } },
+        nextResearch: ["tnt_mk_ii"],
+        cost: { rp: 15, money: 300 }
+    },
+    "tnt_mk_ii": {
+        name: "TNT-Based MK II Upgrade",
+        description: "Upgraded TNT matrix with improved burn stability and enhanced explosive yield.",
+        category: "Chemical Cores",
+        type: "minor",
+        prerequisites: ["tnt_chemical_synthesis"],
+        unlocksComponents: { cores: { "Chemical": ["TNT-Based MK II"] } },
+        nextResearch: [],
+        cost: { rp: 22, money: 430 }
+    },
+    "rdx_chemical_development": {
+        name: "RDX-Based Chemical Development",
+        description: "High-energy RDX chemical cores for enhanced destructive potential and superior blast radius.",
+        category: "Chemical Cores",
+        type: "major",
+        prerequisites: ["light_ap_core_development", "steel_core_refinement"],
+        unlocksComponents: { cores: { "Chemical": ["RDX-Based"] } },
+        nextResearch: ["rdx_mk_ii"],
+        cost: { rp: 20, money: 400 }
+    },
+    "rdx_mk_ii": {
+        name: "RDX-Based MK II Advancement",
+        description: "Higher-yield RDX blend with intensified blast effects and improved chemical stability.",
+        category: "Chemical Cores",
+        type: "minor",
+        prerequisites: ["rdx_chemical_development"],
+        unlocksComponents: { cores: { "Chemical": ["RDX-Based MK II"] } },
+        nextResearch: ["petn_composite"],
+        cost: { rp: 28, money: 560 }
+    },
+    "petn_composite": {
+        name: "PETN Composite Explosives",
+        description: "Military-grade PETN composite for maximum payload and superior detonation characteristics.",
+        category: "Chemical Cores",
+        type: "major",
+        prerequisites: ["rdx_mk_ii"],
+        unlocksComponents: { cores: { "Chemical": ["PETN-Composite"] } },
+        nextResearch: ["petn_mk_ii"],
+        cost: { rp: 40, money: 800 }
+    },
+    "petn_mk_ii": {
+        name: "PETN MK II Enhancement",
+        description: "Advanced PETN formulation with reinforced casing interface and improved reliability under extreme pressures.",
+        category: "Chemical Cores",
+        type: "minor",
+        prerequisites: ["petn_composite"],
+        unlocksComponents: { cores: { "Chemical": ["PETN-Composite MK II"] } },
+        nextResearch: [],
+        cost: { rp: 55, money: 1050 }
+    },
+
+    // ─ CASINGS ───────────────────────────────────────────────────────────
+    "standard_casing_optimization": {
+        name: "Standard Casing Optimization",
+        description: "Baseline casing engineering for reliable ammunition containment and structural integrity.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { casings: ["Standard"] },
+        nextResearch: ["standard_casing_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "standard_casing_mk_ii": {
+        name: "Standard Casing MK II",
+        description: "Updated standard casing with improved tolerance control and enhanced manufacturing consistency.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["standard_casing_optimization"],
+        unlocksComponents: { casings: ["Standard MK II"] },
+        nextResearch: [],
+        cost: { rp: 10, money: 160 }
+    },
+    "low_carbon_casing": {
+        name: "Low-Carbon Casing Development",
+        description: "Lightweight casing for cost-effective ammunition. Cheap but susceptible to instability issues.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { casings: ["Low-Carbon"] },
+        nextResearch: ["low_carbon_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "low_carbon_mk_ii": {
+        name: "Low-Carbon MK II Revision",
+        description: "Budget casing revision with reduced instability penalties while maintaining low production costs.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["low_carbon_casing"],
+        unlocksComponents: { casings: ["Low-Carbon MK II"] },
+        nextResearch: [],
+        cost: { rp: 8, money: 120 }
+    },
+    "high_carbon_reinforcement": {
+        name: "High-Carbon Reinforcement",
+        description: "Durable high-carbon casing with excellent structural stability for demanding operations.",
+        category: "Casings",
+        type: "major",
+        prerequisites: ["standard_casing_optimization"],
+        unlocksComponents: { casings: ["High-Carbon"] },
+        nextResearch: ["high_carbon_mk_ii"],
+        cost: { rp: 15, money: 250 }
+    },
+    "high_carbon_mk_ii": {
+        name: "High-Carbon MK II Technology",
+        description: "Heat-treated high-carbon casing for superior durability and enhanced stability characteristics.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["high_carbon_reinforcement"],
+        unlocksComponents: { casings: ["High-Carbon MK II"] },
+        nextResearch: [],
+        cost: { rp: 24, money: 420 }
+    },
+    "reinforced_casing_engineering": {
+        name: "Reinforced Casing Engineering",
+        description: "Thick reinforced shell body built for extreme pressures and high-stress launches.",
+        category: "Casings",
+        type: "major",
+        prerequisites: ["standard_casing_optimization", "high_carbon_reinforcement"],
+        unlocksComponents: { casings: ["Reinforced"] },
+        nextResearch: ["reinforced_casing_mk_ii"],
+        cost: { rp: 30, money: 500 }
+    },
+    "reinforced_casing_mk_ii": {
+        name: "Reinforced Casing MK II",
+        description: "Second-generation reinforced casing with pressure ribs and advanced metallurgical improvements.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["reinforced_casing_engineering"],
+        unlocksComponents: { casings: ["Reinforced MK II"] },
+        nextResearch: [],
+        cost: { rp: 48, money: 900 }
+    },
+
+    // ─ POWDERS ────────────────────────────────────────────────────────────
+    "coarse_powder_production": {
+        name: "Coarse Powder Production",
+        description: "Rugged propellant with reliable field performance and consistent burn characteristics.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { powders: ["Coarse-Powder"] },
+        nextResearch: ["coarse_powder_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "coarse_powder_mk_ii": {
+        name: "Coarse Powder MK II",
+        description: "Coarse blend with better burn consistency in field conditions and improved reliability.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["coarse_powder_production"],
+        unlocksComponents: { powders: ["Coarse-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 10, money: 170 }
+    },
+    "unrefined_powder_production": {
+        name: "Unrefined Powder Production",
+        description: "Crude propellant; cheap but volatile. Cost-effective for large-scale operations.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { powders: ["Unrefined-Powder"] },
+        nextResearch: ["unrefined_powder_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "unrefined_powder_mk_ii": {
+        name: "Unrefined Powder MK II",
+        description: "Improved low-cost propellant with partial impurity filtering for better consistency.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["unrefined_powder_production"],
+        unlocksComponents: { powders: ["Unrefined-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 8, money: 130 }
+    },
+    "semi_fine_powder_development": {
+        name: "Semi-Fine Powder Development",
+        description: "Balanced propellant for stable pressure curves and reliable performance across various conditions.",
+        category: "Powders",
+        type: "major",
+        prerequisites: ["coarse_powder_production"],
+        unlocksComponents: { powders: ["Semi-Fine-Powder"] },
+        nextResearch: ["semi_fine_powder_mk_ii"],
+        cost: { rp: 12, money: 200 }
+    },
+    "semi_fine_powder_mk_ii": {
+        name: "Semi-Fine Powder MK II",
+        description: "Rebalanced propellant grain for smoother pressure ramps and improved shot consistency.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["semi_fine_powder_development"],
+        unlocksComponents: { powders: ["Semi-Fine-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 20, money: 360 }
+    },
+    "fine_powder_refinement": {
+        name: "Fine Powder Refinement",
+        description: "Refined propellant for high muzzle velocity and superior ballistic performance.",
+        category: "Powders",
+        type: "major",
+        prerequisites: ["coarse_powder_production", "semi_fine_powder_development"],
+        unlocksComponents: { powders: ["Fine-Powder"] },
+        nextResearch: ["fine_powder_mk_ii"],
+        cost: { rp: 25, money: 450 }
+    },
+    "fine_powder_mk_ii": {
+        name: "Fine Powder MK II Optimization",
+        description: "Cleaner burn with higher pressure generation and faster projectile acceleration capabilities.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["fine_powder_refinement"],
+        unlocksComponents: { powders: ["Fine-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 40, money: 760 }
+    }
+};
+
+// Flatten unlock mapping: which research projects unlock which components
+function buildComponentUnlockMap() {
+    const map = {};
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (techData.unlocksComponents) {
+            Object.entries(techData.unlocksComponents).forEach(([partType, items]) => {
+                if (!map[partType]) map[partType] = {};
+                Object.entries(items).forEach(([category, componentList]) => {
+                    componentList.forEach(component => {
+                        const key = partType === "cores" ? `${category}|${component}` : component;
+                        if (!map[partType][key]) map[partType][key] = [];
+                        map[partType][key].push(techId);
+                    });
+                });
+            });
+        }
+    });
+    return map;
+}
+
+// Track which research projects are unlocked
+let unlockedResearch = {};
+
+// Initialize with starter techs
+function initializeStarterResearch() {
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (techData.prerequisites.length === 0) {
+            unlockedResearch[techId] = true;
+        } else {
+            unlockedResearch[techId] = false;
+        }
+    });
+}
+
+// Track which components are unlocked (derived from research)
 let unlockedTechTree = {
     cores: {
         "Solid": {
             "APCR MK II": false,
-            "APCR": false,       // requires Light-AP
+            "APCR": false,
             "TAP MK II": false,
-            "TAP": false,        // requires AP
+            "TAP": false,
             "APHE MK II": false,
-            "APHE": false,       // requires AP
+            "APHE": false,
             "AP MK II": false,
-            "AP": true,         // Starter — no requirements
+            "AP": true,         // Starter — from steel_core_refinement
             "Light-AP MK II": false,
-            "Light-AP": true     // Starter — no requirements
+            "Light-AP": true    // Starter — from light_ap_core_development
         },
         "Chemical": {
             "RDX-Based MK II": false,
-            "RDX-Based": false,      // requires Light-AP + Standard
+            "RDX-Based": false,
             "TNT-Based MK II": false,
-            "TNT-Based": false,      // requires Light-AP
-            "PETN-Composite": false,  // requires RDX-Based
+            "TNT-Based": false,
+            "PETN-Composite": false,
             "PETN-Composite MK II": false
         }
     },
@@ -1942,24 +2497,24 @@ let unlockedTechTree = {
         "High-Carbon MK II": false,
         "Standard MK II": false,
         "Low-Carbon MK II": false,
-        "Reinforced": false,   // requires Standard + High-Carbon
-        "High-Carbon": false,  // requires Standard
-        "Standard": true,      // Starter — no requirements
-        "Low-Carbon": true     // Starter — no requirements
+        "Reinforced": false,
+        "High-Carbon": false,
+        "Standard": true,      // Starter — from standard_casing_optimization
+        "Low-Carbon": true     // Starter — from low_carbon_casing
     },
     powders: {
         "Fine-Powder MK II": false,
         "Semi-Fine-Powder MK II": false,
         "Coarse-Powder MK II": false,
         "Unrefined-Powder MK II": false,
-        "Fine-Powder": false,       // requires Coarse-Powder + Semi-Fine-Powder
-        "Semi-Fine-Powder": false,  // requires Coarse-Powder
-        "Coarse-Powder": true,      // Starter — no requirements
-        "Unrefined-Powder": true    // Starter — no requirements
+        "Fine-Powder": false,
+        "Semi-Fine-Powder": false,
+        "Coarse-Powder": true,       // Starter — from coarse_powder_production
+        "Unrefined-Powder": true     // Starter — from unrefined_powder_production
     }
 };
 
-// Tech Tree Requirements - what needs to be discovered to unlock each item
+// Tech Tree Requirements (LEGACY — kept for compatibility, now uses research tree)
 const techTreeRequirements = {
     cores: {
         "Solid": {
@@ -1972,7 +2527,7 @@ const techTreeRequirements = {
             "AP MK II": ["AP"],
             "AP": ["Light-AP"],
             "Light-AP MK II": ["Light-AP"],
-            "Light-AP": []  // No requirements, starter
+            "Light-AP": []
         },
         "Chemical": {
             "RDX-Based MK II": ["RDX-Based"],
@@ -1990,8 +2545,8 @@ const techTreeRequirements = {
         "Low-Carbon MK II": ["Low-Carbon"],
         "Reinforced": ["Standard", "High-Carbon"],
         "High-Carbon": ["Standard"],
-        "Standard": [],  // No requirements, starter
-        "Low-Carbon": []  // No requirements, starter
+        "Standard": [],
+        "Low-Carbon": []
     },
     powders: {
         "Fine-Powder MK II": ["Fine-Powder"],
@@ -2000,12 +2555,66 @@ const techTreeRequirements = {
         "Unrefined-Powder MK II": ["Unrefined-Powder"],
         "Fine-Powder": ["Coarse-Powder", "Semi-Fine-Powder"],
         "Semi-Fine-Powder": ["Coarse-Powder"],
-        "Coarse-Powder": [],  // No requirements, starter
-        "Unrefined-Powder": []  // No requirements, starter
+        "Coarse-Powder": [],
+        "Unrefined-Powder": []
     }
 };
 
-// Check if an item is unlocked
+// Check if a research project is unlocked
+function isResearchUnlocked(techId) {
+    return unlockedResearch[techId] === true;
+}
+
+// Check if research prerequisites are met (all prerequisites must be unlocked)
+function areResearchPrerequisitesMet(techId) {
+    const tech = researchTreeData[techId];
+    if (!tech) return false;
+    if (tech.prerequisites.length === 0) return true;
+    return tech.prerequisites.every(prereqId => isResearchUnlocked(prereqId));
+}
+
+// Refresh component unlocks based on which research projects are unlocked
+function refreshComponentUnlocks() {
+    // Reset all components to locked (except starters)
+    Object.keys(unlockedTechTree.cores["Solid"]).forEach(comp => {
+        unlockedTechTree.cores["Solid"][comp] = ["AP"].includes(comp) || ["Light-AP"].includes(comp);
+    });
+    Object.keys(unlockedTechTree.cores["Chemical"]).forEach(comp => {
+        unlockedTechTree.cores["Chemical"][comp] = false;
+    });
+    Object.keys(unlockedTechTree.casings).forEach(comp => {
+        unlockedTechTree.casings[comp] = ["Standard", "Low-Carbon"].includes(comp);
+    });
+    Object.keys(unlockedTechTree.powders).forEach(comp => {
+        unlockedTechTree.powders[comp] = ["Coarse-Powder", "Unrefined-Powder"].includes(comp);
+    });
+
+    // Unlock components from unlocked research projects
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (isResearchUnlocked(techId) && techData.unlocksComponents) {
+            const unlocks = techData.unlocksComponents;
+            if (unlocks.cores) {
+                Object.entries(unlocks.cores).forEach(([category, components]) => {
+                    components.forEach(comp => {
+                        unlockedTechTree.cores[category][comp] = true;
+                    });
+                });
+            }
+            if (unlocks.casings) {
+                unlocks.casings.forEach(comp => {
+                    unlockedTechTree.casings[comp] = true;
+                });
+            }
+            if (unlocks.powders) {
+                unlocks.powders.forEach(comp => {
+                    unlockedTechTree.powders[comp] = true;
+                });
+            }
+        }
+    });
+}
+
+// Check if an item is unlocked (component level)
 function isTechUnlocked(partType, category, itemName) {
     if (partType === "cores") {
         return unlockedTechTree.cores[category][itemName];
@@ -2017,65 +2626,36 @@ function isTechUnlocked(partType, category, itemName) {
     return false;
 }
 
-// Check if requirements are met for an item
+// Check if requirements are met for an item (LEGACY — uses research tree now)
 function areRequirementsMet(partType, category, itemName) {
-    let requirements;
-    if (partType === "cores") {
-        requirements = techTreeRequirements.cores[category][itemName];
-    } else if (partType === "casings") {
-        requirements = techTreeRequirements.casings[itemName];
-    } else if (partType === "powders") {
-        requirements = techTreeRequirements.powders[itemName];
-    }
-
-    if (!requirements || requirements.length === 0) return true;
-
-    // For cores, requirements are checked across all categories
-    if (partType === "cores") {
-        return requirements.every(req => {
-            return Object.values(unlockedTechTree.cores).some(catItems => catItems[req]);
-        });
-    } else {
-        return requirements.every(req => unlockedTechTree[partType][req]);
-    }
+    // All requirements are now satisfied through research tree unlocks
+    return true;
 }
 
 /*
  * unlockTechBasedOnTest — called after every test fire.
- * Checks if the currently equipped core/casing/powder can be unlocked
- * (i.e. it isn't already unlocked AND its requirements are all met),
- * then refreshes both the R&D tree display AND the part-selection buttons
- * so newly unlocked items appear immediately without needing a tab click.
+ * Attempts to unlock research projects based on equipped components.
+ * When all components of a shell have been tested (new composition),
+ * checks if any research projects should be unlocked.
  */
 function unlockTechBasedOnTest() {
-    if (core) {
-        const isUnlocked = unlockedTechTree.cores[core.category][core.type];
-        if (!isUnlocked && areRequirementsMet("cores", core.category, core.type)) {
-            unlockedTechTree.cores[core.category][core.type] = true;
-        }
-    }
-    if (casing) {
-        const isUnlocked = unlockedTechTree.casings[casing];
-        if (!isUnlocked && areRequirementsMet("casings", null, casing)) {
-            unlockedTechTree.casings[casing] = true;
-        }
-    }
-    if (powder) {
-        const isUnlocked = unlockedTechTree.powders[powder];
-        if (!isUnlocked && areRequirementsMet("powders", null, powder)) {
-            unlockedTechTree.powders[powder] = true;
-        }
-    }
+    let unlockedAnything = false;
 
-    // Refresh the R&D tree modal
-    updateTechTreeDisplay();
+    // Check if we can unlock any research projects whose prerequisites are now met
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (!isResearchUnlocked(techId) && areResearchPrerequisitesMet(techId)) {
+            unlockedResearch[techId] = true;
+            unlockedAnything = true;
+        }
+    });
 
-    // Check for quest progress
-    checkQuestProgress();
-
-    // Re-render whichever tab is currently open so lock/unlock state updates immediately
-    const activeTab = document.querySelector('#partTabs .tab.activate');
-    if (activeTab) showTabContent(activeTab.dataset.tab);
+    if (unlockedAnything) {
+        refreshComponentUnlocks();
+        updateTechTreeDisplay();
+        const activeTab = document.querySelector('#partTabs .tab.activate');
+        if (activeTab) showTabContent(activeTab.dataset.tab);
+        checkQuestProgress();
+    }
 }
 
 
@@ -2461,9 +3041,52 @@ function getNewArmor() {
         }
         return;
     }
-    awardMoney(-SCOUT_DEPLOY_COST);
-    saveGame();
 
+    const warning =
+        `Deploy scout team for ${currencyText(SCOUT_DEPLOY_COST)}?\n` +
+        `Potential scout KIA chance: ${Math.round(SCOUT_KIA_CHANCE * 100)}%.\n` +
+        `Replacement training cost: ${currencyText(SCOUT_RECRUIT_COST)}.\n` +
+        `Mission duration: ${Math.round(SCOUT_TRAINING_MS / 1000)}s.\n\n` +
+        `${chooseRandom(SCOUT_DEPLOY_WARNS)}\n\n` +
+        `Continue?`;
+
+    openScoutConfirm(warning, () => {
+        awardMoney(-SCOUT_DEPLOY_COST);
+        saveGame();
+        startScoutMission();
+    });
+    return;
+}
+
+function openScoutConfirm(message, callback) {
+    const modal = document.getElementById("scoutConfirmModal");
+    const content = document.getElementById("scoutConfirmMessage");
+    if (!modal || !content) return;
+    content.textContent = message;
+    scoutConfirmCallback = callback;
+    modal.classList.add("show");
+}
+
+function closeScoutConfirm() {
+    const modal = document.getElementById("scoutConfirmModal");
+    if (!modal) return;
+    modal.classList.remove("show");
+    scoutConfirmCallback = null;
+}
+
+function confirmScoutDeploy() {
+    if (scoutConfirmCallback) {
+        const callback = scoutConfirmCallback;
+        closeScoutConfirm();
+        callback();
+    }
+}
+
+function startScoutMission() {
+    const btn = document.getElementById("recoverBtn");
+    const log = document.getElementById("scoutLog");
+    if (!btn || !log) return;
+    
     // ── Pick the armor now (hidden from player until mission complete) ──────
     const roll = Math.random();
     let cumulative = 0;
@@ -2476,28 +3099,24 @@ function getNewArmor() {
         }
     }
 
-    // ── Lock the button ──────────────────────────────────────────────────────
     btn.classList.add("recovering");
     btn.textContent = "↺ Scouts Deployed…";
     log.style.display = "";
-    log.textContent = `Deploying scout team to the engagement zone… (${currencyText(SCOUT_DEPLOY_COST)} spent)`;
+    log.innerHTML = `${chooseRandom(SCOUT_DIALOGUE_START)}<br><span style="opacity:0.5;font-size:9px;">(${currencyText(SCOUT_DEPLOY_COST)} spent)</span>`;
 
-    // ── Timed narrative events ───────────────────────────────────────────────
     const DURATION = 60; // seconds
-
     const events = [
-        { at:  5, msg: "Scout Alpha: Entering hostile perimeter. No contact yet." },
+        { at:  5, msg: chooseRandom(SCOUT_DIALOGUE_START) },
         { at: 12, msg: "Scout Alpha: Moving through debris field. Armor signatures detected ahead." },
-        { at: 20, msg: "Scout Bravo: Flanking east. Keeping comms tight." },
+        { at: 20, msg: chooseRandom(SCOUT_DIALOGUE_MID) },
         { at: 28, msg: "Scout Alpha: Visual on wreckage — possible sample site. Closing in." },
-        { at: 35, msg: "Scout Bravo: Hostile patrol nearby. Team going silent." },
+        { at: 35, msg: chooseRandom(SCOUT_DIALOGUE_MID) },
         { at: 42, msg: "Scout Alpha: Sample confirmed. Beginning extraction." },
         { at: 49, msg: "⚠ Scout Bravo: Taking fire! Cover requested — extraction still in progress." },
-        { at: 55, msg: "Scout Alpha: Sample secured. Team pulling back to LZ." },
+        { at: 55, msg: chooseRandom(SCOUT_DIALOGUE_EXTRACTION) },
         { at: 58, msg: "HQ: Extraction craft on approach. Stand by for handoff." },
     ];
 
-    // Schedule each narrative event
     events.forEach(e => {
         setTimeout(() => {
             if (log.style.display !== "none") {
@@ -2506,26 +3125,17 @@ function getNewArmor() {
         }, e.at * 1000);
     });
 
-    // ── Countdown ticker — updates the log label every second ───────────────
     let elapsed = 0;
     const ticker = setInterval(() => {
         elapsed++;
         const remaining = DURATION - elapsed;
-
-        // Update the countdown suffix on whatever line is currently shown,
-        // but only if a narrative event hasn't just replaced the whole text
-        // (events use innerHTML so we refresh the span if it exists)
         const span = log.querySelector("span");
         if (span) span.textContent = `[ ${remaining}s remaining ]`;
-
-        // Show the button countdown label
         btn.textContent = `↺ Scout Mission — ${remaining}s`;
     }, 1000);
 
-    // ── Mission complete at 60s ──────────────────────────────────────────────
     setTimeout(() => {
         clearInterval(ticker);
-
         const teamLost = Math.random() < SCOUT_KIA_CHANCE;
         if (teamLost) {
             scoutTeamStatus = "needs_replacement";
@@ -2541,23 +3151,15 @@ function getNewArmor() {
             return;
         }
 
-        // Apply the armor result
         currentArmor    = chosenArmor;
         armorDurability = 4;
-
-        // Final log entry
         log.innerHTML =
             `<span style="color:var(--stat-ok, #3aaa72);">✓ Sample delivered: <b>${chosenArmor}</b></span><br>` +
             `<span style="opacity:0.5;font-size:9px;">Scout team safely back at base.</span>`;
-
-        // Update the test result readout
         document.getElementById("testResult").innerHTML =
             `<span class="stat-ok">✓</span> Armor Sample Recovered: <b>${chosenArmor}</b>`;
-
-        // Re-enable button
         btn.classList.remove("recovering");
         btn.textContent = "↺ Recover Armor";
-
         updateDisplay();
         updateTooltip();
         updateArmorDatabase();
@@ -2766,6 +3368,22 @@ function getBuildStatBounds() {
     }), { maxPower: 0, minCost: Infinity, maxStability: 0, maxExplosiveness: 0 });
 }
 
+function updateRetryIndicator() {
+    const el = document.getElementById("retryIndicator");
+    if (!el) return;
+    if (currentFailedOrderId !== null) {
+        el.textContent = "Reattempting failed order...";
+        el.style.display = "inline-block";
+        return;
+    }
+    if (failedOrders.length > 0) {
+        el.textContent = `Failed order queued for retry (${failedOrders.length})`;
+        el.style.display = "inline-block";
+    } else {
+        el.style.display = "none";
+    }
+}
+
 // Tracks which tab is currently open so selectCore/Casing/Powder can re-render it
 let activeTab = 'core';
 
@@ -2879,6 +3497,8 @@ const barrelStats = {
     "Long": { power: 0.7, cost: 0.8, penetration: 1.0, stability: 0.4 },
     "Heavy Long": { power: 1.2, cost: 1.4, penetration: 1.5, stability: 0.8 }
 };
+
+// Flavor text for each part — shown in the tooltip when hovering over a selected part
 
 const partFlavorText = {
     cores: {
@@ -2996,6 +3616,7 @@ function updateDisplay() {
         `<span style="opacity:0.5;font-size:8px;">POWDER</span> ${powderInfo}`;
 
     updateTabBadges();
+    updateRetryIndicator();
 }
 // Update the armor database display with known stats
 function updateArmorDatabase() {
@@ -3158,7 +3779,7 @@ function exitWarning() {
         const heading = warningCard.querySelector("h2");
         const paragraph = warningCard.querySelector("p");
         if (heading) heading.innerText = "Exit";
-        if (paragraph) paragraph.innerText = "SOrry to dissapoint :(";
+        if (paragraph) paragraph.innerText = "Sorry to dissapoint :(";
     }
     let remaining = 5;
     if (countdownEl) countdownEl.innerText = `Closing in ${remaining}s...`;
@@ -3341,10 +3962,11 @@ function submitDesign() {
     if (allocationResult.allocation > 0) {
         resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">R&D allocation: -${currencyText(allocationResult.allocation)} → +${allocationResult.gainedRP} RP</span>`;
     }
-    setTimeout( () => {
+    updateRetryIndicator();
+    setTimeout(() => {
+        isWaiting = false; // Reset waiting state before generating the next order
         generateOrder();
         saveGame();
-        isWaiting = false; // Reset waiting state to allow new orders
     }, 1000); // Creates a new order after a 1-second delay after submission
 }
 
@@ -3641,22 +4263,17 @@ function completeQuest(questId) {
  * "collapsed" hides .tech-tree-section-body via CSS (display:none).
  */
 function toggleTechSection(id) {
-    document.getElementById(id).classList.toggle('collapsed');
+    const section = document.getElementById(id);
+    if (!section) return;
+    const isCollapsed = section.classList.toggle('collapsed');
+    techSectionState[id] = isCollapsed;
 }
 
 /*
  * updateTechTreeDisplay — rebuilds the full tech tree HTML and injects it.
  *
- * Each section starts COLLAPSED so the screen isn't cluttered.
- * The player clicks a header to expand just that category.
- *
- * Structure per section:
- *   <div class="tech-tree-section collapsed" id="sec-X">
- *     <h3 onclick="toggleTechSection('sec-X')">...</h3>
- *     <div class="tech-tree-section-body">
- *       rows of .tree-root / .tree-level nodes
- *     </div>
- *   </div>
+ * Section open/closed state is preserved across redraws so the player
+ * can keep a section expanded while research timers update.
  */
 function updateTechTreeDisplay() {
     const container = document.getElementById("techTreeContent");
@@ -3680,122 +4297,164 @@ function updateTechTreeDisplay() {
         html += '<div class="tech-tree-summary tech-tree-summary-idle">No active research. Click a ready item to begin.</div>';
     }
 
+    // Helper to render research nodes
+    function createResearchNode(techId) {
+        if (!techId || !researchTreeData[techId]) return '';
+        
+        const tech = researchTreeData[techId];
+        const isUnlocked = isResearchUnlocked(techId);
+        const prereqsMet = areResearchPrerequisitesMet(techId);
+        const canStart = isUnlocked;
+        
+        let statusClass = 'locked';
+        let statusText = 'Locked';
+        if (isUnlocked) {
+            statusClass = 'unlocked';
+            statusText = '✓ Unlocked';
+        }
+        
+        const locked = !isUnlocked;
+        const unlocksSummary = [];
+        if (tech.unlocksComponents) {
+            if (tech.unlocksComponents.cores) {
+                Object.values(tech.unlocksComponents.cores).forEach(comps => {
+                    unlocksSummary.push(...comps);
+                });
+            }
+            if (tech.unlocksComponents.casings) unlocksSummary.push(...tech.unlocksComponents.casings);
+            if (tech.unlocksComponents.powders) unlocksSummary.push(...tech.unlocksComponents.powders);
+        }
+        
+        return `<div class="tech-item ${statusClass}">
+            <div class="tech-item-name">${tech.name}</div>
+            <div class="tech-item-description">${tech.description}</div>
+            <div class="tech-item-status">${statusText}</div>
+            ${unlocksSummary.length > 0 ? `<div class="tech-item-unlocks"><strong>Unlocks:</strong> ${unlocksSummary.join(', ')}</div>` : ''}
+            <div class="tech-item-cost">RP: ${tech.cost.rp} | ₵${tech.cost.money}</div>
+        </div>`;
+    }
+
     // ── Solid Cores ──────────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-solid">';
+    html += `<div class="tech-tree-section ${techSectionState['sec-solid'] === false ? '' : 'collapsed'}" id="sec-solid">`;
     html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-solid\')">Solid Cores</h3>';
     html += '<div class="tech-tree-section-body">';
 
     // Level 1: starters
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("Solid", "Light-AP", unlockedTechTree.cores["Solid"]["Light-AP"], [], true) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("Solid", "AP", unlockedTechTree.cores["Solid"]["AP"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("light_ap_core_development") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("steel_core_refinement") + '</div>';
     html += '</div>';
 
-    // Level 2: unlocks from AP / Light-AP
+    // Level 2
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APHE", unlockedTechTree.cores["Solid"]["APHE"], ["AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "TAP", unlockedTechTree.cores["Solid"]["TAP"], ["AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR", unlockedTechTree.cores["Solid"]["APCR"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("light_ap_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("advanced_steel_refinement") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("aphe_ammunition") + '</div>';
     html += '</div>';
 
+    // Level 3
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "Light-AP MK II", unlockedTechTree.cores["Solid"]["Light-AP MK II"], ["Light-AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "AP MK II", unlockedTechTree.cores["Solid"]["AP MK II"], ["AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APHE MK II", unlockedTechTree.cores["Solid"]["APHE MK II"], ["APHE"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "TAP MK II", unlockedTechTree.cores["Solid"]["TAP MK II"], ["TAP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR MK II", unlockedTechTree.cores["Solid"]["APCR MK II"], ["APCR"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("tungsten_refinement") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("aphe_mk_ii") + '</div>';
     html += '</div>';
 
-    html += '</div></div>'; // close body + section
+    // Level 4
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("advanced_tungsten_refinement") + '</div>';
+    html += '</div>';
+
+    // Level 5
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("sabot_ammunition_development") + '</div>';
+    html += '</div>';
+
+    // Level 6
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("advanced_sabot_system") + '</div>';
+    html += '</div>';
+
+    html += '</div></div>';
 
     // ── Chemical Cores ───────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-chemical">';
+    html += `<div class="tech-tree-section ${techSectionState['sec-chemical'] === false ? '' : 'collapsed'}" id="sec-chemical">`;
     html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-chemical\')">Chemical Cores</h3>';
     html += '<div class="tech-tree-section-body">';
 
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("Chemical", "TNT-Based", unlockedTechTree.cores["Chemical"]["TNT-Based"], ["Light-AP"], false) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("Chemical", "RDX-Based", unlockedTechTree.cores["Chemical"]["RDX-Based"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("tnt_chemical_synthesis") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("rdx_chemical_development") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite", unlockedTechTree.cores["Chemical"]["PETN-Composite"], ["RDX-Based"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("tnt_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("rdx_mk_ii") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "TNT-Based MK II", unlockedTechTree.cores["Chemical"]["TNT-Based MK II"], ["TNT-Based"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "RDX-Based MK II", unlockedTechTree.cores["Chemical"]["RDX-Based MK II"], ["RDX-Based"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite MK II", unlockedTechTree.cores["Chemical"]["PETN-Composite MK II"], ["PETN-Composite"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("petn_composite") + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("petn_mk_ii") + '</div>';
     html += '</div>';
 
     html += '</div></div>';
 
     // ── Casings ──────────────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-casings">';
+    html += `<div class="tech-tree-section ${techSectionState['sec-casings'] === false ? '' : 'collapsed'}" id="sec-casings">`;
     html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-casings\')">Casings</h3>';
     html += '<div class="tech-tree-section-body">';
 
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("casing", "Standard", unlockedTechTree.casings["Standard"], [], true) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("casing", "Low-Carbon", unlockedTechTree.casings["Low-Carbon"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("standard_casing_optimization") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("low_carbon_casing") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "High-Carbon", unlockedTechTree.casings["High-Carbon"], ["Standard"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("standard_casing_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("low_carbon_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("high_carbon_reinforcement") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced", unlockedTechTree.casings["Reinforced"], ["Standard", "High-Carbon"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("high_carbon_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("reinforced_casing_engineering") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Low-Carbon MK II", unlockedTechTree.casings["Low-Carbon MK II"], ["Low-Carbon"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Standard MK II", unlockedTechTree.casings["Standard MK II"], ["Standard"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "High-Carbon MK II", unlockedTechTree.casings["High-Carbon MK II"], ["High-Carbon"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced MK II", unlockedTechTree.casings["Reinforced MK II"], ["Reinforced"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("reinforced_casing_mk_ii") + '</div>';
     html += '</div>';
 
     html += '</div></div>';
 
     // ── Powders ──────────────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-powders">';
+    html += `<div class="tech-tree-section ${techSectionState['sec-powders'] === false ? '' : 'collapsed'}" id="sec-powders">`;
     html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-powders\')">Powders</h3>';
     html += '<div class="tech-tree-section-body">';
 
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("powder", "Coarse-Powder", unlockedTechTree.powders["Coarse-Powder"], [], true) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("powder", "Unrefined-Powder", unlockedTechTree.powders["Unrefined-Powder"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("coarse_powder_production") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("unrefined_powder_production") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Semi-Fine-Powder", unlockedTechTree.powders["Semi-Fine-Powder"], ["Coarse-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("coarse_powder_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("unrefined_powder_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("semi_fine_powder_development") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder", unlockedTechTree.powders["Fine-Powder"], ["Coarse-Powder", "Semi-Fine-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("semi_fine_powder_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("fine_powder_refinement") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Unrefined-Powder MK II", unlockedTechTree.powders["Unrefined-Powder MK II"], ["Unrefined-Powder"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Coarse-Powder MK II", unlockedTechTree.powders["Coarse-Powder MK II"], ["Coarse-Powder"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Semi-Fine-Powder MK II", unlockedTechTree.powders["Semi-Fine-Powder MK II"], ["Semi-Fine-Powder"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder MK II", unlockedTechTree.powders["Fine-Powder MK II"], ["Fine-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("fine_powder_mk_ii") + '</div>';
     html += '</div>';
 
-    html += '</div></div>'; // close body + section
-
-    // ── Future Programs (placeholders) ──────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-future">';
-    html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-future\')">Future Programs (Placeholder)</h3>';
-    html += '<div class="tech-tree-section-body">';
-    html += '<div class="tree-root">';
-    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Guided Fuse Suite</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
-    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Composite Jacket</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
-    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Smart Propellant Mix</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
-    html += '</div>';
     html += '</div></div>';
 
-    html += '</div>'; // close .tech-tree-container
+    html += '</div>';
     container.innerHTML = html;
 }
 
@@ -3867,6 +4526,7 @@ function saveGame() {
         researchPoints,
         rdBudgetPercent,
         unlockedTechTree,
+        unlockedResearch,
         knownStats,
         failedOrders,
         nextFailedOrderId,
@@ -3926,6 +4586,10 @@ function loadGame() {
         if (data.unlockedTechTree && typeof data.unlockedTechTree === "object") {
             unlockedTechTree = mergeSaveObject(unlockedTechTree, data.unlockedTechTree);
         }
+        if (data.unlockedResearch && typeof data.unlockedResearch === "object") {
+            unlockedResearch = data.unlockedResearch;
+            refreshComponentUnlocks();
+        }
         if (data.knownStats && typeof data.knownStats === "object") {
             knownStats = mergeSaveObject(knownStats, data.knownStats);
         }
@@ -3946,12 +4610,6 @@ function loadGame() {
         if (typeof data.scoutTrainingEndsAt === "number") scoutTrainingEndsAt = data.scoutTrainingEndsAt;
         if (typeof data.advancedText === "boolean") advancedText = data.advancedText;
         if (typeof data.developerModeUnlocked === "boolean") developerModeUnlocked = data.developerModeUnlocked;
-        if (data.unlockedTechTree) unlockedTechTree = data.unlockedTechTree;
-        if (data.knownStats) knownStats = data.knownStats;
-        if (Array.isArray(data.failedOrders)) failedOrders = data.failedOrders;
-        if (typeof data.nextFailedOrderId === "number") nextFailedOrderId = data.nextFailedOrderId;
-        if (typeof data.currentArmor === "string") currentArmor = data.currentArmor;
-        if (typeof data.armorDurability === "number") armorDurability = data.armorDurability;
         if (typeof data.currentQuest === "string" || data.currentQuest === null) currentQuest = data.currentQuest;
         if (data.questProgress && typeof data.questProgress === "object") questProgress = data.questProgress;
         if (Array.isArray(data.completedQuests)) completedQuests = data.completedQuests;
@@ -4020,6 +4678,12 @@ function startFromTitle(mode) {
     updateEconomyDisplay();
     updateBudgetPanel();
     updateScoutTeamUI();
+
+    // Initialize research tree system if not already done
+    if (Object.keys(unlockedResearch).length === 0) {
+        initializeStarterResearch();
+        refreshComponentUnlocks();
+    }
 
     // Ensure we have a persistent save file and start autosave
     saveGame();
