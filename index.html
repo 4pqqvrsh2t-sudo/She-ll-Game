@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>She-ll Designer v0.3.7</title>
+    <meta charset="UTF-8">
+    <title>She-ll Designer v1.4.6</title>
     <style>
 /* ══════════════════════════════════════════════════════════════════════════
-   FEDERATION ORDNANCE TERMINAL — She-ll Designer v0.3.7
+   FEDERATION ORDNANCE TERMINAL — She-ll Designer v1.4.6
    Primary palette : Deep navy blues
    Accent palette  : Dark brown + amber/tan
    ══════════════════════════════════════════════════════════════════════════ */
@@ -748,6 +749,42 @@ body {
     line-height: 1.45;
 }
 
+#scoutConfirmModal .modal-content {
+    max-width: 520px;
+    max-height: 54vh;
+}
+
+#scoutConfirmModal .modal-body {
+    padding: 18px 22px;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--txt-main);
+    white-space: pre-wrap;
+}
+
+#scoutConfirmModal .modal-body + .modal-body {
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#scoutConfirmModal .fed-btn {
+    min-width: 120px;
+}
+
+#scoutConfirmModal .fed-btn-amber {
+    border-color: var(--bdr-tan);
+}
+
+#scoutConfirmModal .scout-confirm-message {
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(74, 158, 216, 0.15);
+    color: var(--txt-muted);
+}
+
 .db-armor-block {
     border: 1px solid var(--bdr-blue);
     background: rgba(8, 20, 35, 0.7);
@@ -824,6 +861,70 @@ body {
     white-space: normal;
 }
 
+/* ── Quest modal overrides ── */
+#questModal .modal-content {
+    max-width: 600px;
+    max-height: 80vh;
+}
+
+#questModal .modal-header h2 {
+    color: var(--txt-head);
+    letter-spacing: 5px;
+    font-size: 11px;
+}
+
+#questModal .modal-body {
+    background: var(--bg-deep);
+    color: var(--txt-main);
+    overflow: auto;
+    padding: 20px;
+    white-space: normal;
+}
+
+.quest-item {
+    margin-bottom: 20px;
+}
+
+.quest-item h3 {
+    color: var(--txt-head);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.quest-requirements {
+    margin-left: 10px;
+}
+
+.quest-requirement {
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.quest-requirement.completed {
+    color: var(--txt-tan-hi);
+    text-decoration: line-through;
+}
+
+/* ── Budget modal ── */
+#budgetModal .modal-content {
+    max-width: 500px;
+    max-height: 70vh;
+}
+
+#budgetModal .modal-header h2 {
+    color: var(--txt-head);
+    letter-spacing: 5px;
+    font-size: 11px;
+}
+
+#budgetModal .modal-body {
+    background: var(--bg-deep);
+    color: var(--txt-main);
+    overflow: auto;
+    padding: 20px;
+    white-space: normal;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    TECH TREE
    ══════════════════════════════════════════════════════════════════════════ */
@@ -835,6 +936,43 @@ body {
     padding-bottom: 40px;
     max-width: 620px;
     margin: 0 auto;
+}
+
+.tech-tree-summary {
+    border: 1px solid var(--bdr-bright);
+    background: rgba(10, 20, 40, 0.95);
+    padding: 14px 16px;
+    border-radius: 8px;
+    color: var(--txt-main);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tech-tree-summary-title {
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--txt-elec);
+}
+
+.tech-tree-summary-line {
+    font-family: monospace;
+    font-size: 10px;
+    color: var(--txt-muted);
+}
+
+.tech-tree-summary-line span {
+    color: var(--txt-head);
+}
+
+.tech-tree-summary-idle {
+    border: 1px solid var(--bdr-blue);
+    background: rgba(5, 10, 18, 0.85);
+    padding: 14px 16px;
+    border-radius: 8px;
+    color: var(--txt-muted);
 }
 
 .tech-tree-section {
@@ -915,6 +1053,107 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.tech-item {
+    width: 240px;
+    border: 1px solid var(--bdr-blue);
+    background: var(--bg-card);
+    padding: 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.tech-item.locked {
+    opacity: 0.5;
+    border-color: var(--txt-dim);
+    background: rgba(10, 18, 35, 0.5);
+}
+
+.tech-item.unlocked {
+    border-color: var(--bdr-mid);
+    background: rgba(10, 20, 40, 0.9);
+}
+
+.tech-item.unlocked:hover {
+    border-color: var(--bdr-bright);
+    box-shadow: 0 0 12px rgba(74, 158, 216, 0.2);
+}
+
+.tech-item-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: var(--txt-head);
+    letter-spacing: 0.5px;
+    font-family: monospace;
+    text-align: center;
+}
+
+.tech-item.locked .tech-item-name { color: var(--txt-dim); }
+
+.tech-item-description {
+    font-size: 9px;
+    color: var(--txt-main);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    text-align: left;
+    opacity: 0.9;
+}
+
+.tech-item.locked .tech-item-description { color: var(--txt-muted); }
+
+.tech-item-status {
+    font-size: 9px;
+    color: var(--txt-muted);
+    font-family: monospace;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.tech-item.locked  .tech-item-status { color: var(--txt-dim); }
+.tech-item.unlocked .tech-item-status { color: var(--glow-blue); }
+
+.tech-item-unlocks {
+    font-size: 8px;
+    color: var(--txt-head);
+    background: rgba(5, 20, 15, 0.5);
+    padding: 6px;
+    border-radius: 2px;
+    border-left: 2px solid var(--glow-blue);
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.tech-item-unlocks strong {
+    color: var(--txt-elec);
+    display: block;
+    margin-bottom: 3px;
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tech-item-cost {
+    font-size: 8px;
+    color: var(--txt-muted);
+    text-align: center;
+}
+
+.tech-item.unlocked .tech-item-cost { color: var(--txt-tan); }
+
+.tree-connector {
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(to bottom, var(--bdr-mid), transparent);
+    margin: 0 auto;
+    position: relative;
+}
+
+.tech-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     min-width: 120px;
 }
@@ -940,6 +1179,7 @@ body {
     background: var(--bg-deep);
     border-color: var(--txt-dim);
     opacity: 0.55;
+    cursor: var(--glow-red);
 }
 
 .tech-item.unlocked {
@@ -1035,6 +1275,7 @@ body {
     letter-spacing: 4px;
     text-transform: uppercase;
     margin: 0 0 6px 0;
+    cursor: pointer;
 }
 
 .title-sub {
@@ -1050,12 +1291,91 @@ body {
     margin-bottom: 8px;
 }
 
-/* (old tab-bar stub removed — new .tab-bar is defined above in the redesign) */
-
-    </style>
+.title-screen.developer-mode {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="12" fill="%23f5df4d"/><path d="M10 16 L22 16 M16 10 L16 22" stroke="%23000" stroke-width="2"/></svg>') 16 16, crosshair;
+}
+.warning-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 18, 0.96);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6000;
+}
+.warning-card {
+    width: min(520px, 92vw);
+    border: 1px solid var(--bdr-mid);
+    background: var(--bg-panel);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
+    padding: 24px;
+}
+.warning-card h2 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    color: var(--txt-head);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.warning-card p {
+    margin: 0;
+    line-height: 1.65;
+    color: var(--txt-main);
+    font-size: 11px;
+}
+.warning-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+.warning-countdown {
+    margin-top: 14px;
+    color: var(--txt-muted);
+    font-size: 11px;
+}
+</style>
 </head>
 
 <body>
+
+<div id="titleScreen" class="title-screen">
+  <div class="title-card">
+    <h1 class="title-name" id="titleName">She-ll Designer</h1>
+    <div class="title-sub">Federation Ordnance Terminal</div>
+    <div class="title-actions">
+      <button id="continueBtn" class="fed-btn fed-btn-primary" onclick="startFromTitle('continue')">▶ Continue</button>
+      <button id="loadBtn" class="fed-btn fed-btn-amber" onclick="startFromTitle('load')">↺ Load Save</button>
+      <button class="fed-btn" onclick="startFromTitle('new')">＋ New Game</button>
+    </div>
+    <div id="developerPanel" style="display:none; margin-top: 18px; padding: 14px; border: 1px solid var(--bdr-blue); border-radius: 10px; background: rgba(5, 10, 18, 0.88);">
+      <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:12px;">Developer Mode Active</div>
+      <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+        <span>Research Points</span>
+        <input id="devRPInput" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+      </label>
+      <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+        <span>Money</span>
+        <input id="devMoneyInput" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+      </label>
+      <button class="fed-btn fed-btn-primary" onclick="applyDeveloperValues()" style="width:auto;">Apply Values</button>
+      <div id="devMessage" style="margin-top:10px; font-size:10px; color:var(--txt-muted);"></div>
+    </div>
+    <div id="developerUnlockNote" style="display:none; margin-top:10px; font-size:10px; color: var(--txt-elec);">Developer mode unlocked. Open Settings to adjust RP and Money.</div>
+  </div>
+</div>
+
+<div id="warningModal" class="warning-modal">
+  <div class="warning-card">
+    <h2>Warning</h2>
+    <p>This game's code was largely generated by AI, but all concepts and designs were created by humans. The original creator retains all IP rights.</p>
+    <div class="warning-actions">
+      <button class="fed-btn fed-btn-primary" onclick="continueFromWarning()">Continue</button>
+      <button class="fed-btn fed-btn-amber" onclick="exitWarning()">Exit</button>
+    </div>
+    <p id="warningCountdown" class="warning-countdown"></p>
+  </div>
+</div>
 
 <div id="titleScreen" class="title-screen">
   <div class="title-card">
@@ -1081,11 +1401,12 @@ body {
       <button class="dispatch-icon-btn" title="Operations">☰</button>
       <button class="dispatch-icon-btn" title="Notifications">🔔</button>
       <button class="dispatch-icon-btn" title="Logistics">⬢</button>
-      <button class="dispatch-icon-btn" title="Settings" onclick="openSettingsModal()">⚙</button>
+      <button class="dispatch-icon-btn" title="Settings" onclick="playSound('settings'); openSettingsModal()">⚙</button>
     </div>
     <div class="top-tabs">
-      <button class="rnd-tab" onclick="openTechTreeModal()">R&amp;D</button>
-      <button class="rnd-tab budget-tab" onclick="openBudgetModal()">Budget</button>
+      <button class="rnd-tab" onclick="playSound('rnd'); openTechTreeModal()">R&amp;D</button>
+      <button class="rnd-tab" onclick="playSound('budget'); openBudgetModal()">Budget</button>
+      <button class="rnd-tab" onclick="playSound('general'); openQuestModal()">Quests</button>
     </div>
     <span class="top-bar-label">Dispatch</span>
 
@@ -1094,11 +1415,12 @@ body {
       All styling comes from the CSS #request rule (no inline styles needed).
     -->
     <p id="request"></p>
+    <span id="retryIndicator" class="top-bar-label" style="margin-left:10px; opacity:0.75; font-size:9px; display:none;"></span>
 
     <!-- RP and money counters — populated by updateEconomyDisplay() -->
     <div class="top-bar-counters">
       <span>RP&nbsp;<span class="counter-val" id="rpDisplay">0</span></span>
-      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">2500000</span></span>
+      <span>₵&nbsp;<span class="counter-val" id="moneyDisplay">10000</span></span>
     </div>
 
   </div>
@@ -1110,7 +1432,7 @@ body {
     <div class="panel-left">
 
       <div class="panel-header">
-        <h1>She-ll Designer&nbsp;<span style="color:var(--txt-muted); font-weight:400;">v0.3.7</span></h1>
+        <h1>She-ll Designer&nbsp;<span style="color:var(--txt-muted); font-weight:400;">v1.4.6</span></h1>
       </div>
 
       <div class="panel-section" style="font-size:9px; color:var(--txt-muted); line-height:1.8;">
@@ -1128,14 +1450,15 @@ body {
       </div>
 
       <div class="panel-section">
-        <button class="fed-btn fed-btn-primary" onclick="openDatabaseModal()">▶ Armor Database</button>
+
       </div>
 
       <div class="panel-section">
         <span class="fed-label">Testing Range</span>
-        <button class="fed-btn fed-btn-amber" onclick="testShell()">▶ Fire Test Round</button>
+        <button class="fed-btn fed-btn-primary" onclick="playSound('testShell'); testShell()">▶ Fire Test Round</button>
+        <button class="fed-btn fed-btn-amber" onclick="playSound('database'); openDatabaseModal()" style="margin-top:4px;">Armor Database</button>
         <p id="testResult" class="readout" style="margin-top:6px;"></p>
-        <button class="fed-btn" id="recoverBtn" onclick="getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
+        <button class="fed-btn" id="recoverBtn" onclick="playSound('recover'); getNewArmor()" style="margin-top:4px;">↺ Recover Armor</button>
         <!--
           #scoutLog — filled by getNewArmor() with timed scout team status messages.
           Hidden by default (display:none) so it doesn't take space when idle.
@@ -1144,7 +1467,7 @@ body {
       </div>
 
       <div class="panel-section">
-        <button class="fed-btn fed-btn-primary" onclick="submitDesign()">▶ Submit to Command</button>
+        <button class="fed-btn fed-btn-primary" onclick="playSound('submit'); submitDesign()">▶ Submit to Command</button>
         <p id="result" class="readout" style="margin-top:6px;"></p>
       </div>
 
@@ -1183,7 +1506,7 @@ body {
 
 <!-- Database Modal -->
 <div id="databaseModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h2>Armor Database</h2>
             <button class="close-btn" onclick="closeDatabaseModal()">✕</button>
@@ -1194,22 +1517,9 @@ body {
     </div>
 </div>
 
-<div id="budgetModal" class="modal">
-    <div class="modal-content" style="max-width:520px; height:auto; max-height:70vh;">
-        <div class="modal-header">
-            <h2>Budget Allocation</h2>
-            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
-            <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
-            <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
-        </div>
-    </div>
-</div>
 
 <div id="settingsModal" class="modal">
-    <div class="modal-content" style="max-width:460px; height:auto; max-height:60vh;">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:460px; height:auto; max-height:60vh;">
         <div class="modal-header">
             <h2>Settings</h2>
             <button class="close-btn" onclick="closeSettingsModal()">✕</button>
@@ -1217,15 +1527,27 @@ body {
         <div class="modal-body">
             <label style="display:flex; align-items:center; gap:10px; font-size:11px;">
                 <input id="advancedTextToggle" type="checkbox" checked onchange="setAdvancedText(this.checked)">
-                <span><b>Advanced Text</b> — show full numbers and detailed descriptions.</span>
+                <span><b>Advanced Text</b> — Show full numbers and detailed descriptions.</span>
             </label>
+            <div id="developerSettings" style="display:none; margin-top:18px; border-top:1px solid var(--bdr-blue); padding-top:14px;">
+                <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:8px;">Developer Controls</div>
+                <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+                    <span>Research Points</span>
+                    <input id="devRPInputSettings" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+                </label>
+                <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
+                    <span>Money</span>
+                    <input id="devMoneyInputSettings" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+                </label>
+                <button class="fed-btn fed-btn-primary" onclick="applyDeveloperValues(true)" style="width:auto;">Apply Developer Values</button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Tech Tree Modal -->
 <div id="techTreeModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h2>R&D Tech Tree</h2>
             <button class="close-btn" onclick="closeTechTreeModal()">✕</button>
@@ -1235,6 +1557,111 @@ body {
         </div>
     </div>
 </div>
+
+<!-- Quest Modal -->
+<div id="questModal" class="modal">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Active Quests</h2>
+            <button class="close-btn" onclick="closeQuestModal()">✕</button>
+        </div>
+        <div class="modal-body" id="questContent">
+            <!-- Quest content will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Budget Modal -->
+<div id="budgetModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Budget Management</h2>
+            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
+        </div>
+        <div class="modal-body" id="budgetContent">
+            <!-- Budget content will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Scout Deployment Confirmation Modal -->
+<div id="scoutConfirmModal" class="modal">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Confirm Scout Deployment</h2>
+            <button class="close-btn" onclick="closeScoutConfirm()">✕</button>
+        </div>
+        <div class="modal-body scout-confirm-message" id="scoutConfirmMessage" style="white-space: pre-wrap;">
+            <!-- Confirmation text goes here -->
+        </div>
+        <div class="modal-body" style="display:flex; gap:10px; flex-wrap:wrap; padding-top:0;">
+            <button class="fed-btn fed-btn-amber" onclick="confirmScoutDeploy()" style="width:auto;">Deploy Scouts</button>
+            <button class="fed-btn" onclick="closeScoutConfirm()" style="width:auto;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Audio Elements -->
+<audio id="titleMusic" loop preload="auto">
+  <source src="sounds/title.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="gameMusic" loop preload="auto">
+  <source src="sounds/game.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="clickSound" preload="auto">
+  <source src="sounds/click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="coreClickSound" preload="auto">
+  <source src="sounds/core_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="chemicalClickSound" preload="auto">
+  <source src="sounds/chemical_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="casingClickSound" preload="auto">
+  <source src="sounds/casing_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="powderClickSound" preload="auto">
+  <source src="sounds/powder_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="barrelClickSound" preload="auto">
+  <source src="sounds/barrel_click.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="testShellSound" preload="auto">
+  <source src="sounds/test_shell.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="databaseSound" preload="auto">
+  <source src="sounds/database.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="rndSound" preload="auto">
+  <source src="sounds/rnd.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="settingsSound" preload="auto">
+  <source src="sounds/settings.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="budgetSound" preload="auto">
+  <source src="sounds/budget.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="recoverSound" preload="auto">
+  <source src="sounds/recover.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="submitSound" preload="auto">
+  <source src="sounds/submit.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 <script>
 
@@ -1274,6 +1701,92 @@ const costMin = 4, costMax = 8;
 const stabilityMin = 1, stabilityMax = 3;
 const explosiveMin = 0, explosiveMax = 3;
 
+// Audio Elements
+let titleMusic;
+let gameMusic;
+let clickSound;
+let coreClickSound;
+let chemicalClickSound;
+let casingClickSound;
+let powderClickSound;
+let barrelClickSound;
+let testShellSound;
+let databaseSound;
+let rndSound;
+let settingsSound;
+let budgetSound;
+
+// Initialize audio
+function initAudio() {
+    titleMusic = document.getElementById('titleMusic');
+    gameMusic = document.getElementById('gameMusic');
+    clickSound = document.getElementById('clickSound');
+    coreClickSound = document.getElementById('coreClickSound');
+    chemicalClickSound = document.getElementById('chemicalClickSound');
+    casingClickSound = document.getElementById('casingClickSound');
+    powderClickSound = document.getElementById('powderClickSound');
+    barrelClickSound = document.getElementById('barrelClickSound');
+    testShellSound = document.getElementById('testShellSound');
+    databaseSound = document.getElementById('databaseSound');
+    rndSound = document.getElementById('rndSound');
+    settingsSound = document.getElementById('settingsSound');
+    budgetSound = document.getElementById('budgetSound');
+    recoverSound = document.getElementById('recoverSound');
+    submitSound = document.getElementById('submitSound');
+}
+
+// Play sound function
+function playSound(type) {
+    let audio;
+    switch(type) {
+        case 'general':
+            audio = clickSound;
+            break;
+        case 'core':
+            audio = coreClickSound;
+            break;
+        case 'chemical':
+            audio = chemicalClickSound;
+            break;
+        case 'casing':
+            audio = casingClickSound;
+            break;
+        case 'powder':
+            audio = powderClickSound;
+            break;
+        case 'barrel':
+            audio = barrelClickSound;
+            break;
+        case 'testShell':
+            audio = testShellSound;
+            break;
+        case 'database':
+            audio = databaseSound;
+            break;
+        case 'rnd':
+            audio = rndSound;
+            break;
+        case 'settings':
+            audio = settingsSound;
+            break;
+        case 'budget':
+            audio = budgetSound;
+            break;
+        case 'recover':
+            audio = recoverSound;
+            break;
+        case 'submit':
+            audio = submitSound;
+            break;
+    }
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => {
+            // Ignore errors if audio not loaded or user hasn't interacted
+        });
+    }
+}
+
 // Variables to hold current order
 let isWaiting = false;
 let requiredPower;
@@ -1289,6 +1802,31 @@ let currentOrderDescription = ""; // Store the current order text
 let allBuildStatsCache = null; // Cached build combinations for feasibility checks
 let currentOrderIsImpossible = false; // Impossible orders are never added to retry queue
 const COST_TO_CURRENCY = 100;
+const SAVE_PREFIX = "shell_game_save_v1_";
+const SAVE_LATEST_KEY = "shell_game_save_latest";
+let autoSaveInterval = null;
+let techSectionState = {};
+
+// Quest System
+let currentQuest = null;
+let completedQuests = [];
+let questProgress = {};
+
+// Quest definitions
+const quests = {
+    "restore_federation_capabilities": {
+        name: "Restore the Federation's Entire Capabilities",
+        requirements: [
+            { type: "unlock_tech", tech: "Chemical.TNT-Based", description: "Unlock TNT-Based Core" }
+        ],
+        rewards: {
+            rp: 500,
+            money: 2000
+        },
+        nextQuest: "expand_research_facilities" // Example for future
+    }
+    // Add more quests here as needed
+};
 
 // Current parts
 let core = null;
@@ -1308,11 +1846,45 @@ let currentArmor ="Standard Polar Domain Armor";
 let armorDurability = 4;
 let scoutTeamStatus = "ready"; // ready | training | needs_replacement
 let scoutTrainingEndsAt = 0;
+let lastTestedShellKey = null;
 const SCOUT_KIA_CHANCE = 0.12;
 const SCOUT_CASUALTY_COST = 800;
 const SCOUT_RECRUIT_COST = 1500;
 const SCOUT_DEPLOY_COST = 1200;
 const SCOUT_TRAINING_MS = 45000;
+let scoutConfirmCallback = null;
+
+const SCOUT_DEPLOY_WARNS = [
+    "This mission is high-risk: the enemy zone is hot and extraction is not guaranteed.",
+    "Scout losses are possible. Recovery teams often need replacement training after heavy contact.",
+    "Remember: every mission costs funds, and a lost scout team will require a costly replacement.",
+];
+
+const SCOUT_DIALOGUE_START = [
+    "Command: Squad moving out. Keep your comms tight.",
+    "Dispatch: Recovery team en route. Maintain radio silence until contact.",
+    "Bridge: Scouts have reached the perimeter. Awaiting your order.",
+    "Intel: Team is inserting now. Expect intermittent transmissions.",
+];
+
+const SCOUT_DIALOGUE_MID = [
+    "Scout Delta: Recon is underway. Terrain clear for now.",
+    "Scout Echo: I see a fresh impact signature; moving to intercept.",
+    "Scout Foxtrot: Visual on target area. Sensors registering heavy plating.",
+    "Scout Bravo: Enemy patrols closing fast. We might need to fall back.",
+    "Scout Charlie: Civilians in the area, proceed carefully.",
+    "Scout Delta: Approaching the extraction zone. Keep comms secure.",
+];
+
+const SCOUT_DIALOGUE_EXTRACTION = [
+    "Scout Alpha: Extraction inbound, hold position.",
+    "Scout Bravo: Sample secured, exfil route is hot.",
+    "Scout Charlie: Returning to LZ with target in tow.",
+];
+
+function chooseRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
 
 //Knowledge system (what the player has learned about the enemy armor)
 let knownStats = {
@@ -1370,15 +1942,17 @@ let knownStats = {
  * Tech unlocks are started from the R&D tree and complete over time.
  * ────────────────────────────────────────────────────────────────────────── */
 let researchPoints = 0;
-let money = 2500000;
-let rdBudgetPercent = 0.5;
+let money = 10000;
+let rdBudgetPercent = 0.25;
 let researchProjects = {};
 let advancedText = true;
+let hasGeneratedFirstOrder = false;
+let developerModeUnlocked = false;
+let titleNameClickCount = 0;
 
 /*
  * RP and money costs per tech tree item.
  * Format: { rp: <int>, money: <int> }
- * These are placeholder values — tune them as the game design evolves.
  */
 const techTreeCosts = {
     cores: {
@@ -1449,6 +2023,14 @@ function costToCurrency(costPoints) {
     return Math.round(costPoints * COST_TO_CURRENCY);
 }
 
+function researchDurationMs(costEntry) {
+    if (!costEntry) return 10000;
+    const base = 8000;
+    const rpFactor = costEntry.rp * 200;
+    const moneyFactor = costEntry.money * 5;
+    return Math.max(3000, base + rpFactor + moneyFactor);
+}
+
 function currencyText(amount) {
     const rounded = Math.round(amount);
     if (advancedText) return `₵${rounded.toLocaleString()}`;
@@ -1498,7 +2080,14 @@ function setRDBudgetPercent(percent) {
 }
 
 function updateBudgetPanel() {
+    const container = document.getElementById("budgetContent");
     const percentValue = Math.round(rdBudgetPercent * 100);
+    container.innerHTML = `
+        <div class="fed-label">Budget Allocation</div>
+        <p id="budgetSummary" class="readout" style="margin-bottom:10px;"></p>
+        <input id="budgetSlider" type="range" min="0" max="100" step="5" value="50" oninput="setRDBudgetPercent(this.value)" style="width:100%;">
+        <p class="readout" style="margin-top:10px;">Higher allocation means faster R&D growth, but less cash on hand for orders and scout operations.</p>
+    `;
     const summary = document.getElementById("budgetSummary");
     const slider = document.getElementById("budgetSlider");
     if (summary) {
@@ -1523,29 +2112,396 @@ function spendResources(rpCost, moneyCost) {
     return true;
 }
 
-// Tech Tree Unlock System
-// Only items with no requirements (starters) begin as true.
-// Everything else starts false and must be researched after its prerequisites are unlocked.
+// ═══════════════════════════════════════════════════════════════════════════
+// RESEARCH TREE SYSTEM — Tiered progression with descriptions and branching
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Core research projects with descriptions, prerequisites, and unlocked components
+const researchTreeData = {
+    // ─ SOLID CORES ────────────────────────────────────────────────────────
+    "steel_core_refinement": {
+        name: "Steel Core Refinement",
+        description: "With newer ways to refine steel cores, we've produced more consistent AP ammunition.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { cores: { "Solid": ["AP"] } },
+        nextResearch: ["advanced_steel_refinement"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "advanced_steel_refinement": {
+        name: "Advanced Steel Refinement",
+        description: "Improved metallurgical processes yield superior AP MK II cores with better penetration characteristics.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["steel_core_refinement"],
+        unlocksComponents: { cores: { "Solid": ["AP MK II"] } },
+        nextResearch: ["tungsten_refinement"],
+        cost: { rp: 12, money: 180 }
+    },
+    "tungsten_refinement": {
+        name: "Tungsten Refinement Process",
+        description: "Breakthrough in tungsten alloy processing enables production of TAP cores, far superior to standard steel ammunition.",
+        category: "Solid Cores",
+        type: "major",
+        prerequisites: ["advanced_steel_refinement"],
+        unlocksComponents: { cores: { "Solid": ["TAP"] } },
+        nextResearch: ["advanced_tungsten_refinement"],
+        cost: { rp: 25, money: 450 }
+    },
+    "advanced_tungsten_refinement": {
+        name: "Advanced Tungsten Alloys",
+        description: "Next-generation tungsten formulations produce TAP MK II, combining superior penetration with improved stability.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["tungsten_refinement"],
+        unlocksComponents: { cores: { "Solid": ["TAP MK II"] } },
+        nextResearch: ["sabot_ammunition_development"],
+        cost: { rp: 34, money: 680 }
+    },
+    "sabot_ammunition_development": {
+        name: "Sabot Ammunition Development",
+        description: "Revolutionary sabot-based ammunition technology produces APCR cores with exceptional penetration capabilities.",
+        category: "Solid Cores",
+        type: "major",
+        prerequisites: ["advanced_tungsten_refinement"],
+        unlocksComponents: { cores: { "Solid": ["APCR"] } },
+        nextResearch: ["advanced_sabot_system"],
+        cost: { rp: 30, money: 600 }
+    },
+    "advanced_sabot_system": {
+        name: "Advanced Sabot Systems",
+        description: "Refined sabot design and improved penetrator geometry result in APCR MK II, our most advanced kinetic ammunition.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["sabot_ammunition_development"],
+        unlocksComponents: { cores: { "Solid": ["APCR MK II"] } },
+        nextResearch: [],
+        cost: { rp: 42, money: 820 }
+    },
+    "light_ap_core_development": {
+        name: "Light AP Core Development",
+        description: "Lightweight armor-piercing ammunition designed for cost-effective operations and rapid deployment.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { cores: { "Solid": ["Light-AP"] } },
+        nextResearch: ["light_ap_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "light_ap_mk_ii": {
+        name: "Light AP MK II Optimization",
+        description: "Enhanced lightweight core design with better ballistic properties and improved reliability.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["light_ap_core_development"],
+        unlocksComponents: { cores: { "Solid": ["Light-AP MK II"] } },
+        nextResearch: [],
+        cost: { rp: 8, money: 120 }
+    },
+    "aphe_ammunition": {
+        name: "APHE Ammunition Program",
+        description: "Armor-piercing with high explosive payload. Combines penetration with internal blast effect for maximum destruction.",
+        category: "Solid Cores",
+        type: "major",
+        prerequisites: ["steel_core_refinement"],
+        unlocksComponents: { cores: { "Solid": ["APHE"] } },
+        nextResearch: ["aphe_mk_ii"],
+        cost: { rp: 20, money: 400 }
+    },
+    "aphe_mk_ii": {
+        name: "APHE MK II Enhancement",
+        description: "Up-armored APHE with stronger delayed charge mechanism and improved fuse reliability.",
+        category: "Solid Cores",
+        type: "minor",
+        prerequisites: ["aphe_ammunition"],
+        unlocksComponents: { cores: { "Solid": ["APHE MK II"] } },
+        nextResearch: [],
+        cost: { rp: 28, money: 560 }
+    },
+
+    // ─ CHEMICAL CORES ────────────────────────────────────────────────────
+    "tnt_chemical_synthesis": {
+        name: "TNT-Based Chemical Synthesis",
+        description: "Reliable TNT-based explosive cores for general-purpose targets and area suppression.",
+        category: "Chemical Cores",
+        type: "major",
+        prerequisites: ["light_ap_core_development"],
+        unlocksComponents: { cores: { "Chemical": ["TNT-Based"] } },
+        nextResearch: ["tnt_mk_ii"],
+        cost: { rp: 15, money: 300 }
+    },
+    "tnt_mk_ii": {
+        name: "TNT-Based MK II Upgrade",
+        description: "Upgraded TNT matrix with improved burn stability and enhanced explosive yield.",
+        category: "Chemical Cores",
+        type: "minor",
+        prerequisites: ["tnt_chemical_synthesis"],
+        unlocksComponents: { cores: { "Chemical": ["TNT-Based MK II"] } },
+        nextResearch: [],
+        cost: { rp: 22, money: 430 }
+    },
+    "rdx_chemical_development": {
+        name: "RDX-Based Chemical Development",
+        description: "High-energy RDX chemical cores for enhanced destructive potential and superior blast radius.",
+        category: "Chemical Cores",
+        type: "major",
+        prerequisites: ["light_ap_core_development", "steel_core_refinement"],
+        unlocksComponents: { cores: { "Chemical": ["RDX-Based"] } },
+        nextResearch: ["rdx_mk_ii"],
+        cost: { rp: 20, money: 400 }
+    },
+    "rdx_mk_ii": {
+        name: "RDX-Based MK II Advancement",
+        description: "Higher-yield RDX blend with intensified blast effects and improved chemical stability.",
+        category: "Chemical Cores",
+        type: "minor",
+        prerequisites: ["rdx_chemical_development"],
+        unlocksComponents: { cores: { "Chemical": ["RDX-Based MK II"] } },
+        nextResearch: ["petn_composite"],
+        cost: { rp: 28, money: 560 }
+    },
+    "petn_composite": {
+        name: "PETN Composite Explosives",
+        description: "Military-grade PETN composite for maximum payload and superior detonation characteristics.",
+        category: "Chemical Cores",
+        type: "major",
+        prerequisites: ["rdx_mk_ii"],
+        unlocksComponents: { cores: { "Chemical": ["PETN-Composite"] } },
+        nextResearch: ["petn_mk_ii"],
+        cost: { rp: 40, money: 800 }
+    },
+    "petn_mk_ii": {
+        name: "PETN MK II Enhancement",
+        description: "Advanced PETN formulation with reinforced casing interface and improved reliability under extreme pressures.",
+        category: "Chemical Cores",
+        type: "minor",
+        prerequisites: ["petn_composite"],
+        unlocksComponents: { cores: { "Chemical": ["PETN-Composite MK II"] } },
+        nextResearch: [],
+        cost: { rp: 55, money: 1050 }
+    },
+
+    // ─ CASINGS ───────────────────────────────────────────────────────────
+    "standard_casing_optimization": {
+        name: "Standard Casing Optimization",
+        description: "Baseline casing engineering for reliable ammunition containment and structural integrity.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { casings: ["Standard"] },
+        nextResearch: ["standard_casing_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "standard_casing_mk_ii": {
+        name: "Standard Casing MK II",
+        description: "Updated standard casing with improved tolerance control and enhanced manufacturing consistency.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["standard_casing_optimization"],
+        unlocksComponents: { casings: ["Standard MK II"] },
+        nextResearch: [],
+        cost: { rp: 10, money: 160 }
+    },
+    "low_carbon_casing": {
+        name: "Low-Carbon Casing Development",
+        description: "Lightweight casing for cost-effective ammunition. Cheap but susceptible to instability issues.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { casings: ["Low-Carbon"] },
+        nextResearch: ["low_carbon_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "low_carbon_mk_ii": {
+        name: "Low-Carbon MK II Revision",
+        description: "Budget casing revision with reduced instability penalties while maintaining low production costs.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["low_carbon_casing"],
+        unlocksComponents: { casings: ["Low-Carbon MK II"] },
+        nextResearch: [],
+        cost: { rp: 8, money: 120 }
+    },
+    "high_carbon_reinforcement": {
+        name: "High-Carbon Reinforcement",
+        description: "Durable high-carbon casing with excellent structural stability for demanding operations.",
+        category: "Casings",
+        type: "major",
+        prerequisites: ["standard_casing_optimization"],
+        unlocksComponents: { casings: ["High-Carbon"] },
+        nextResearch: ["high_carbon_mk_ii"],
+        cost: { rp: 15, money: 250 }
+    },
+    "high_carbon_mk_ii": {
+        name: "High-Carbon MK II Technology",
+        description: "Heat-treated high-carbon casing for superior durability and enhanced stability characteristics.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["high_carbon_reinforcement"],
+        unlocksComponents: { casings: ["High-Carbon MK II"] },
+        nextResearch: [],
+        cost: { rp: 24, money: 420 }
+    },
+    "reinforced_casing_engineering": {
+        name: "Reinforced Casing Engineering",
+        description: "Thick reinforced shell body built for extreme pressures and high-stress launches.",
+        category: "Casings",
+        type: "major",
+        prerequisites: ["standard_casing_optimization", "high_carbon_reinforcement"],
+        unlocksComponents: { casings: ["Reinforced"] },
+        nextResearch: ["reinforced_casing_mk_ii"],
+        cost: { rp: 30, money: 500 }
+    },
+    "reinforced_casing_mk_ii": {
+        name: "Reinforced Casing MK II",
+        description: "Second-generation reinforced casing with pressure ribs and advanced metallurgical improvements.",
+        category: "Casings",
+        type: "minor",
+        prerequisites: ["reinforced_casing_engineering"],
+        unlocksComponents: { casings: ["Reinforced MK II"] },
+        nextResearch: [],
+        cost: { rp: 48, money: 900 }
+    },
+
+    // ─ POWDERS ────────────────────────────────────────────────────────────
+    "coarse_powder_production": {
+        name: "Coarse Powder Production",
+        description: "Rugged propellant with reliable field performance and consistent burn characteristics.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { powders: ["Coarse-Powder"] },
+        nextResearch: ["coarse_powder_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "coarse_powder_mk_ii": {
+        name: "Coarse Powder MK II",
+        description: "Coarse blend with better burn consistency in field conditions and improved reliability.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["coarse_powder_production"],
+        unlocksComponents: { powders: ["Coarse-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 10, money: 170 }
+    },
+    "unrefined_powder_production": {
+        name: "Unrefined Powder Production",
+        description: "Crude propellant; cheap but volatile. Cost-effective for large-scale operations.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: [],
+        unlocksComponents: { powders: ["Unrefined-Powder"] },
+        nextResearch: ["unrefined_powder_mk_ii"],
+        cost: { rp: 0, money: 0 }  // Starter
+    },
+    "unrefined_powder_mk_ii": {
+        name: "Unrefined Powder MK II",
+        description: "Improved low-cost propellant with partial impurity filtering for better consistency.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["unrefined_powder_production"],
+        unlocksComponents: { powders: ["Unrefined-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 8, money: 130 }
+    },
+    "semi_fine_powder_development": {
+        name: "Semi-Fine Powder Development",
+        description: "Balanced propellant for stable pressure curves and reliable performance across various conditions.",
+        category: "Powders",
+        type: "major",
+        prerequisites: ["coarse_powder_production"],
+        unlocksComponents: { powders: ["Semi-Fine-Powder"] },
+        nextResearch: ["semi_fine_powder_mk_ii"],
+        cost: { rp: 12, money: 200 }
+    },
+    "semi_fine_powder_mk_ii": {
+        name: "Semi-Fine Powder MK II",
+        description: "Rebalanced propellant grain for smoother pressure ramps and improved shot consistency.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["semi_fine_powder_development"],
+        unlocksComponents: { powders: ["Semi-Fine-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 20, money: 360 }
+    },
+    "fine_powder_refinement": {
+        name: "Fine Powder Refinement",
+        description: "Refined propellant for high muzzle velocity and superior ballistic performance.",
+        category: "Powders",
+        type: "major",
+        prerequisites: ["coarse_powder_production", "semi_fine_powder_development"],
+        unlocksComponents: { powders: ["Fine-Powder"] },
+        nextResearch: ["fine_powder_mk_ii"],
+        cost: { rp: 25, money: 450 }
+    },
+    "fine_powder_mk_ii": {
+        name: "Fine Powder MK II Optimization",
+        description: "Cleaner burn with higher pressure generation and faster projectile acceleration capabilities.",
+        category: "Powders",
+        type: "minor",
+        prerequisites: ["fine_powder_refinement"],
+        unlocksComponents: { powders: ["Fine-Powder MK II"] },
+        nextResearch: [],
+        cost: { rp: 40, money: 760 }
+    }
+};
+
+// Flatten unlock mapping: which research projects unlock which components
+function buildComponentUnlockMap() {
+    const map = {};
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (techData.unlocksComponents) {
+            Object.entries(techData.unlocksComponents).forEach(([partType, items]) => {
+                if (!map[partType]) map[partType] = {};
+                Object.entries(items).forEach(([category, componentList]) => {
+                    componentList.forEach(component => {
+                        const key = partType === "cores" ? `${category}|${component}` : component;
+                        if (!map[partType][key]) map[partType][key] = [];
+                        map[partType][key].push(techId);
+                    });
+                });
+            });
+        }
+    });
+    return map;
+}
+
+// Track which research projects are unlocked
+let unlockedResearch = {};
+
+// Initialize with starter techs
+function initializeStarterResearch() {
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (techData.prerequisites.length === 0) {
+            unlockedResearch[techId] = true;
+        } else {
+            unlockedResearch[techId] = false;
+        }
+    });
+}
+
+// Track which components are unlocked (derived from research)
 let unlockedTechTree = {
     cores: {
         "Solid": {
             "APCR MK II": false,
-            "APCR": false,       // requires Light-AP
+            "APCR": false,
             "TAP MK II": false,
-            "TAP": false,        // requires AP
+            "TAP": false,
             "APHE MK II": false,
-            "APHE": false,       // requires AP
+            "APHE": false,
             "AP MK II": false,
-            "AP": false,        // requires Light-AP
+            "AP": true,         // Starter — from steel_core_refinement
             "Light-AP MK II": false,
-            "Light-AP": true     // Starter — no requirements
+            "Light-AP": true    // Starter — from light_ap_core_development
         },
         "Chemical": {
             "RDX-Based MK II": false,
-            "RDX-Based": false,      // requires Light-AP
+            "RDX-Based": false,
             "TNT-Based MK II": false,
-            "TNT-Based": false,      // requires Light-AP
-            "PETN-Composite": false,  // requires RDX-Based
+            "TNT-Based": false,
+            "PETN-Composite": false,
             "PETN-Composite MK II": false
         }
     },
@@ -1554,24 +2510,24 @@ let unlockedTechTree = {
         "High-Carbon MK II": false,
         "Standard MK II": false,
         "Low-Carbon MK II": false,
-        "Reinforced": false,   // requires Standard + High-Carbon
-        "High-Carbon": false,  // requires Standard
-        "Standard": true,      // Starter — no requirements
-        "Low-Carbon": true     // Starter — no requirements
+        "Reinforced": false,
+        "High-Carbon": false,
+        "Standard": true,      // Starter — from standard_casing_optimization
+        "Low-Carbon": true     // Starter — from low_carbon_casing
     },
     powders: {
         "Fine-Powder MK II": false,
         "Semi-Fine-Powder MK II": false,
         "Coarse-Powder MK II": false,
         "Unrefined-Powder MK II": false,
-        "Fine-Powder": false,       // requires Coarse-Powder + Semi-Fine-Powder
-        "Semi-Fine-Powder": false,  // requires Coarse-Powder
-        "Coarse-Powder": true,      // Starter — no requirements
-        "Unrefined-Powder": true    // Starter — no requirements
+        "Fine-Powder": false,
+        "Semi-Fine-Powder": false,
+        "Coarse-Powder": true,       // Starter — from coarse_powder_production
+        "Unrefined-Powder": true     // Starter — from unrefined_powder_production
     }
 };
 
-// Tech Tree Requirements - what needs to be discovered to unlock each item
+// Tech Tree Requirements (LEGACY — kept for compatibility, now uses research tree)
 const techTreeRequirements = {
     cores: {
         "Solid": {
@@ -1584,11 +2540,11 @@ const techTreeRequirements = {
             "AP MK II": ["AP"],
             "AP": ["Light-AP"],
             "Light-AP MK II": ["Light-AP"],
-            "Light-AP": []  // No requirements, starter
+            "Light-AP": []
         },
         "Chemical": {
             "RDX-Based MK II": ["RDX-Based"],
-            "RDX-Based": ["Light-AP"],
+            "RDX-Based": ["Light-AP", "Standard"],
             "TNT-Based MK II": ["TNT-Based"],
             "TNT-Based": ["Light-AP"],
             "PETN-Composite": ["RDX-Based"],
@@ -1602,8 +2558,8 @@ const techTreeRequirements = {
         "Low-Carbon MK II": ["Low-Carbon"],
         "Reinforced": ["Standard", "High-Carbon"],
         "High-Carbon": ["Standard"],
-        "Standard": [],  // No requirements, starter
-        "Low-Carbon": []  // No requirements, starter
+        "Standard": [],
+        "Low-Carbon": []
     },
     powders: {
         "Fine-Powder MK II": ["Fine-Powder"],
@@ -1612,12 +2568,66 @@ const techTreeRequirements = {
         "Unrefined-Powder MK II": ["Unrefined-Powder"],
         "Fine-Powder": ["Coarse-Powder", "Semi-Fine-Powder"],
         "Semi-Fine-Powder": ["Coarse-Powder"],
-        "Coarse-Powder": [],  // No requirements, starter
-        "Unrefined-Powder": []  // No requirements, starter
+        "Coarse-Powder": [],
+        "Unrefined-Powder": []
     }
 };
 
-// Check if an item is unlocked
+// Check if a research project is unlocked
+function isResearchUnlocked(techId) {
+    return unlockedResearch[techId] === true;
+}
+
+// Check if research prerequisites are met (all prerequisites must be unlocked)
+function areResearchPrerequisitesMet(techId) {
+    const tech = researchTreeData[techId];
+    if (!tech) return false;
+    if (tech.prerequisites.length === 0) return true;
+    return tech.prerequisites.every(prereqId => isResearchUnlocked(prereqId));
+}
+
+// Refresh component unlocks based on which research projects are unlocked
+function refreshComponentUnlocks() {
+    // Reset all components to locked (except starters)
+    Object.keys(unlockedTechTree.cores["Solid"]).forEach(comp => {
+        unlockedTechTree.cores["Solid"][comp] = ["AP"].includes(comp) || ["Light-AP"].includes(comp);
+    });
+    Object.keys(unlockedTechTree.cores["Chemical"]).forEach(comp => {
+        unlockedTechTree.cores["Chemical"][comp] = false;
+    });
+    Object.keys(unlockedTechTree.casings).forEach(comp => {
+        unlockedTechTree.casings[comp] = ["Standard", "Low-Carbon"].includes(comp);
+    });
+    Object.keys(unlockedTechTree.powders).forEach(comp => {
+        unlockedTechTree.powders[comp] = ["Coarse-Powder", "Unrefined-Powder"].includes(comp);
+    });
+
+    // Unlock components from unlocked research projects
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (isResearchUnlocked(techId) && techData.unlocksComponents) {
+            const unlocks = techData.unlocksComponents;
+            if (unlocks.cores) {
+                Object.entries(unlocks.cores).forEach(([category, components]) => {
+                    components.forEach(comp => {
+                        unlockedTechTree.cores[category][comp] = true;
+                    });
+                });
+            }
+            if (unlocks.casings) {
+                unlocks.casings.forEach(comp => {
+                    unlockedTechTree.casings[comp] = true;
+                });
+            }
+            if (unlocks.powders) {
+                unlocks.powders.forEach(comp => {
+                    unlockedTechTree.powders[comp] = true;
+                });
+            }
+        }
+    });
+}
+
+// Check if an item is unlocked (component level)
 function isTechUnlocked(partType, category, itemName) {
     if (partType === "cores") {
         return !!unlockedTechTree.cores?.[category]?.[itemName];
@@ -1629,106 +2639,36 @@ function isTechUnlocked(partType, category, itemName) {
     return false;
 }
 
-function getTechRequirements(partType, category, itemName) {
-    if (partType === "cores") {
-        return techTreeRequirements.cores?.[category]?.[itemName] || [];
-    }
-    if (partType === "casings") {
-        return techTreeRequirements.casings?.[itemName] || [];
-    }
-    if (partType === "powders") {
-        return techTreeRequirements.powders?.[itemName] || [];
-    }
-    return [];
-}
-
-function isRequirementUnlocked(partType, category, requirement) {
-    if (partType === "cores") {
-        if (unlockedTechTree.cores?.[category]?.[requirement] !== undefined) {
-            return !!unlockedTechTree.cores[category][requirement];
-        }
-        return Object.values(unlockedTechTree.cores).some(catItems => !!catItems?.[requirement]);
-    }
-    return !!unlockedTechTree[partType]?.[requirement];
-}
-
-function getMissingRequirements(partType, category, itemName) {
-    return getTechRequirements(partType, category, itemName)
-        .filter(req => !isRequirementUnlocked(partType, category, req));
-}
-
-// Check if requirements are met for an item
+// Check if requirements are met for an item (LEGACY — uses research tree now)
 function areRequirementsMet(partType, category, itemName) {
-    return getMissingRequirements(partType, category, itemName).length === 0;
-}
-
-function normalizeTechTreeUnlocks() {
-    let changed = false;
-    let pruned;
-
-    Object.entries(techTreeRequirements.casings).forEach(([itemName, requirements]) => {
-        if (requirements.length === 0 && !unlockedTechTree.casings[itemName]) {
-            unlockedTechTree.casings[itemName] = true;
-            changed = true;
-        }
-    });
-    Object.entries(techTreeRequirements.powders).forEach(([itemName, requirements]) => {
-        if (requirements.length === 0 && !unlockedTechTree.powders[itemName]) {
-            unlockedTechTree.powders[itemName] = true;
-            changed = true;
-        }
-    });
-    Object.entries(techTreeRequirements.cores).forEach(([category, items]) => {
-        Object.entries(items).forEach(([itemName, requirements]) => {
-            if (requirements.length === 0 && !unlockedTechTree.cores[category][itemName]) {
-                unlockedTechTree.cores[category][itemName] = true;
-                changed = true;
-            }
-        });
-    });
-
-    do {
-        pruned = false;
-        Object.entries(techTreeRequirements.cores).forEach(([category, items]) => {
-            Object.entries(items).forEach(([itemName, requirements]) => {
-                if (requirements.length > 0 && unlockedTechTree.cores[category][itemName] && !areRequirementsMet("cores", category, itemName)) {
-                    unlockedTechTree.cores[category][itemName] = false;
-                    pruned = true;
-                    changed = true;
-                }
-            });
-        });
-        Object.entries(techTreeRequirements.casings).forEach(([itemName, requirements]) => {
-            if (requirements.length > 0 && unlockedTechTree.casings[itemName] && !areRequirementsMet("casings", null, itemName)) {
-                unlockedTechTree.casings[itemName] = false;
-                pruned = true;
-                changed = true;
-            }
-        });
-        Object.entries(techTreeRequirements.powders).forEach(([itemName, requirements]) => {
-            if (requirements.length > 0 && unlockedTechTree.powders[itemName] && !areRequirementsMet("powders", null, itemName)) {
-                unlockedTechTree.powders[itemName] = false;
-                pruned = true;
-                changed = true;
-            }
-        });
-    } while (pruned);
-
-    return changed;
+    // All requirements are now satisfied through research tree unlocks
+    return true;
 }
 
 /*
- * refreshTechUnlockState — compatibility shim for older code paths that used
- * test firing to reveal tech. Unlocks now only happen through completed R&D
- * projects, so this only normalizes and redraws the current tech state.
+ * unlockTechBasedOnTest — called after every test fire.
+ * Attempts to unlock research projects based on equipped components.
+ * When all components of a shell have been tested (new composition),
+ * checks if any research projects should be unlocked.
  */
-function refreshTechUnlockState() {
-    normalizeTechTreeUnlocks();
-    updateTechTreeDisplay();
+function unlockTechBasedOnTest() {
+    let unlockedAnything = false;
 
-    // Re-render whichever tab is currently open so lock/unlock state updates immediately
-    const activeTab = document.querySelector('#partTabs .tab.activate');
-    if (activeTab) showTabContent(activeTab.dataset.tab);
+    // Check if we can unlock any research projects whose prerequisites are now met
+    Object.entries(researchTreeData).forEach(([techId, techData]) => {
+        if (!isResearchUnlocked(techId) && areResearchPrerequisitesMet(techId)) {
+            unlockedResearch[techId] = true;
+            unlockedAnything = true;
+        }
+    });
+
+    if (unlockedAnything) {
+        refreshComponentUnlocks();
+        updateTechTreeDisplay();
+        const activeTab = document.querySelector('#partTabs .tab.activate');
+        if (activeTab) showTabContent(activeTab.dataset.tab);
+        checkQuestProgress();
+    }
 }
 
 const unlockTechBasedOnTest = refreshTechUnlockState;
@@ -1743,11 +2683,11 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
 
     if (partType === "core") {
         let text = "";
-        let armors = [currentArmor];
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
         armors.forEach((armor, i) => {
             const stat = knownStats?.[partType]?.[partCategory]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
-                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Penetration ${stat.penetration}, Cost ${stat.cost}, Stability ${stat.stability}`;
+                text += `${armor}: Power ${stat.power}, Explosiveness ${stat.explosiveness}, Cost ${stat.cost}, Stability ${stat.stability}`;
             } else {
                 text += `${armor}: ???`;
             }
@@ -1756,7 +2696,7 @@ function getKnownStatText(partType, partCategory, partName, forTooltip = false) 
         return text;
     } else {
         let text = "";
-        let armors = [currentArmor];
+        let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor", "Polar Domain Civilian Buildings", "Polar Domain Military Buildings"];
         armors.forEach((armor, i) => {
             const stat = knownStats?.[partType]?.[partName]?.[armor];
             if (stat && typeof stat === "object") {
@@ -1956,6 +2896,10 @@ function calculateArmorStats(core, casing, powder, armor) {
     };
 }
 // Function to test the shell against the current armor
+function getShellCompositionKey() {
+    return `${core?.category || 'none'}|${core?.type || 'none'}|${casing || 'none'}|${powder || 'none'}|${barrelSize || 'none'}`;
+}
+
 function testShell() {
     if (!core || !casing || !powder) {
         document.getElementById("testResult").innerText = "Incomplete shell!";
@@ -1965,47 +2909,66 @@ function testShell() {
         document.getElementById("testResult").innerText = "Armor has been spent. Recover a new sample to continue testing.";
         return;
     }
-    armorDurability--;
-    //Calculate the actual stats of the shell against the current armor
-    let actualStats = calculateArmorStats(core, casing, powder, currentArmor);
 
+    const buildCostCurrency = costToCurrency(cost);
+    if (money < buildCostCurrency) {
+        document.getElementById("testResult").innerText = `Insufficient funds to test. Shell build cost is ${currencyText(buildCostCurrency)}.`;
+        return;
+    }
+
+    armorDurability--;
+    awardMoney(-buildCostCurrency);
+
+    const shellKey = getShellCompositionKey();
+    const changedComposition = shellKey !== lastTestedShellKey;
+    const actualStats = calculateArmorStats(core, casing, powder, currentArmor);
 
     // Store best-known (max observed) knowledge for this part+armor profile
-   knownStats.core[core.category] = knownStats.core[core.category] || {};
-   knownStats.core[core.category][core.type] = knownStats.core[core.category][core.type] || {};
-   const oldCore = knownStats.core[core.category][core.type][currentArmor] || {};
-   knownStats.core[core.category][core.type][currentArmor] = {
-       power: Math.max(oldCore.power ?? 0, actualStats.power),
-       explosiveness: Math.max(oldCore.explosiveness ?? 0, actualStats.explosiveness),
-       cost: Math.max(oldCore.cost ?? 0, actualStats.cost),
-       stability: Math.max(oldCore.stability ?? 0, actualStats.stability),
-       penetration: Math.max(oldCore.penetration ?? 0, actualStats.penetration)
-   };
+    knownStats.core[core.category] = knownStats.core[core.category] || {};
+    knownStats.core[core.category][core.type] = knownStats.core[core.category][core.type] || {};
+    const oldCore = knownStats.core[core.category][core.type][currentArmor] || {};
+    knownStats.core[core.category][core.type][currentArmor] = {
+        power: Math.max(oldCore.power ?? 0, actualStats.power),
+        explosiveness: Math.max(oldCore.explosiveness ?? 0, actualStats.explosiveness),
+        cost: Math.max(oldCore.cost ?? 0, actualStats.cost),
+        stability: Math.max(oldCore.stability ?? 0, actualStats.stability),
+        penetration: Math.max(oldCore.penetration ?? 0, actualStats.penetration)
+    };
 
-   knownStats.casing[casing] = knownStats.casing[casing] || {};
-   const oldCasing = knownStats.casing[casing][currentArmor] || {};
-   knownStats.casing[casing][currentArmor] = {
-       power: Math.max(oldCasing.power ?? 0, actualStats.power),
-       cost: Math.max(oldCasing.cost ?? 0, actualStats.cost),
-       stability: Math.max(oldCasing.stability ?? 0, actualStats.stability)
-   };
+    knownStats.casing[casing] = knownStats.casing[casing] || {};
+    const oldCasing = knownStats.casing[casing][currentArmor] || {};
+    knownStats.casing[casing][currentArmor] = {
+        power: Math.max(oldCasing.power ?? 0, actualStats.power),
+        cost: Math.max(oldCasing.cost ?? 0, actualStats.cost),
+        stability: Math.max(oldCasing.stability ?? 0, actualStats.stability)
+    };
 
-   knownStats.powder[powder] = knownStats.powder[powder] || {};
-   const oldPowder = knownStats.powder[powder][currentArmor] || {};
-   knownStats.powder[powder][currentArmor] = {
-       power: Math.max(oldPowder.power ?? 0, actualStats.power),
-       cost: Math.max(oldPowder.cost ?? 0, actualStats.cost),
-       stability: Math.max(oldPowder.stability ?? 0, actualStats.stability)
-   };
-  
-  //Show results of the test
-  let resultText = `Testing Results on ${currentArmor}:\nPower: ${actualStats.power} | Explosiveness: ${actualStats.explosiveness} | Penetration: ${actualStats.penetration} | Cost: ${actualStats.cost} | Stability: ${actualStats.stability}\nDurability Left: ${armorDurability}`;
+    knownStats.powder[powder] = knownStats.powder[powder] || {};
+    const oldPowder = knownStats.powder[powder][currentArmor] || {};
+    knownStats.powder[powder][currentArmor] = {
+        power: Math.max(oldPowder.power ?? 0, actualStats.power),
+        cost: Math.max(oldPowder.cost ?? 0, actualStats.cost),
+        stability: Math.max(oldPowder.stability ?? 0, actualStats.stability)
+    };
+
+    lastTestedShellKey = shellKey;
+
+    const baseText = `Base shell stats: Power ${formatStat(power)} | Explosiveness ${formatStat(explosiveness)} | Cost ${currencyText(buildCostCurrency)} | Stability ${formatStat(stability)}`;
+    const actualText = `Against ${currentArmor}: Power ${formatStat(actualStats.power)} | Explosiveness ${formatStat(actualStats.explosiveness)} | Cost ${currencyText(costToCurrency(actualStats.cost))} | Stability ${formatStat(actualStats.stability)}`;
+    let resultText = `Testing Results on ${currentArmor}:\n${baseText}\n${actualText}\nDurability Left: ${armorDurability}\nTest shell expense: -${currencyText(buildCostCurrency)}`;
+
+    if (changedComposition) {
+        awardRP(2);
+        resultText += `\nRP Gained: +2`;
+    } else {
+        resultText += `\nNo RP earned. Change components for additional research.`;
+    }
+
     document.getElementById("testResult").innerText = resultText;
-
     updateDisplay();
     updateTooltip();
     updateArmorDatabase();
-    awardRP(2);
+    saveGame();
 }
 
 function updateScoutTeamUI() {
@@ -2093,9 +3056,52 @@ function getNewArmor() {
         }
         return;
     }
-    awardMoney(-SCOUT_DEPLOY_COST);
-    saveGame();
 
+    const warning =
+        `Deploy scout team for ${currencyText(SCOUT_DEPLOY_COST)}?\n` +
+        `Potential scout KIA chance: ${Math.round(SCOUT_KIA_CHANCE * 100)}%.\n` +
+        `Replacement training cost: ${currencyText(SCOUT_RECRUIT_COST)}.\n` +
+        `Mission duration: ${Math.round(SCOUT_TRAINING_MS / 1000)}s.\n\n` +
+        `${chooseRandom(SCOUT_DEPLOY_WARNS)}\n\n` +
+        `Continue?`;
+
+    openScoutConfirm(warning, () => {
+        awardMoney(-SCOUT_DEPLOY_COST);
+        saveGame();
+        startScoutMission();
+    });
+    return;
+}
+
+function openScoutConfirm(message, callback) {
+    const modal = document.getElementById("scoutConfirmModal");
+    const content = document.getElementById("scoutConfirmMessage");
+    if (!modal || !content) return;
+    content.textContent = message;
+    scoutConfirmCallback = callback;
+    modal.classList.add("show");
+}
+
+function closeScoutConfirm() {
+    const modal = document.getElementById("scoutConfirmModal");
+    if (!modal) return;
+    modal.classList.remove("show");
+    scoutConfirmCallback = null;
+}
+
+function confirmScoutDeploy() {
+    if (scoutConfirmCallback) {
+        const callback = scoutConfirmCallback;
+        closeScoutConfirm();
+        callback();
+    }
+}
+
+function startScoutMission() {
+    const btn = document.getElementById("recoverBtn");
+    const log = document.getElementById("scoutLog");
+    if (!btn || !log) return;
+    
     // ── Pick the armor now (hidden from player until mission complete) ──────
     const roll = Math.random();
     let cumulative = 0;
@@ -2108,28 +3114,24 @@ function getNewArmor() {
         }
     }
 
-    // ── Lock the button ──────────────────────────────────────────────────────
     btn.classList.add("recovering");
     btn.textContent = "↺ Scouts Deployed…";
     log.style.display = "";
-    log.textContent = `Deploying scout team to the engagement zone… (${currencyText(SCOUT_DEPLOY_COST)} spent)`;
+    log.innerHTML = `${chooseRandom(SCOUT_DIALOGUE_START)}<br><span style="opacity:0.5;font-size:9px;">(${currencyText(SCOUT_DEPLOY_COST)} spent)</span>`;
 
-    // ── Timed narrative events ───────────────────────────────────────────────
     const DURATION = 60; // seconds
-
     const events = [
-        { at:  5, msg: "Scout Alpha: Entering hostile perimeter. No contact yet." },
+        { at:  5, msg: chooseRandom(SCOUT_DIALOGUE_START) },
         { at: 12, msg: "Scout Alpha: Moving through debris field. Armor signatures detected ahead." },
-        { at: 20, msg: "Scout Bravo: Flanking east. Keeping comms tight." },
+        { at: 20, msg: chooseRandom(SCOUT_DIALOGUE_MID) },
         { at: 28, msg: "Scout Alpha: Visual on wreckage — possible sample site. Closing in." },
-        { at: 35, msg: "Scout Bravo: Hostile patrol nearby. Team going silent." },
+        { at: 35, msg: chooseRandom(SCOUT_DIALOGUE_MID) },
         { at: 42, msg: "Scout Alpha: Sample confirmed. Beginning extraction." },
         { at: 49, msg: "⚠ Scout Bravo: Taking fire! Cover requested — extraction still in progress." },
-        { at: 55, msg: "Scout Alpha: Sample secured. Team pulling back to LZ." },
+        { at: 55, msg: chooseRandom(SCOUT_DIALOGUE_EXTRACTION) },
         { at: 58, msg: "HQ: Extraction craft on approach. Stand by for handoff." },
     ];
 
-    // Schedule each narrative event
     events.forEach(e => {
         setTimeout(() => {
             if (log.style.display !== "none") {
@@ -2138,26 +3140,17 @@ function getNewArmor() {
         }, e.at * 1000);
     });
 
-    // ── Countdown ticker — updates the log label every second ───────────────
     let elapsed = 0;
     const ticker = setInterval(() => {
         elapsed++;
         const remaining = DURATION - elapsed;
-
-        // Update the countdown suffix on whatever line is currently shown,
-        // but only if a narrative event hasn't just replaced the whole text
-        // (events use innerHTML so we refresh the span if it exists)
         const span = log.querySelector("span");
         if (span) span.textContent = `[ ${remaining}s remaining ]`;
-
-        // Show the button countdown label
         btn.textContent = `↺ Scout Mission — ${remaining}s`;
     }, 1000);
 
-    // ── Mission complete at 60s ──────────────────────────────────────────────
     setTimeout(() => {
         clearInterval(ticker);
-
         const teamLost = Math.random() < SCOUT_KIA_CHANCE;
         if (teamLost) {
             scoutTeamStatus = "needs_replacement";
@@ -2173,23 +3166,15 @@ function getNewArmor() {
             return;
         }
 
-        // Apply the armor result
         currentArmor    = chosenArmor;
         armorDurability = 4;
-
-        // Final log entry
         log.innerHTML =
             `<span style="color:var(--stat-ok, #3aaa72);">✓ Sample delivered: <b>${chosenArmor}</b></span><br>` +
             `<span style="opacity:0.5;font-size:9px;">Scout team safely back at base.</span>`;
-
-        // Update the test result readout
         document.getElementById("testResult").innerHTML =
             `<span class="stat-ok">✓</span> Armor Sample Recovered: <b>${chosenArmor}</b>`;
-
-        // Re-enable button
         btn.classList.remove("recovering");
         btn.textContent = "↺ Recover Armor";
-
         updateDisplay();
         updateTooltip();
         updateArmorDatabase();
@@ -2198,28 +3183,113 @@ function getNewArmor() {
 }
 
 // Function to generate a new order
-function generateOrder() {
-    if (isWaiting) return; // Prevent generating a new order while waiting for the next one
+function getOrderRanges(description) {
+    const ranges = {
+        pMin: 6, pMax: 10,
+        cMin: 5, cMax: 12,
+        sMin: 2, sMax: 4,
+        eMin: 0, eMax: 2
+    };
 
-    let useFailedOrder = false;
-let description;
-    
-    if (failedOrders.length > 0 && ordersSinceRetryPrompt >= 2) {
-        useFailedOrder = true;
+    if (description.includes("Reinforced") || description.includes("Heavily armored")) {
+        ranges.pMin += 2;
+        ranges.pMax += 2;
+        ranges.cMin += 1;
+        ranges.cMax += 1;
+    }
+    if (description.includes("Lightly Armored") || description.includes("Soft targets") || description.includes("Weak armor") || description.includes("Light Armor")) {
+        ranges.pMin -= 2;
+        ranges.pMax -= 2;
+        ranges.cMin -= 1;
+        ranges.cMax -= 1;
+    }
+    if (description.includes("Cost-Effective") || description.includes("Low") || description.includes("Mass Production") || description.includes("Tight Budget")) {
+        ranges.cMin -= 2;
+        ranges.cMax -= 4;
+    }
+    if (description.includes("Stable") || description.includes("Not break") || description.includes("Wont shatter") || description.includes("High Impact")) {
+        ranges.sMin += 1;
+        ranges.sMax += 4;
+    }
+    if (description.includes("Civilian Buildings")) {
+        ranges.eMin += 6;
+        ranges.eMax += 15;
+    }
+    if (description.includes("Military Buildings") || description.includes("Bunker Buster")) {
+        ranges.eMax += 8;
+        ranges.pMin += 6;
+        ranges.pMax += 15;
+        ranges.sMin += 6;
+        ranges.sMax += 12;
     }
 
-    if (useFailedOrder) {
-            // Retry the oldest failed order; keep it queued until player succeeds
-            let order = failedOrders[0];
+    ranges.pMin = Math.max(0, ranges.pMin);
+    ranges.pMax = Math.max(ranges.pMin, ranges.pMax);
+    ranges.cMin = Math.max(0, ranges.cMin);
+    ranges.cMax = Math.max(ranges.cMin, ranges.cMax);
+    ranges.sMin = Math.max(0, ranges.sMin);
+    ranges.sMax = Math.max(ranges.sMin, ranges.sMax);
+    ranges.eMin = Math.max(0, ranges.eMin);
+    ranges.eMax = Math.max(ranges.eMin, ranges.eMax);
+    return ranges;
+}
 
-            // Re-use the stored requirements — no need to re-roll stats
+function rollOrderFromRanges(ranges) {
+    return {
+        requiredPower: Math.floor(Math.random() * (ranges.pMax - ranges.pMin + 1)) + ranges.pMin,
+        maxCost: Math.floor(Math.random() * (ranges.cMax - ranges.cMin + 1)) + ranges.cMin,
+        requiredStability: Math.floor(Math.random() * (ranges.sMax - ranges.sMin + 1)) + ranges.sMin,
+        requiredExplosiveness: Math.floor(Math.random() * (ranges.eMax - ranges.eMin + 1)) + ranges.eMin
+    };
+}
+
+function findFeasibleOrder(ranges) {
+    let attempt = 0;
+    let order = rollOrderFromRanges(ranges);
+    while (!isOrderFeasible(order.requiredPower, order.maxCost, order.requiredStability, order.requiredExplosiveness) && attempt < 40) {
+        order = rollOrderFromRanges(ranges);
+        attempt++;
+    }
+    if (!isOrderFeasible(order.requiredPower, order.maxCost, order.requiredStability, order.requiredExplosiveness)) {
+        const fallback = getAllBuildStats()[Math.floor(Math.random() * getAllBuildStats().length)];
+        return {
+            requiredPower: Math.floor(fallback.power),
+            maxCost: Math.ceil(fallback.cost),
+            requiredStability: Math.floor(fallback.stability),
+            requiredExplosiveness: Math.floor(fallback.explosiveness)
+        };
+    }
+    return order;
+}
+
+function makeOrderImpossible(ranges) {
+    const bounds = getBuildStatBounds();
+    const base = findFeasibleOrder(ranges);
+    const selector = Math.random();
+    if (selector < 0.5) {
+        base.requiredPower = Math.max(bounds.maxPower + 1, base.requiredPower + 1);
+    } else if (selector < 0.85) {
+        base.maxCost = Math.max(0, Math.min(base.maxCost - 1, bounds.minCost - 1));
+    } else {
+        base.requiredExplosiveness = Math.max(bounds.maxExplosiveness + 1, base.requiredExplosiveness + 1);
+    }
+    return base;
+}
+
+function generateOrder() {
+    if (isWaiting) return;
+
+    let description;
+    const useFailedOrder = failedOrders.length > 0 && ordersSinceRetryPrompt >= 2;
+
+    if (currentFailedOrderId !== null) {
+        const order = failedOrders.find(order => order.id === currentFailedOrderId);
+        if (order) {
             description = "Central Command: Previous design failed. Reattempt this order:\n" + order.description;
             requiredPower = order.requiredPower;
             maxCost = order.maxCost;
             requiredStability = order.requiredStability;
             requiredExplosiveness = order.requiredExplosiveness;
-
-            currentFailedOrderId = order.id;
             currentOrderIsImpossible = false;
             ordersSinceRetryPrompt = 0;
             currentOrderDescription = description;
@@ -2232,89 +3302,152 @@ let description;
             );
             flashDispatchBar();
         } else {
+            currentFailedOrderId = null;
+            ordersSinceRetryPrompt = 0;
+            description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+            const ranges = getOrderRanges(description);
+            const order = findFeasibleOrder(ranges);
+            currentOrderIsImpossible = Math.random() < 0.2;
 
-    // Base stat ranges — keywords in the description push these up or down below
-    let pMin = 6, pMax = 10;
-    let cMin = 5, cMax = 12;
-    let sMin = 2, sMax = 4;
-    let eMin = 0, eMax = 2;
-    
-    // Randomly choose a description (reuse the outer `description` variable — no re-declaration)
-    description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+            if (currentOrderIsImpossible) {
+                const impossibleOrder = makeOrderImpossible(ranges);
+                requiredPower = impossibleOrder.requiredPower;
+                maxCost = impossibleOrder.maxCost;
+                requiredStability = impossibleOrder.requiredStability;
+                requiredExplosiveness = impossibleOrder.requiredExplosiveness;
+            } else {
+                requiredPower = order.requiredPower;
+                maxCost = order.maxCost;
+                requiredStability = order.requiredStability;
+                requiredExplosiveness = order.requiredExplosiveness;
+            }
 
-    // Keywords in description that adjust the stat requirements
-    if(description.includes("Reinforced") || description.includes("Heavily armored")) {
-        pMin += 2;
-        pMax += 2; // Increase power requirement for reinforced armor
-        cMin += 1;
-        cMax += 1; // Slightly higher cost expectations for heavy-duty shells
-    }
-    if(description.includes("Lightly Armored") || description.includes("Soft targets") || description.includes("Weak armor") || description.includes("Light Armor")) {
-        pMin -= 2;
-        pMax -= 2; // Decrease power requirement for lightly armored targets
-        cMin -= 1;
-        cMax -= 1; // Lower cost expectations for softer targets
-    }
-    if(description.includes("Cost-Effective") || description.includes("Low") || description.includes("Mass Production") || description.includes("Tight Budget")) {
-        cMin -= 2;
-        cMax -= 4; // Decrease cost requirement for cost-effective orders
-    }
-    if(description.includes("Stable") || description.includes("Not break") || description.includes("Wont shatter") || description.includes("High Impact")) {
-        sMin += 1;
-        sMax += 4; // Increase stability requirement for stable/long-range orders
-    }
-    if(description.includes("Civilian Buildings")) {
-        eMin += 6;
-        eMax += 15; // Increase explosiveness requirement for civilian buildings
-    }
-    if(description.includes("Military Buildings") || description.includes("Bunker Buster")) {
-        eMin += 0;
-        eMax += 8; // Moderate explosiveness requirement for military targets
-        pMin += 6;
-        pMax += 15; // Increase power requirement for military buildings
-        sMin += 6;
-        sMax += 12; // Increase stability requirement for military buildings
+            currentOrderDescription = description;
+            currentFailedOrderId = null;
+            ordersSinceRetryPrompt++;
+            typewriterDispatch(
+                simplifyDescription(description) + "\n\n" +
+                "Power ≥ " + requiredPower +
+                " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+                " | Stability ≥ " + requiredStability +
+                " | Explosiveness ≥ " + requiredExplosiveness
+            );
+            flashDispatchBar();
+        }
+    } else if (useFailedOrder) {
+        const order = failedOrders[0];
+        description = "Central Command: Previous design failed. Reattempt this order:\n" + order.description;
+        requiredPower = order.requiredPower;
+        maxCost = order.maxCost;
+        requiredStability = order.requiredStability;
+        requiredExplosiveness = order.requiredExplosiveness;
+        currentFailedOrderId = order.id;
+        currentOrderIsImpossible = false;
+        ordersSinceRetryPrompt = 0;
+        currentOrderDescription = description;
+        typewriterDispatch(
+            "Reattempting Failed Order:\n" + simplifyDescription(currentOrderDescription) + "\n\n" +
+            "Power ≥ " + requiredPower +
+            " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+            " | Stability ≥ " + requiredStability +
+            " | Explosiveness ≥ " + requiredExplosiveness
+        );
+        flashDispatchBar();
+    } else {
+        description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+        const ranges = getOrderRanges(description);
+        const order = findFeasibleOrder(ranges);
+        currentOrderIsImpossible = Math.random() < 0.2;
+
+        if (currentOrderIsImpossible) {
+            const impossibleOrder = makeOrderImpossible(ranges);
+            requiredPower = impossibleOrder.requiredPower;
+            maxCost = impossibleOrder.maxCost;
+            requiredStability = impossibleOrder.requiredStability;
+            requiredExplosiveness = impossibleOrder.requiredExplosiveness;
+        } else {
+            requiredPower = order.requiredPower;
+            maxCost = order.maxCost;
+            requiredStability = order.requiredStability;
+            requiredExplosiveness = order.requiredExplosiveness;
+        }
+
+        currentOrderDescription = description;
+        currentFailedOrderId = null;
+        ordersSinceRetryPrompt++;
+        typewriterDispatch(
+            simplifyDescription(description) + "\n\n" +
+            "Power ≥ " + requiredPower +
+            " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+            " | Stability ≥ " + requiredStability +
+            " | Explosiveness ≥ " + requiredExplosiveness
+        );
+        flashDispatchBar();
     }
 
-    // Clamp values to ensure they stay within reasonable bounds
-    pMin = Math.max(0, pMin); pMax = Math.max(pMin, pMax);
-    cMin = Math.max(0, cMin); cMax = Math.max(cMin, cMax);
-    sMin = Math.max(0, sMin); sMax = Math.max(sMin, sMax);
-    eMin = Math.max(0, eMin); eMax = Math.max(eMin, eMax);
-
-    // Keep rolling until the order is achievable by at least one valid loadout.
-    currentOrderIsImpossible = false;
-    let attempts = 0;
-    do {
-        requiredPower = Math.floor(Math.random() * (pMax - pMin + 1)) + pMin;
-        maxCost = Math.floor(Math.random() * (cMax - cMin + 1)) + cMin;
-        requiredStability = Math.floor(Math.random() * (sMax - sMin + 1)) + sMin;
-        requiredExplosiveness = Math.floor(Math.random() * (eMax - eMin + 1)) + eMin;
-        attempts++;
-    } while (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness) && attempts < 40);
-
-    // Guaranteed fallback for gameplay loop stability.
-    if (!isOrderFeasible(requiredPower, maxCost, requiredStability, requiredExplosiveness)) {
-        const fallback = getAllBuildStats()[Math.floor(Math.random() * getAllBuildStats().length)];
-        requiredPower = Math.floor(fallback.power);
-        maxCost = Math.ceil(fallback.cost);
-        requiredStability = Math.floor(fallback.stability);
-        requiredExplosiveness = Math.floor(fallback.explosiveness);
+    if (hasGeneratedFirstOrder) {
+        applyBudgetAllocationForOrder();
+    } else {
+        hasGeneratedFirstOrder = true;
     }
+}
 
-    currentOrderDescription = description;
+function getAllBuildStats() {
+    if (allBuildStatsCache) return allBuildStatsCache;
 
-    //Pick a random description for the order
-    typewriterDispatch(
-        simplifyDescription(description) + "\n\n" +
-        "Power ≥ " + requiredPower +
-        " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
-        " | Stability ≥ " + requiredStability +
-        " | Explosiveness ≥ " + requiredExplosiveness
+    const builds = [];
+    Object.entries(coreStats).forEach(([category, types]) => {
+        Object.entries(types).forEach(([type, c]) => {
+            Object.entries(casingStats).forEach(([casingType, cs]) => {
+                Object.entries(powderStats).forEach(([powderType, ps]) => {
+                    const basePower = Math.max(0, c.power + (c.explosiveness * 0.15) + cs.power + ps.power);
+                    Object.entries(barrelStats).forEach(([barrelType, b]) => {
+                        const costVal = Math.max(0, c.cost + cs.cost + ps.cost + b.cost);
+                        const stabilityVal = Math.max(0, c.stability + cs.stability + ps.stability + b.stability);
+                        const explosivenessVal = Math.max(0, c.explosiveness + ps.explosiveness);
+                        const powerVal = Math.max(0, basePower + b.power);
+                        builds.push({ category, type, casingType, powderType, barrelType, power: powerVal, cost: costVal, stability: stabilityVal, explosiveness: explosivenessVal });
+                    });
+                });
+            });
+        });
+    });
+    allBuildStatsCache = builds;
+    return allBuildStatsCache;
+}
+
+function isOrderFeasible(reqPower, maxAllowedCost, reqStability, reqExplosiveness) {
+    return getAllBuildStats().some(stats =>
+        stats.power >= reqPower &&
+        stats.cost <= maxAllowedCost &&
+        stats.stability >= reqStability &&
+        stats.explosiveness >= reqExplosiveness
     );
-    currentFailedOrderId = null;
-    ordersSinceRetryPrompt++;
-    flashDispatchBar();
+}
+
+function getBuildStatBounds() {
+    const builds = getAllBuildStats();
+    return builds.reduce((acc, stats) => ({
+        maxPower: Math.max(acc.maxPower, stats.power),
+        minCost: Math.min(acc.minCost, stats.cost),
+        maxStability: Math.max(acc.maxStability, stats.stability),
+        maxExplosiveness: Math.max(acc.maxExplosiveness, stats.explosiveness)
+    }), { maxPower: 0, minCost: Infinity, maxStability: 0, maxExplosiveness: 0 });
+}
+
+function updateRetryIndicator() {
+    const el = document.getElementById("retryIndicator");
+    if (!el) return;
+    if (currentFailedOrderId !== null) {
+        el.textContent = "Reattempting failed order...";
+        el.style.display = "inline-block";
+        return;
+    }
+    if (failedOrders.length > 0) {
+        el.textContent = `Failed order queued for retry (${failedOrders.length})`;
+        el.style.display = "inline-block";
+    } else {
+        el.style.display = "none";
     }
 
 }
@@ -2476,6 +3609,8 @@ const barrelStats = {
     "Heavy Long": { power: 1.2, cost: 1.4, penetration: 1.5, stability: 0.8 }
 };
 
+// Flavor text for each part — shown in the tooltip when hovering over a selected part
+
 const partFlavorText = {
     cores: {
         Solid: {
@@ -2586,20 +3721,20 @@ function updateDisplay() {
         `<div class="stat-row">${statTag(costToCurrency(cost),      rCst,  "max", "Cost (₵)")}</div>` +
         `<div class="stat-row">${statTag(formatStat(stability),     rStb,  "min", "Stability")}</div>` +
         `<div class="stat-row">${statTag(formatStat(explosiveness), rExpl, "min", "Explosiveness")}</div>` +
-        `<div class="stat-row">Penetration: <b>${formatStat(penetration)}</b></div>` +
         `<br>` +
         `<span style="opacity:0.5;font-size:8px;">CORE</span>&nbsp;&nbsp;${coreInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">CASING</span> ${casingInfo}<br>` +
         `<span style="opacity:0.5;font-size:8px;">POWDER</span> ${powderInfo}`;
 
     updateTabBadges();
+    updateRetryIndicator();
 }
 // Update the armor database display with known stats
 function updateArmorDatabase() {
     let html = "";
     let armors = ["Standard Polar Domain Armor", "Light Polar Domain Armor", "Heavy Polar Domain Armor"];
 
-    const coreRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Expl ${stat.explosiveness}, Pen ${stat.penetration}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
+    const coreRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Expl ${stat.explosiveness}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
     const simpleRow = (type, stat) => `<div class="db-row"><b>${type}</b> — ${stat ? `Pwr ${stat.power}, Cst ${stat.cost}, Stb ${stat.stability}` : "???"}</div>`;
 
     armors.forEach(armor => {
@@ -2634,9 +3769,145 @@ function updateArmorDatabase() {
     }
 }
 
+function refreshDeveloperUI() {
+    const titleScreen = document.getElementById("titleScreen");
+    const developerPanel = document.getElementById("developerPanel");
+    const developerUnlockNote = document.getElementById("developerUnlockNote");
+    const devSettings = document.getElementById("developerSettings");
+    if (titleScreen) titleScreen.classList.toggle("developer-mode", developerModeUnlocked);
+    if (developerPanel) developerPanel.style.display = developerModeUnlocked ? "block" : "none";
+    if (developerUnlockNote) developerUnlockNote.style.display = developerModeUnlocked ? "block" : "none";
+    if (devSettings) devSettings.style.display = developerModeUnlocked ? "block" : "none";
+
+    if (developerModeUnlocked) {
+        const rpInput = document.getElementById("devRPInput");
+        const moneyInput = document.getElementById("devMoneyInput");
+        const rpInputSettings = document.getElementById("devRPInputSettings");
+        const moneyInputSettings = document.getElementById("devMoneyInputSettings");
+        if (rpInput) rpInput.value = researchPoints;
+        if (moneyInput) moneyInput.value = money;
+        if (rpInputSettings) rpInputSettings.value = researchPoints;
+        if (moneyInputSettings) moneyInputSettings.value = money;
+    }
+}
+
+function handleTitleNameClick() {
+    titleNameClickCount += 1;
+    if (!developerModeUnlocked && titleNameClickCount >= 5) {
+        developerModeUnlocked = true;
+        localStorage.setItem("shell_game_developer_mode", "true");
+        refreshDeveloperUI();
+        alert("Developer mode unlocked! You can now adjust RP and Money in Settings.");
+    }
+}
+
+function applyDeveloperValues(useSettings = false) {
+    const rpInput = useSettings ? document.getElementById("devRPInputSettings") : document.getElementById("devRPInput");
+    const moneyInput = useSettings ? document.getElementById("devMoneyInputSettings") : document.getElementById("devMoneyInput");
+    const devMessage = document.getElementById("devMessage");
+    let valid = true;
+    let message = "Developer values updated.";
+    if (!developerModeUnlocked) {
+        message = "Developer mode is not unlocked yet.";
+        valid = false;
+    }
+    if (rpInput) {
+        const value = Number(rpInput.value);
+        if (!Number.isFinite(value) || value < 0) {
+            message = "Enter a valid non-negative RP value.";
+            valid = false;
+        } else {
+            researchPoints = Math.round(value * 100) / 100; // keep two decimals
+        }
+    }
+    if (moneyInput) {
+        const value = Number(moneyInput.value);
+        if (!Number.isFinite(value) || value < 0) {
+            message = "Enter a valid non-negative Money value.";
+            valid = false;
+        } else {
+            money = Math.round(value * 100) / 100; // keep two decimals
+        }
+    }
+    if (valid) {
+        updateEconomyDisplay();
+        saveGame();
+        if (!useSettings && devMessage) devMessage.innerText = message;
+        const settingsRp = document.getElementById("devRPInputSettings");
+        const settingsMoney = document.getElementById("devMoneyInputSettings");
+        if (settingsRp) settingsRp.value = researchPoints;
+        if (settingsMoney) settingsMoney.value = money;
+        const titleRp = document.getElementById("devRPInput");
+        const titleMoney = document.getElementById("devMoneyInput");
+        if (titleRp) titleRp.value = researchPoints;
+        if (titleMoney) titleMoney.value = money;
+    }
+    if (devMessage) devMessage.innerText = message;
+}
+
+function loadDeveloperMode() {
+    developerModeUnlocked = localStorage.getItem("shell_game_developer_mode") === "true";
+    refreshDeveloperUI();
+}
+
+let warningCountdownTimer = null;
+
+function showWarningModal() {
+    const modal = document.getElementById("warningModal");
+    if (modal) modal.style.display = "flex";
+}
+
+function closeWarningModal() {
+    const modal = document.getElementById("warningModal");
+    const countdown = document.getElementById("warningCountdown");
+    if (modal) modal.style.display = "none";
+    if (countdown) countdown.innerText = "";
+    if (warningCountdownTimer) {
+        clearInterval(warningCountdownTimer);
+        warningCountdownTimer = null;
+    }
+}
+
+function continueFromWarning() {
+    closeWarningModal();
+}
+
+function attemptClosePage() {
+    try {
+        window.close();
+    } catch (e) {
+        // Fallback if the browser blocks closing.
+    }
+    document.body.innerHTML = `<div style="height:100vh; display:flex; align-items:center; justify-content:center; background:#02060f; color:#d48a3a; font-family:Inter, 'Segoe UI', Arial, sans-serif; text-align:center; padding:20px;"><div><h1>Sorry to dissapoint :(</h1><p style="opacity:0.8; margin-top:12px;">The page has been closed.</p></div></div>`;
+}
+
+function exitWarning() {
+    const countdownEl = document.getElementById("warningCountdown");
+    const warningCard = document.querySelector(".warning-card");
+    const actions = document.querySelector(".warning-actions");
+    if (actions) actions.style.display = "none";
+    if (warningCard) {
+        const heading = warningCard.querySelector("h2");
+        const paragraph = warningCard.querySelector("p");
+        if (heading) heading.innerText = "Exit";
+        if (paragraph) paragraph.innerText = "Sorry to dissapoint :(";
+    }
+    let remaining = 5;
+    if (countdownEl) countdownEl.innerText = `Closing in ${remaining}s...`;
+    warningCountdownTimer = setInterval(() => {
+        remaining -= 1;
+        if (countdownEl) countdownEl.innerText = remaining > 0 ? `Closing in ${remaining}s...` : `Closing...`;
+        if (remaining <= 0) {
+            clearInterval(warningCountdownTimer);
+            warningCountdownTimer = null;
+            attemptClosePage();
+        }
+    }, 1000);
+}
+
 // Core selection
 function selectCore(category, type) {
-    if (!isTechUnlocked("cores", category, type)) return;
+    playSound(category === 'Chemical' ? 'chemical' : 'core');
     // Remove old stats
     if(core) {
         const oldCategory = core.category;
@@ -2664,11 +3935,11 @@ function selectCore(category, type) {
     updateDisplay();
     // Re-render the open tab so the selected button gets .part-selected
     showTabContent(activeTab);
-}
+};
 
 // Casing selection
 function selectCasing(type) {
-    if (!isTechUnlocked("casings", null, type)) return;
+    playSound('casing');
     if(casing) {
         power -= casingStats[casing].power;
         cost -= casingStats[casing].cost;
@@ -2684,11 +3955,11 @@ function selectCasing(type) {
     clampStats();
     updateDisplay();
     showTabContent(activeTab);
-}
+};
 
 // Powder selection
 function selectPowder(type) {
-    if (!isTechUnlocked("powders", null, type)) return;
+    playSound('powder');
     if(powder) {
         power -= powderStats[powder].power;
         cost -= powderStats[powder].cost;
@@ -2704,7 +3975,28 @@ function selectPowder(type) {
     clampStats();
     updateDisplay();
     showTabContent(activeTab);
-}
+};
+
+function selectBarrelSize(type) {
+    playSound('barrel');
+    if (barrelSize && barrelStats[barrelSize]) {
+        power -= barrelStats[barrelSize].power;
+        cost -= barrelStats[barrelSize].cost;
+        stability -= barrelStats[barrelSize].stability;
+        penetration -= barrelStats[barrelSize].penetration;
+    }
+
+    barrelSize = type;
+
+    power += barrelStats[type].power;
+    cost += barrelStats[type].cost;
+    stability += barrelStats[type].stability;
+    penetration += barrelStats[type].penetration;
+
+    clampStats();
+    updateDisplay();
+    showTabContent(activeTab);
+};
 
 function selectBarrelSize(type) {
     if (barrelSize && barrelStats[barrelSize]) {
@@ -2730,46 +4022,51 @@ function selectBarrelSize(type) {
 function submitDesign() {
     if (isWaiting) return; // Prevent multiple submissions while waiting for the next order
 
+    // Require a complete shell for any submission (prevent empty submissions)
+    if (!core || !casing || !powder) {
+        const resultEl = document.getElementById("result");
+        if (resultEl) {
+            resultEl.classList.add("readout-fail");
+            resultEl.classList.remove("readout-success");
+            resultEl.innerHTML = `<span class="stat-fail">✗ Incomplete shell</span><br><span style="opacity:0.75;font-size:9px;">You must select Core, Casing, and Powder before submitting a design.</span>`;
+        }
+        return;
+    }
+
+    // (redundant) retry-specific incomplete-shell check removed — top-level guard covers this
+
     isWaiting = true; // Set waiting state to prevent new orders until the next one is generated
 
     let failures = [];
+    const failureDetails = [];
     // Check each requirement and collect failure reasons
     if (power < requiredPower) {
-        failures.push("Not enough power.");
+        failures.push("Not enough Power.");
+        failureDetails.push({ stat: "Power", diff: requiredPower - power, threshold: Math.max(1, requiredPower * 0.15) });
     }
     if (cost > maxCost) {
-        failures.push("Too expensive.");
+        failures.push("Too Expensive.");
+        failureDetails.push({ stat: "Cost", diff: cost - maxCost, threshold: Math.max(1, maxCost * 0.15) });
     }
     if (stability < requiredStability) {
         failures.push("Shell Stability is too low.");
+        failureDetails.push({ stat: "Stability", diff: requiredStability - stability, threshold: Math.max(1, requiredStability * 0.15) });
     }
     if (explosiveness < requiredExplosiveness) {
-        failures.push("Not enough explosiveness.");
-    }
-    if (failures.length > 0) {
-        // Store new failures; retry failures stay queued until a successful completion
-        if (currentFailedOrderId === null && !currentOrderIsImpossible) {
-            failedOrders.push({
-                id: nextFailedOrderId++,
-                description: currentOrderDescription,
-                requiredPower,
-                maxCost,
-                requiredStability,
-                requiredExplosiveness
-            });
-        }
-    } else if (currentFailedOrderId !== null) {
-        // Successful retry: remove completed failed order from queue
-        failedOrders = failedOrders.filter(order => order.id !== currentFailedOrderId);
-        currentFailedOrderId = null;
+        failures.push("Not enough Explosiveness.");
+        failureDetails.push({ stat: "Explosiveness", diff: requiredExplosiveness - explosiveness, threshold: Math.max(1, requiredExplosiveness * 0.15) });
     }
 
-    // Budget settlement: keep savings if under budget, pay penalties if over budget.
     const budgetDelta = costToCurrency(maxCost - cost);
     awardMoney(budgetDelta);
     const allocationResult = applyBudgetAllocationForOrder();
 
-    // Display result — per-criterion ✓/✗ using innerHTML for colored spans
+    function getFailMessage() {
+        if (failureDetails.length === 0) return "";
+        const closeEnough = failureDetails.some(f => f.diff <= Math.max(1, f.threshold / 2));
+        return closeEnough ? "Standard order confirmed!" : "Order complete.";
+    }
+
     const resultEl = document.getElementById("result");
     const checks = [
         { label: "Power",         pass: power        >= requiredPower,         detail: `${power} / ≥${requiredPower}` },
@@ -2781,6 +4078,10 @@ function submitDesign() {
         resultEl.classList.add("readout-success");
         resultEl.classList.remove("readout-fail");
         resultEl.innerHTML = `<span class="stat-ok">✓ Order Fulfilled</span><br><span style="opacity:0.6;font-size:9px;">All requirements met. Dispatching to Command.</span>`;
+        if (currentFailedOrderId !== null) {
+            failedOrders = failedOrders.filter(order => order.id !== currentFailedOrderId);
+            currentFailedOrderId = null;
+        }
     } else {
         resultEl.classList.add("readout-fail");
         resultEl.classList.remove("readout-success");
@@ -2788,16 +4089,28 @@ function submitDesign() {
             `<span class="stat-fail">✗ Requirements Not Met</span><br>` +
             checks.map(c =>
                 `<span class="${c.pass ? 'stat-ok' : 'stat-fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}: ${c.detail}`
-            ).join("<br>");
+            ).join("<br>") +
+            `<br><span style="opacity:0.75;font-size:9px;">${getFailMessage()}</span>`;
+        if (!currentOrderIsImpossible && currentFailedOrderId === null) {
+            failedOrders.push({
+                id: nextFailedOrderId++,
+                description: currentOrderDescription,
+                requiredPower,
+                maxCost,
+                requiredStability,
+                requiredExplosiveness
+            });
+        }
     }
     resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">Budget ${budgetDelta >= 0 ? "surplus" : "overrun"}: ${budgetDelta >= 0 ? "+" : ""}${currencyText(budgetDelta)}</span>`;
     if (allocationResult.allocation > 0) {
         resultEl.innerHTML += `<br><span style="opacity:0.7;font-size:9px;">R&D allocation: -${currencyText(allocationResult.allocation)} → +${allocationResult.gainedRP} RP</span>`;
     }
-    setTimeout( () => {
+    updateRetryIndicator();
+    setTimeout(() => {
+        isWaiting = false; // Reset waiting state before generating the next order
         generateOrder();
         saveGame();
-        isWaiting = false; // Reset waiting state to allow new orders
     }, 1000); // Creates a new order after a 1-second delay after submission
 }
 
@@ -2819,7 +4132,13 @@ tabs.forEach(tab => {
     });
 });
 
-setInterval(updateResearchProjects, 1000);
+setInterval(() => {
+    updateResearchProjects();
+    const techTreeModal = document.getElementById("techTreeModal");
+    if (techTreeModal && techTreeModal.classList.contains("show")) {
+        updateTechTreeDisplay();
+    }
+}, 1000);
 setInterval(updateScoutTeamUI, 1000);
 
 /*
@@ -2841,7 +4160,18 @@ setInterval(updateScoutTeamUI, 1000);
 function partBtn(partType, category, itemName, label, id, onclick) {
     const unlocked = isTechUnlocked(partType, category, itemName);
 
-    let hint = getPartFlavor(partType, category, itemName);
+    // Build a short stat hint string from the relevant stats table
+    let hint = "";
+    if (partType === "cores" && category && coreStats[category] && coreStats[category][itemName]) {
+        const s = coreStats[category][itemName];
+        hint = `Pwr ${s.power}  Cst ${currencyText(costToCurrency(s.cost))}  Expl ${s.explosiveness}`;
+    } else if (partType === "casings" && casingStats[itemName]) {
+        const s = casingStats[itemName];
+        hint = `Stb ${s.stability > 0 ? '+' : ''}${s.stability}  Cst ${currencyText(costToCurrency(s.cost))}`;
+    } else if (partType === "powders" && powderStats[itemName]) {
+        const s = powderStats[itemName];
+        hint = `Pwr +${s.power}  Stb ${s.stability > 0 ? '+' : ''}${s.stability}`;
+    }
     const hintEl = hint ? `<span class="part-hint">${hint}</span>` : "";
 
     if (!unlocked) {
@@ -2890,27 +4220,27 @@ function showTabContent(tab) {
     }
 
     if (tab === 'casing') {
-    const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
-        const activeClass = barrelSize === name ? "active" : "";
-        return `<button class="barrel-chip ${activeClass}" onclick="selectBarrelSize('${name}')">
-            <div><b>${name} Barrel</b></div>
-            <div>Pwr ${s.power >= 0 ? "+" : ""}${s.power} · Cst ${currencyText(costToCurrency(s.cost))}</div>
-            <div>Pen ${s.penetration >= 0 ? "+" : ""}${s.penetration} · Stb ${s.stability >= 0 ? "+" : ""}${s.stability}</div>
-        </button>`;
-    }).join("");
+        const barrelButtons = Object.entries(barrelStats).map(([name, s]) => {
+            const activeClass = barrelSize === name ? "active" : "";
+            return `<button class="barrel-chip ${activeClass}" onclick="selectBarrelSize('${name}')">
+                <div><b>${name} Barrel</b></div>
+                <div>Pwr ${s.power >= 0 ? "+" : ""}${s.power} · Cst ${currencyText(costToCurrency(s.cost))}</div>
+                <div>Stb ${s.stability >= 0 ? "+" : ""}${s.stability}</div>
+            </button>`;
+        }).join("");
 
-    tabContent.innerHTML = `
-        <div class="fed-label">Barrel Size</div>
-        <div class="barrel-scroll">${barrelButtons}</div>
-        ${partBtn("casings",null,"Reinforced MK II","Reinforced Casing Mk II","reinforcedCasingMk2Btn","selectCasing('Reinforced MK II')")}
-        ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
-        ${partBtn("casings",null,"High-Carbon MK II","High-Carbon Casing Mk II","highCarbonCasingMk2Btn","selectCasing('High-Carbon MK II')")}
-        ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
-        ${partBtn("casings",null,"Standard MK II","Standard Casing Mk II","standardCasingMk2Btn","selectCasing('Standard MK II')")}
-        ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
-        ${partBtn("casings",null,"Low-Carbon MK II","Low-Carbon Casing Mk II","lowCarbonCasingMk2Btn","selectCasing('Low-Carbon MK II')")}
-        ${partBtn("casings",null,"Low-Carbon","Low-Carbon Casing","lowCarbonCasingBtn","selectCasing('Low-Carbon')")}
-    `;
+        tabContent.innerHTML = `
+            <div class="fed-label">Barrel Size</div>
+            <div class="barrel-scroll">${barrelButtons}</div>
+            ${partBtn("casings",null,"Reinforced MK II","Reinforced Casing Mk II","reinforcedCasingMk2Btn","selectCasing('Reinforced MK II')")}
+            ${partBtn("casings",null,"Reinforced","Reinforced Casing","reinforcedCasingBtn","selectCasing('Reinforced')")}
+            ${partBtn("casings",null,"High-Carbon MK II","High-Carbon Casing Mk II","highCarbonCasingMk2Btn","selectCasing('High-Carbon MK II')")}
+            ${partBtn("casings",null,"High-Carbon","High-Carbon Casing","highCarbonCasingBtn","selectCasing('High-Carbon')")}
+            ${partBtn("casings",null,"Standard MK II","Standard Casing Mk II","standardCasingMk2Btn","selectCasing('Standard MK II')")}
+            ${partBtn("casings",null,"Standard","Standard Casing","standardCasingBtn","selectCasing('Standard')")}
+            ${partBtn("casings",null,"Low-Carbon MK II","Low-Carbon Casing Mk II","lowCarbonCasingMk2Btn","selectCasing('Low-Carbon MK II')")}
+            ${partBtn("casings",null,"Low-Carbon","Low-Carbon Casing","lowCarbonCasingBtn","selectCasing('Low-Carbon')")}
+        `;
     }
 
     if (tab === 'powder') {
@@ -2929,6 +4259,7 @@ function showTabContent(tab) {
     updateDisplay();
     updateTooltip();
     updateArmorDatabase();
+    updateBudgetPanel();
 }
 
 // Modal Functions
@@ -2952,6 +4283,8 @@ function closeBudgetModal() {
 function openSettingsModal() {
     const toggle = document.getElementById("advancedTextToggle");
     if (toggle) toggle.checked = advancedText;
+    const developerPanel = document.getElementById("developerSettings");
+    if (developerPanel) developerPanel.style.display = developerModeUnlocked ? "block" : "none";
     document.getElementById("settingsModal").classList.add("show");
 }
 
@@ -2969,73 +4302,266 @@ function closeTechTreeModal() {
     document.getElementById("techTreeModal").classList.remove("show");
 }
 
+// Quest Modal Functions
+function openQuestModal() {
+    updateQuestDisplay();
+    document.getElementById("questModal").classList.add("show");
+}
+
+function closeQuestModal() {
+    document.getElementById("questModal").classList.remove("show");
+}
+
+// Update Quest Display
+function updateQuestDisplay() {
+    const container = document.getElementById("questContent");
+    let html = '';
+
+    if (!currentQuest) {
+        // Initialize first quest if none active
+        currentQuest = "restore_federation_capabilities";
+        questProgress[currentQuest] = { completed: [] };
+    }
+
+    const quest = quests[currentQuest];
+    if (quest) {
+        html += `<div class="quest-item">`;
+        html += `<h3>${quest.name}</h3>`;
+        html += `<div class="quest-requirements">`;
+        quest.requirements.forEach((req, index) => {
+            const isCompleted = questProgress[currentQuest].completed.includes(index);
+            const status = isCompleted ? '✓' : '○';
+            html += `<div class="quest-requirement ${isCompleted ? 'completed' : ''}">${status} ${req.description}</div>`;
+        });
+        html += `</div>`;
+        html += `</div>`;
+    } else {
+        html += '<div>No active quests.</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+// Check Quest Progress
+function checkQuestProgress() {
+    if (!currentQuest) return;
+
+    const quest = quests[currentQuest];
+    if (!quest) return;
+
+    let progressChanged = false;
+    quest.requirements.forEach((req, index) => {
+        if (questProgress[currentQuest].completed.includes(index)) return;
+
+        let completed = false;
+        if (req.type === "unlock_tech") {
+            const [category, type] = req.tech.split('.');
+            if (unlockedTechTree.cores[category] && unlockedTechTree.cores[category][type]) {
+                completed = unlockedTechTree.cores[category][type];
+            } else if (unlockedTechTree.casings[type]) {
+                completed = unlockedTechTree.casings[type];
+            } else if (unlockedTechTree.powders[type]) {
+                completed = unlockedTechTree.powders[type];
+            }
+        }
+
+        if (completed) {
+            questProgress[currentQuest].completed.push(index);
+            progressChanged = true;
+        }
+    });
+
+    // Check if quest is complete
+    if (questProgress[currentQuest].completed.length === quest.requirements.length) {
+        completeQuest(currentQuest);
+    } else if (progressChanged) {
+        // Update display if progress changed
+        updateQuestDisplay();
+    }
+}
+
+// Complete Quest
+function completeQuest(questId) {
+    const quest = quests[questId];
+    if (!quest) return;
+
+    // Award rewards
+    researchPoints += quest.rewards.rp || 0;
+    money += quest.rewards.money || 0;
+
+    // Mark as completed
+    completedQuests.push(questId);
+    currentQuest = quest.nextQuest || null;
+
+    // Update displays
+    updateEconomyDisplay();
+    updateQuestDisplay();
+
+    // Show completion message
+    alert(`Quest Completed: ${quest.name}\n\nRewards:\n${quest.rewards.rp ? `+${quest.rewards.rp} RP\n` : ''}${quest.rewards.money ? `+${quest.rewards.money} ₵` : ''}`);
+}
+
 /*
  * toggleTechSection — called when the player clicks a section header.
  * Finds the section by its id and toggles the "collapsed" class on/off.
  * "collapsed" hides .tech-tree-section-body via CSS (display:none).
  */
 function toggleTechSection(id) {
-    document.getElementById(id).classList.toggle('collapsed');
+    const section = document.getElementById(id);
+    if (!section) return;
+    const isCollapsed = section.classList.toggle('collapsed');
+    techSectionState[id] = isCollapsed;
 }
 
 /*
  * updateTechTreeDisplay — rebuilds the full tech tree HTML and injects it.
  *
- * Each section starts COLLAPSED so the screen isn't cluttered.
- * The player clicks a header to expand just that category.
- *
- * Structure per section:
- *   <div class="tech-tree-section collapsed" id="sec-X">
- *     <h3 onclick="toggleTechSection('sec-X')">...</h3>
- *     <div class="tech-tree-section-body">
- *       rows of .tree-root / .tree-level nodes
- *     </div>
- *   </div>
+ * Section open/closed state is preserved across redraws so the player
+ * can keep a section expanded while research timers update.
  */
 function updateTechTreeDisplay() {
     const container = document.getElementById("techTreeContent");
     let html = '<div class="tech-tree-container">';
 
+    const activeResearch = Object.entries(researchProjects).map(([key, project]) => {
+        const remainingSecs = Math.max(0, Math.ceil((project.finishAt - Date.now()) / 1000));
+        return {
+            label: `${project.itemName} (${project.category})`,
+            remainingSecs
+        };
+    });
+
+    if (activeResearch.length > 0) {
+        html += '<div class="tech-tree-summary"><div class="tech-tree-summary-title">Active Research</div>';
+        activeResearch.forEach(project => {
+            html += `<div class="tech-tree-summary-line">${project.label}: <span>${project.remainingSecs}s remaining</span></div>`;
+        });
+        html += '</div>';
+    } else {
+        html += '<div class="tech-tree-summary tech-tree-summary-idle">No active research. Click a ready item to begin.</div>';
+    }
+
+    // Helper to render research nodes
+    function createResearchNode(techId) {
+        if (!techId || !researchTreeData[techId]) return '';
+        
+        const tech = researchTreeData[techId];
+        const key = getTechKey(tech.category, tech.itemName);
+        const isUnlocked = isResearchUnlocked(techId);
+        const project = researchProjects[key];
+        const prereqsMet = areResearchPrerequisitesMet(techId);
+        const costEntry = getTechCostEntry(tech.category, tech.itemName);
+        const remainingSecs = project ? Math.max(0, Math.ceil((project.finishAt - Date.now()) / 1000)) : 0;
+        
+        let statusClass = 'locked';
+        let statusText = 'Locked';
+        let helperLine = '';
+        let clickableAttr = '';
+
+        if (isUnlocked) {
+            statusClass = 'unlocked';
+            statusText = '✓ Unlocked';
+        } else if (project) {
+            statusClass = 'locked';
+            statusText = `⏳ Researching (${remainingSecs}s)`;
+            helperLine = `<div class="tech-item-cost">Research time: ${Math.max(1, remainingSecs)}s</div>`;
+        } else if (prereqsMet) {
+            statusClass = 'ready';
+            statusText = '🔓 Ready';
+            clickableAttr = ` onclick="event.stopPropagation(); startResearch('${tech.category}','${tech.itemName}')" `;
+            helperLine = `<div class="tech-item-cost">Click to start research</div>`;
+        }
+
+        let costLine = '';
+        if (costEntry) {
+            costLine = costEntry.rp === 0 && costEntry.money === 0
+                ? `<div class="tech-item-cost">Free</div>`
+                : `<div class="tech-item-cost">RP: ${costEntry.rp} | ₵${costEntry.money}</div>`;
+        }
+
+        const unlocksSummary = [];
+        if (tech.unlocksComponents) {
+            if (tech.unlocksComponents.cores) {
+                Object.values(tech.unlocksComponents.cores).forEach(comps => {
+                    unlocksSummary.push(...comps);
+                });
+            }
+            if (tech.unlocksComponents.casings) unlocksSummary.push(...tech.unlocksComponents.casings);
+            if (tech.unlocksComponents.powders) unlocksSummary.push(...tech.unlocksComponents.powders);
+        }
+
+        return `<div class="tech-item ${statusClass}" ${clickableAttr}>
+            <div class="tech-item-name">${tech.name}</div>
+            <div class="tech-item-description">${tech.description}</div>
+            <div class="tech-item-status">${statusText}</div>
+            ${costLine}
+            ${helperLine}
+            ${unlocksSummary.length > 0 ? `<div class="tech-item-unlocks"><strong>Unlocks:</strong> ${unlocksSummary.join(', ')}</div>` : ''}
+        </div>`;
+    }
+
     // ── Solid Cores ──────────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-solid">';
-    html += '<h3 onclick="toggleTechSection(\'sec-solid\')">Solid Cores</h3>';
+    html += `<div class="tech-tree-section ${techSectionState['sec-solid'] === false ? '' : 'collapsed'}" id="sec-solid">`;
+    html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-solid\')">Solid Cores</h3>';
     html += '<div class="tech-tree-section-body">';
 
     // Level 1: starters
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("Solid", "Light-AP", unlockedTechTree.cores["Solid"]["Light-AP"], [], true) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("Solid", "AP", unlockedTechTree.cores["Solid"]["AP"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("light_ap_core_development") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("steel_core_refinement") + '</div>';
     html += '</div>';
 
-    // Level 2: unlocks from AP / Light-AP
+    // Level 2
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APHE", unlockedTechTree.cores["Solid"]["APHE"], ["AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "TAP", unlockedTechTree.cores["Solid"]["TAP"], ["AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR", unlockedTechTree.cores["Solid"]["APCR"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("light_ap_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("advanced_steel_refinement") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("aphe_ammunition") + '</div>';
     html += '</div>';
 
+    // Level 3
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "Light-AP MK II", unlockedTechTree.cores["Solid"]["Light-AP MK II"], ["Light-AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "AP MK II", unlockedTechTree.cores["Solid"]["AP MK II"], ["AP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APHE MK II", unlockedTechTree.cores["Solid"]["APHE MK II"], ["APHE"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "TAP MK II", unlockedTechTree.cores["Solid"]["TAP MK II"], ["TAP"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Solid", "APCR MK II", unlockedTechTree.cores["Solid"]["APCR MK II"], ["APCR"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("tungsten_refinement") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("aphe_mk_ii") + '</div>';
     html += '</div>';
 
-    html += '</div></div>'; // close body + section
+    // Level 4
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("advanced_tungsten_refinement") + '</div>';
+    html += '</div>';
+
+    // Level 5
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("sabot_ammunition_development") + '</div>';
+    html += '</div>';
+
+    // Level 6
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("advanced_sabot_system") + '</div>';
+    html += '</div>';
+
+    html += '</div></div>';
 
     // ── Chemical Cores ───────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-chemical">';
-    html += '<h3 onclick="toggleTechSection(\'sec-chemical\')">Chemical Cores</h3>';
+    html += `<div class="tech-tree-section ${techSectionState['sec-chemical'] === false ? '' : 'collapsed'}" id="sec-chemical">`;
+    html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-chemical\')">Chemical Cores</h3>';
     html += '<div class="tech-tree-section-body">';
 
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("Chemical", "TNT-Based", unlockedTechTree.cores["Chemical"]["TNT-Based"], ["Light-AP"], false) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("Chemical", "RDX-Based", unlockedTechTree.cores["Chemical"]["RDX-Based"], ["Light-AP"], false) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("tnt_chemical_synthesis") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("rdx_chemical_development") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite", unlockedTechTree.cores["Chemical"]["PETN-Composite"], ["RDX-Based"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("tnt_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("rdx_mk_ii") + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("petn_composite") + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("petn_mk_ii") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
@@ -3047,21 +4573,28 @@ function updateTechTreeDisplay() {
     html += '</div></div>';
 
     // ── Casings ──────────────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-casings">';
-    html += '<h3 onclick="toggleTechSection(\'sec-casings\')">Casings</h3>';
+    html += `<div class="tech-tree-section ${techSectionState['sec-casings'] === false ? '' : 'collapsed'}" id="sec-casings">`;
+    html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-casings\')">Casings</h3>';
     html += '<div class="tech-tree-section-body">';
 
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("casing", "Standard", unlockedTechTree.casings["Standard"], [], true) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("casing", "Low-Carbon", unlockedTechTree.casings["Low-Carbon"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("standard_casing_optimization") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("low_carbon_casing") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "High-Carbon", unlockedTechTree.casings["High-Carbon"], ["Standard"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("standard_casing_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("low_carbon_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("high_carbon_reinforcement") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced", unlockedTechTree.casings["Reinforced"], ["Standard", "High-Carbon"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("high_carbon_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("reinforced_casing_engineering") + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("reinforced_casing_mk_ii") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
@@ -3074,44 +4607,33 @@ function updateTechTreeDisplay() {
     html += '</div></div>';
 
     // ── Powders ──────────────────────────────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-powders">';
-    html += '<h3 onclick="toggleTechSection(\'sec-powders\')">Powders</h3>';
+    html += `<div class="tech-tree-section ${techSectionState['sec-powders'] === false ? '' : 'collapsed'}" id="sec-powders">`;
+    html += '<h3 onclick="event.stopPropagation(); toggleTechSection(\'sec-powders\')">Powders</h3>';
     html += '<div class="tech-tree-section-body">';
 
     html += '<div class="tree-root">';
-    html += '<div class="tech-node">' + createTechItemHTML("powder", "Coarse-Powder", unlockedTechTree.powders["Coarse-Powder"], [], true) + '</div>';
-    html += '<div class="tech-node">' + createTechItemHTML("powder", "Unrefined-Powder", unlockedTechTree.powders["Unrefined-Powder"], [], true) + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("coarse_powder_production") + '</div>';
+    html += '<div class="tech-node">' + createResearchNode("unrefined_powder_production") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Semi-Fine-Powder", unlockedTechTree.powders["Semi-Fine-Powder"], ["Coarse-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("coarse_powder_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("unrefined_powder_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("semi_fine_powder_development") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder", unlockedTechTree.powders["Fine-Powder"], ["Coarse-Powder", "Semi-Fine-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("semi_fine_powder_mk_ii") + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("fine_powder_refinement") + '</div>';
     html += '</div>';
 
     html += '<div class="tree-level">';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Unrefined-Powder MK II", unlockedTechTree.powders["Unrefined-Powder MK II"], ["Unrefined-Powder"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Coarse-Powder MK II", unlockedTechTree.powders["Coarse-Powder MK II"], ["Coarse-Powder"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Semi-Fine-Powder MK II", unlockedTechTree.powders["Semi-Fine-Powder MK II"], ["Semi-Fine-Powder"], false) + '</div>';
-    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("powder", "Fine-Powder MK II", unlockedTechTree.powders["Fine-Powder MK II"], ["Fine-Powder"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("fine_powder_mk_ii") + '</div>';
     html += '</div>';
 
-    html += '</div></div>'; // close body + section
-
-    // ── Future Programs (placeholders) ──────────────────────────────────────
-    html += '<div class="tech-tree-section collapsed" id="sec-future">';
-    html += '<h3 onclick="toggleTechSection(\'sec-future\')">Future Programs (Placeholder)</h3>';
-    html += '<div class="tech-tree-section-body">';
-    html += '<div class="tree-root">';
-    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Guided Fuse Suite</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
-    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Composite Jacket</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
-    html += '<div class="tech-node"><div class="tech-item locked"><div class="tech-item-name">Smart Propellant Mix</div><div class="tech-item-status">Placeholder</div><div class="tech-item-cost">Coming in later stages</div></div></div>';
-    html += '</div>';
     html += '</div></div>';
 
-    html += '</div>'; // close .tech-tree-container
+    html += '</div>';
     container.innerHTML = html;
 }
 
@@ -3127,10 +4649,9 @@ function getTechCostEntry(category, itemName) {
 }
 
 function startResearch(category, itemName) {
-    normalizeTechTreeUnlocks();
     const partType = getCategoryType(category);
     const partCategory = (category === "Solid" || category === "Chemical") ? category : null;
-    if (isTechUnlocked(partType, partCategory, itemName) || !areRequirementsMet(partType, partCategory, itemName)) return;
+    if (!areRequirementsMet(partType, partCategory, itemName)) return;
 
     const key = getTechKey(category, itemName);
     if (researchProjects[key]) return;
@@ -3156,14 +4677,6 @@ function updateResearchProjects() {
     Object.entries(researchProjects).forEach(([key, project]) => {
         if (now < project.finishAt) return;
 
-        const partType = getCategoryType(project.category);
-        const partCategory = (project.category === "Solid" || project.category === "Chemical") ? project.category : null;
-        if (!areRequirementsMet(partType, partCategory, project.itemName)) {
-            delete researchProjects[key];
-            changed = true;
-            return;
-        }
-
         if (project.category === "Solid" || project.category === "Chemical") {
             unlockedTechTree.cores[project.category][project.itemName] = true;
         } else if (project.category === "casing") {
@@ -3183,12 +4696,16 @@ function updateResearchProjects() {
 }
 
 function saveGame() {
-    normalizeTechTreeUnlocks();
+    const timestamp = Date.now();
+    const saveKey = `${SAVE_PREFIX}${timestamp}`;
     const payload = {
+        saveKey,
+        savedAt: timestamp,
         money,
         researchPoints,
         rdBudgetPercent,
         unlockedTechTree,
+        unlockedResearch,
         knownStats,
         failedOrders,
         nextFailedOrderId,
@@ -3205,13 +4722,40 @@ function saveGame() {
         armorDurability,
         scoutTeamStatus,
         scoutTrainingEndsAt,
-        advancedText
+        advancedText,
+        developerModeUnlocked,
+        currentQuest,
+        questProgress,
+        completedQuests
     };
-    localStorage.setItem("shell_game_save_v1", JSON.stringify(payload));
+    try {
+        localStorage.setItem(saveKey, JSON.stringify(payload));
+        localStorage.setItem(SAVE_LATEST_KEY, saveKey);
+    } catch (e) {
+        alert("Unable to save. File creation unsuccessful :p");
+        return false;
+    }
+    return true;
+}
+
+function getLatestSaveKey() {
+    const latest = localStorage.getItem(SAVE_LATEST_KEY);
+    if (latest && localStorage.getItem(latest)) return latest;
+
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(SAVE_PREFIX)) keys.push(key);
+    }
+    if (keys.length === 0) return null;
+    keys.sort();
+    return keys[keys.length - 1];
 }
 
 function loadGame() {
-    const raw = localStorage.getItem("shell_game_save_v1");
+    const saveKey = getLatestSaveKey();
+    if (!saveKey) return false;
+    const raw = localStorage.getItem(saveKey);
     if (!raw) return false;
     try {
         const data = JSON.parse(raw);
@@ -3220,6 +4764,10 @@ function loadGame() {
         if (typeof data.rdBudgetPercent === "number") rdBudgetPercent = data.rdBudgetPercent;
         if (data.unlockedTechTree && typeof data.unlockedTechTree === "object") {
             unlockedTechTree = mergeSaveObject(unlockedTechTree, data.unlockedTechTree);
+        }
+        if (data.unlockedResearch && typeof data.unlockedResearch === "object") {
+            unlockedResearch = data.unlockedResearch;
+            refreshComponentUnlocks();
         }
         if (data.knownStats && typeof data.knownStats === "object") {
             knownStats = mergeSaveObject(knownStats, data.knownStats);
@@ -3240,7 +4788,10 @@ function loadGame() {
         if (typeof data.scoutTeamStatus === "string") scoutTeamStatus = data.scoutTeamStatus;
         if (typeof data.scoutTrainingEndsAt === "number") scoutTrainingEndsAt = data.scoutTrainingEndsAt;
         if (typeof data.advancedText === "boolean") advancedText = data.advancedText;
-        normalizeTechTreeUnlocks();
+        if (typeof data.developerModeUnlocked === "boolean") developerModeUnlocked = data.developerModeUnlocked;
+        if (typeof data.currentQuest === "string" || data.currentQuest === null) currentQuest = data.currentQuest;
+        if (data.questProgress && typeof data.questProgress === "object") questProgress = data.questProgress;
+        if (Array.isArray(data.completedQuests)) completedQuests = data.completedQuests;
         return true;
     } catch (e) {
         return false;
@@ -3248,7 +4799,7 @@ function loadGame() {
 }
 
 function hasSaveFile() {
-    return !!localStorage.getItem("shell_game_save_v1");
+    return !!getLatestSaveKey();
 }
 
 function mergeSaveObject(defaultObj, savedObj) {
@@ -3279,7 +4830,11 @@ function startFromTitle(mode) {
     let loaded = false;
 
     if (mode === "new") {
-        localStorage.removeItem("shell_game_save_v1");
+        const latest = getLatestSaveKey();
+        if (latest) {
+            localStorage.removeItem(latest);
+        }
+        localStorage.removeItem(SAVE_LATEST_KEY);
     } else {
         loaded = loadGame();
         if (!loaded) {
@@ -3293,10 +4848,32 @@ function startFromTitle(mode) {
     if (title) title.style.display = "none";
     if (game) game.style.display = "flex";
 
+    // Transition music
+    if (titleMusic) titleMusic.pause();
+    if (gameMusic) gameMusic.play().catch(e => {});
+
     showTabContent('core');
+    refreshDeveloperUI();
     updateEconomyDisplay();
     updateBudgetPanel();
     updateScoutTeamUI();
+
+    // Initialize research tree system if not already done
+    if (Object.keys(unlockedResearch).length === 0) {
+        initializeStarterResearch();
+        refreshComponentUnlocks();
+    }
+
+    // Ensure we have a persistent save file and start autosave
+    saveGame();
+    if (autoSaveInterval) clearInterval(autoSaveInterval);
+    autoSaveInterval = setInterval(() => saveGame(), 15 * 60 * 1000);
+
+    // Initialize quest system
+    if (!currentQuest) {
+        currentQuest = "restore_federation_capabilities";
+        questProgress[currentQuest] = { completed: [] };
+    }
 
     if (!loaded) {
         generateOrder();
@@ -3319,11 +4896,18 @@ function startFromTitle(mode) {
 }
 
 function initTitleScreen() {
+    loadDeveloperMode();
+    initAudio();
     const hasSave = hasSaveFile();
     const continueBtn = document.getElementById("continueBtn");
     const loadBtn = document.getElementById("loadBtn");
+    const titleName = document.getElementById("titleName");
     if (continueBtn) continueBtn.style.display = hasSave ? "block" : "none";
     if (loadBtn) loadBtn.disabled = !hasSave;
+    if (titleName) titleName.addEventListener("click", handleTitleNameClick);
+    showWarningModal();
+    // Play title music
+    if (titleMusic) titleMusic.play().catch(e => {});
 }
 
 initTitleScreen();
@@ -3343,31 +4927,8 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
     let clickableAttr = "";
     let helperLine = "";
 
-    if (unlocked) {
-        status = isStarter ? "⭐ Starter" : "✓ Unlocked";
-        statusClass = "unlocked";
-    } else if (project) {
-        const secs = Math.max(1, Math.ceil((project.finishAt - Date.now()) / 1000));
-        status = `⏳ Researching (${secs}s)`;
-        statusClass = "locked";
-    } else {
-        const partType = getCategoryType(category);
-        const partCategory = category === "Solid" || category === "Chemical" ? category : null;
-        const missingRequirements = getMissingRequirements(partType, partCategory, itemName);
-        if (missingRequirements.length === 0) {
-            status = "🔓 Ready";
-            statusClass = "ready";
-            helperLine = `<div class="tech-item-cost">Click to start research</div>`;
-            clickableAttr = ` onclick="startResearch('${category}','${itemName}')" `;
-        } else {
-            helperLine = `<div class="tech-item-cost">Requires: ${missingRequirements.join(", ")}</div>`;
-        }
-    }
-
-    // Look up the cost for this item from the economy table
-    let costLine = "";
+    let costEntry;
     try {
-        let costEntry;
         if (category === "Solid" || category === "Chemical") {
             costEntry = techTreeCosts.cores[category][itemName];
         } else if (category === "casing") {
@@ -3375,14 +4936,37 @@ function createTechItemHTML(category, itemName, unlocked, requirements, isStarte
         } else if (category === "powder") {
             costEntry = techTreeCosts.powders[itemName];
         }
-        if (costEntry) {
-            if (costEntry.rp === 0 && costEntry.money === 0) {
-                costLine = `<div class="tech-item-cost">Free</div>`;
-            } else {
-                costLine = `<div class="tech-item-cost">${costEntry.rp} RP · ₵${costEntry.money}</div>`;
-            }
+    } catch(e) {
+        costEntry = null;
+    }
+
+    const durationLabel = costEntry && (costEntry.rp > 0 || costEntry.money > 0)
+        ? `Research time: ${Math.max(1, Math.ceil(researchDurationMs(costEntry) / 1000))}s`
+        : "Research time: instant";
+
+    if (unlocked) {
+        status = isStarter ? "⭐ Starter" : "✓ Unlocked";
+        statusClass = "unlocked";
+    } else if (project) {
+        const secs = Math.max(1, Math.ceil((project.finishAt - Date.now()) / 1000));
+        status = `⏳ Researching (${secs}s)`;
+        statusClass = "locked";
+        helperLine = `<div class="tech-item-cost">${durationLabel}</div>`;
+    } else if (requirements.length === 0 || areRequirementsMet(getCategoryType(category), category === "Solid" || category === "Chemical" ? category : null, itemName)) {
+        status = "🔓 Ready";
+        statusClass = "ready";
+        helperLine = `<div class="tech-item-cost">Click to start research</div><div class="tech-item-cost">${durationLabel}</div>`;
+        clickableAttr = ` onclick="event.stopPropagation(); startResearch('${category}','${itemName}')" `;
+    }
+
+    let costLine = "";
+    if (costEntry) {
+        if (costEntry.rp === 0 && costEntry.money === 0) {
+            costLine = `<div class="tech-item-cost">Free</div>`;
+        } else {
+            costLine = `<div class="tech-item-cost">${costEntry.rp} RP · ₵${costEntry.money}</div>`;
         }
-    } catch(e) { /* cost lookup is best-effort */ }
+    }
 
     return `
         <div class="tech-item ${statusClass}" ${clickableAttr}>
@@ -3404,22 +4988,24 @@ function getCategoryType(category) {
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const databaseModal = document.getElementById("databaseModal");
-    const budgetModal = document.getElementById("budgetModal");
     const settingsModal = document.getElementById("settingsModal");
     const techTreeModal = document.getElementById("techTreeModal");
+    const questModal = document.getElementById("questModal");
+    const budgetModal = document.getElementById("budgetModal");
     if (event.target === databaseModal) {
         closeDatabaseModal();
-    }
-    if (event.target === budgetModal) {
-        closeBudgetModal();
     }
     if (event.target === settingsModal) {
         closeSettingsModal();
     }
-    if (event.target === techTreeModal) {
-        closeTechTreeModal();
+    // Note: techTreeModal is full-screen, no backdrop to click
+    if (event.target === questModal) {
+        closeQuestModal();
     }
-}
+    if (event.target === budgetModal) {
+        closeBudgetModal();
+    }
+};
 </script>
 
 </div><!-- close outer column flex wrapper -->
