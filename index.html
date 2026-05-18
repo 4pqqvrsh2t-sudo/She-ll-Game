@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>She-ll Designer v1.4.6</title>
     <style>
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1351,11 +1352,11 @@ body {
       <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:12px;">Developer Mode Active</div>
       <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
         <span>Research Points</span>
-        <input id="devRPInput" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+        <input id="devRPInput" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
       </label>
       <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
         <span>Money</span>
-        <input id="devMoneyInput" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+        <input id="devMoneyInput" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
       </label>
       <button class="fed-btn fed-btn-primary" onclick="applyDeveloperValues()" style="width:auto;">Apply Values</button>
       <div id="devMessage" style="margin-top:10px; font-size:10px; color:var(--txt-muted);"></div>
@@ -1520,11 +1521,11 @@ body {
                 <div style="font-size:11px; letter-spacing:1px; color: var(--txt-tan-hi); margin-bottom:8px;">Developer Controls</div>
                 <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
                     <span>Research Points</span>
-                    <input id="devRPInputSettings" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+                    <input id="devRPInputSettings" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
                 </label>
                 <label style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--txt-main);">
                     <span>Money</span>
-                    <input id="devMoneyInputSettings" type="number" min="0" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
+                    <input id="devMoneyInputSettings" type="number" min="0" step="0.01" inputmode="decimal" pattern="\d*(\.\d{0,2})?" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'); const m=this.value.match(/^\d+(?:\.\d{0,2})?/); this.value = m ? m[0] : '';" style="width:120px; padding:6px; border:1px solid var(--bdr-blue); background: var(--bg-card); color: var(--txt-main);" />
                 </label>
                 <button class="fed-btn fed-btn-primary" onclick="applyDeveloperValues(true)" style="width:auto;">Apply Developer Values</button>
             </div>
@@ -3267,7 +3268,59 @@ function generateOrder() {
     let description;
     const useFailedOrder = failedOrders.length > 0 && ordersSinceRetryPrompt >= 2;
 
-    if (useFailedOrder) {
+    if (currentFailedOrderId !== null) {
+        const order = failedOrders.find(order => order.id === currentFailedOrderId);
+        if (order) {
+            description = "Central Command: Previous design failed. Reattempt this order:\n" + order.description;
+            requiredPower = order.requiredPower;
+            maxCost = order.maxCost;
+            requiredStability = order.requiredStability;
+            requiredExplosiveness = order.requiredExplosiveness;
+            currentOrderIsImpossible = false;
+            ordersSinceRetryPrompt = 0;
+            currentOrderDescription = description;
+            typewriterDispatch(
+                "Reattempting Failed Order:\n" + simplifyDescription(currentOrderDescription) + "\n\n" +
+                "Power ≥ " + requiredPower +
+                " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+                " | Stability ≥ " + requiredStability +
+                " | Explosiveness ≥ " + requiredExplosiveness
+            );
+            flashDispatchBar();
+        } else {
+            currentFailedOrderId = null;
+            ordersSinceRetryPrompt = 0;
+            description = orderDescriptions[Math.floor(Math.random() * orderDescriptions.length)];
+            const ranges = getOrderRanges(description);
+            const order = findFeasibleOrder(ranges);
+            currentOrderIsImpossible = Math.random() < 0.2;
+
+            if (currentOrderIsImpossible) {
+                const impossibleOrder = makeOrderImpossible(ranges);
+                requiredPower = impossibleOrder.requiredPower;
+                maxCost = impossibleOrder.maxCost;
+                requiredStability = impossibleOrder.requiredStability;
+                requiredExplosiveness = impossibleOrder.requiredExplosiveness;
+            } else {
+                requiredPower = order.requiredPower;
+                maxCost = order.maxCost;
+                requiredStability = order.requiredStability;
+                requiredExplosiveness = order.requiredExplosiveness;
+            }
+
+            currentOrderDescription = description;
+            currentFailedOrderId = null;
+            ordersSinceRetryPrompt++;
+            typewriterDispatch(
+                simplifyDescription(description) + "\n\n" +
+                "Power ≥ " + requiredPower +
+                " | Cost ≤ " + currencyText(costToCurrency(maxCost)) +
+                " | Stability ≥ " + requiredStability +
+                " | Explosiveness ≥ " + requiredExplosiveness
+            );
+            flashDispatchBar();
+        }
+    } else if (useFailedOrder) {
         const order = failedOrders[0];
         description = "Central Command: Previous design failed. Reattempt this order:\n" + order.description;
         requiredPower = order.requiredPower;
@@ -3706,7 +3759,7 @@ function applyDeveloperValues(useSettings = false) {
             message = "Enter a valid non-negative RP value.";
             valid = false;
         } else {
-            researchPoints = Math.floor(value);
+            researchPoints = Math.round(value * 100) / 100; // keep two decimals
         }
     }
     if (moneyInput) {
@@ -3715,7 +3768,7 @@ function applyDeveloperValues(useSettings = false) {
             message = "Enter a valid non-negative Money value.";
             valid = false;
         } else {
-            money = Math.floor(value);
+            money = Math.round(value * 100) / 100; // keep two decimals
         }
     }
     if (valid) {
@@ -3890,6 +3943,19 @@ function selectBarrelSize(type) {
 // Submit design
 function submitDesign() {
     if (isWaiting) return; // Prevent multiple submissions while waiting for the next order
+
+    // Require a complete shell for any submission (prevent empty submissions)
+    if (!core || !casing || !powder) {
+        const resultEl = document.getElementById("result");
+        if (resultEl) {
+            resultEl.classList.add("readout-fail");
+            resultEl.classList.remove("readout-success");
+            resultEl.innerHTML = `<span class="stat-fail">✗ Incomplete shell</span><br><span style="opacity:0.75;font-size:9px;">You must select Core, Casing, and Powder before submitting a design.</span>`;
+        }
+        return;
+    }
+
+    // (redundant) retry-specific incomplete-shell check removed — top-level guard covers this
 
     isWaiting = true; // Set waiting state to prevent new orders until the next one is generated
 
@@ -4302,18 +4368,39 @@ function updateTechTreeDisplay() {
         if (!techId || !researchTreeData[techId]) return '';
         
         const tech = researchTreeData[techId];
+        const key = getTechKey(tech.category, tech.itemName);
         const isUnlocked = isResearchUnlocked(techId);
+        const project = researchProjects[key];
         const prereqsMet = areResearchPrerequisitesMet(techId);
-        const canStart = isUnlocked;
+        const costEntry = getTechCostEntry(tech.category, tech.itemName);
+        const remainingSecs = project ? Math.max(0, Math.ceil((project.finishAt - Date.now()) / 1000)) : 0;
         
         let statusClass = 'locked';
         let statusText = 'Locked';
+        let helperLine = '';
+        let clickableAttr = '';
+
         if (isUnlocked) {
             statusClass = 'unlocked';
             statusText = '✓ Unlocked';
+        } else if (project) {
+            statusClass = 'locked';
+            statusText = `⏳ Researching (${remainingSecs}s)`;
+            helperLine = `<div class="tech-item-cost">Research time: ${Math.max(1, remainingSecs)}s</div>`;
+        } else if (prereqsMet) {
+            statusClass = 'ready';
+            statusText = '🔓 Ready';
+            clickableAttr = ` onclick="event.stopPropagation(); startResearch('${tech.category}','${tech.itemName}')" `;
+            helperLine = `<div class="tech-item-cost">Click to start research</div>`;
         }
-        
-        const locked = !isUnlocked;
+
+        let costLine = '';
+        if (costEntry) {
+            costLine = costEntry.rp === 0 && costEntry.money === 0
+                ? `<div class="tech-item-cost">Free</div>`
+                : `<div class="tech-item-cost">RP: ${costEntry.rp} | ₵${costEntry.money}</div>`;
+        }
+
         const unlocksSummary = [];
         if (tech.unlocksComponents) {
             if (tech.unlocksComponents.cores) {
@@ -4324,13 +4411,14 @@ function updateTechTreeDisplay() {
             if (tech.unlocksComponents.casings) unlocksSummary.push(...tech.unlocksComponents.casings);
             if (tech.unlocksComponents.powders) unlocksSummary.push(...tech.unlocksComponents.powders);
         }
-        
-        return `<div class="tech-item ${statusClass}">
+
+        return `<div class="tech-item ${statusClass}" ${clickableAttr}>
             <div class="tech-item-name">${tech.name}</div>
             <div class="tech-item-description">${tech.description}</div>
             <div class="tech-item-status">${statusText}</div>
+            ${costLine}
+            ${helperLine}
             ${unlocksSummary.length > 0 ? `<div class="tech-item-unlocks"><strong>Unlocks:</strong> ${unlocksSummary.join(', ')}</div>` : ''}
-            <div class="tech-item-cost">RP: ${tech.cost.rp} | ₵${tech.cost.money}</div>
         </div>`;
     }
 
