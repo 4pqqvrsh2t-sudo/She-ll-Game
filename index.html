@@ -1377,6 +1377,18 @@ body {
   </div>
 </div>
 
+<div id="titleScreen" class="title-screen">
+  <div class="title-card">
+    <h1 class="title-name">She-ll Designer</h1>
+    <div class="title-sub">Federation Ordnance Terminal</div>
+    <div class="title-actions">
+      <button id="continueBtn" class="fed-btn fed-btn-primary" onclick="startFromTitle('continue')">▶ Continue</button>
+      <button id="loadBtn" class="fed-btn fed-btn-amber" onclick="startFromTitle('load')">↺ Load Save</button>
+      <button class="fed-btn" onclick="startFromTitle('new')">＋ New Game</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════════════════════
      FEDERATION ORDNANCE TERMINAL
      Outer flex COLUMN: top dispatch bar + main panel row beneath it.
@@ -2618,11 +2630,11 @@ function refreshComponentUnlocks() {
 // Check if an item is unlocked (component level)
 function isTechUnlocked(partType, category, itemName) {
     if (partType === "cores") {
-        return unlockedTechTree.cores[category][itemName];
+        return !!unlockedTechTree.cores?.[category]?.[itemName];
     } else if (partType === "casings") {
-        return unlockedTechTree.casings[itemName];
+        return !!unlockedTechTree.casings?.[itemName];
     } else if (partType === "powders") {
-        return unlockedTechTree.powders[itemName];
+        return !!unlockedTechTree.powders?.[itemName];
     }
     return false;
 }
@@ -2658,6 +2670,8 @@ function unlockTechBasedOnTest() {
         checkQuestProgress();
     }
 }
+
+const unlockTechBasedOnTest = refreshTechUnlockState;
 
 
 // New version that shows all armors with ??? for unknown ones
@@ -3435,6 +3449,50 @@ function updateRetryIndicator() {
     } else {
         el.style.display = "none";
     }
+
+}
+
+function getAllBuildStats() {
+    if (allBuildStatsCache) return allBuildStatsCache;
+
+    const builds = [];
+    Object.entries(coreStats).forEach(([category, types]) => {
+        Object.entries(types).forEach(([type, c]) => {
+            Object.entries(casingStats).forEach(([casingType, cs]) => {
+                Object.entries(powderStats).forEach(([powderType, ps]) => {
+                    const basePower = Math.max(0, c.power + (c.explosiveness * 0.15) + cs.power + ps.power);
+                    Object.entries(barrelStats).forEach(([barrelType, b]) => {
+                        const costVal = Math.max(0, c.cost + cs.cost + ps.cost + b.cost);
+                        const stabilityVal = Math.max(0, c.stability + cs.stability + ps.stability + b.stability);
+                        const explosivenessVal = Math.max(0, c.explosiveness + ps.explosiveness);
+                        const powerVal = Math.max(0, basePower + b.power);
+                        builds.push({ category, type, casingType, powderType, barrelType, power: powerVal, cost: costVal, stability: stabilityVal, explosiveness: explosivenessVal });
+                    });
+                });
+            });
+        });
+    });
+    allBuildStatsCache = builds;
+    return allBuildStatsCache;
+}
+
+function isOrderFeasible(reqPower, maxAllowedCost, reqStability, reqExplosiveness) {
+    return getAllBuildStats().some(stats =>
+        stats.power >= reqPower &&
+        stats.cost <= maxAllowedCost &&
+        stats.stability >= reqStability &&
+        stats.explosiveness >= reqExplosiveness
+    );
+}
+
+function getBuildStatBounds() {
+    const builds = getAllBuildStats();
+    return builds.reduce((acc, stats) => ({
+        maxPower: Math.max(acc.maxPower, stats.power),
+        minCost: Math.min(acc.minCost, stats.cost),
+        maxStability: Math.max(acc.maxStability, stats.stability),
+        maxExplosiveness: Math.max(acc.maxExplosiveness, stats.explosiveness)
+    }), { maxPower: 0, minCost: Infinity, maxStability: 0, maxExplosiveness: 0 });
 }
 
 // Tracks which tab is currently open so selectCore/Casing/Powder can re-render it
@@ -3939,6 +3997,26 @@ function selectBarrelSize(type) {
     updateDisplay();
     showTabContent(activeTab);
 };
+
+function selectBarrelSize(type) {
+    if (barrelSize && barrelStats[barrelSize]) {
+        power -= barrelStats[barrelSize].power;
+        cost -= barrelStats[barrelSize].cost;
+        stability -= barrelStats[barrelSize].stability;
+        penetration -= barrelStats[barrelSize].penetration;
+    }
+
+    barrelSize = type;
+
+    power += barrelStats[type].power;
+    cost += barrelStats[type].cost;
+    stability += barrelStats[type].stability;
+    penetration += barrelStats[type].penetration;
+
+    clampStats();
+    updateDisplay();
+    showTabContent(activeTab);
+}
 
 // Submit design
 function submitDesign() {
@@ -4486,6 +4564,12 @@ function updateTechTreeDisplay() {
     html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("petn_mk_ii") + '</div>';
     html += '</div>';
 
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "TNT-Based MK II", unlockedTechTree.cores["Chemical"]["TNT-Based MK II"], ["TNT-Based"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "RDX-Based MK II", unlockedTechTree.cores["Chemical"]["RDX-Based MK II"], ["RDX-Based"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("Chemical", "PETN-Composite MK II", unlockedTechTree.cores["Chemical"]["PETN-Composite MK II"], ["PETN-Composite"], false) + '</div>';
+    html += '</div>';
+
     html += '</div></div>';
 
     // ── Casings ──────────────────────────────────────────────────────────────
@@ -4511,6 +4595,13 @@ function updateTechTreeDisplay() {
 
     html += '<div class="tree-level">';
     html += '<div class="tech-node"><div class="tree-connector"></div>' + createResearchNode("reinforced_casing_mk_ii") + '</div>';
+    html += '</div>';
+
+    html += '<div class="tree-level">';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Low-Carbon MK II", unlockedTechTree.casings["Low-Carbon MK II"], ["Low-Carbon"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Standard MK II", unlockedTechTree.casings["Standard MK II"], ["Standard"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "High-Carbon MK II", unlockedTechTree.casings["High-Carbon MK II"], ["High-Carbon"], false) + '</div>';
+    html += '<div class="tech-node"><div class="tree-connector"></div>' + createTechItemHTML("casing", "Reinforced MK II", unlockedTechTree.casings["Reinforced MK II"], ["Reinforced"], false) + '</div>';
     html += '</div>';
 
     html += '</div></div>';
